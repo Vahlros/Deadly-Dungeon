@@ -1,5 +1,6 @@
 #pragma once
 #include "enemy.h"
+#include "rooms.h"
 
 struct Player
 {
@@ -22,7 +23,7 @@ struct Player
 	Entity entity{};
 
 	//Initializes player
-	void Init(GameData& game);
+	void Init(GameData& game, const Dim2Df& spawnPosition);
 
 	//Get inputs and react
 	void InputHandling(sf::RenderWindow& window, const GameData& game);

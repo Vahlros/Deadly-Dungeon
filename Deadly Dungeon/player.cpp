@@ -2,7 +2,7 @@
 #include "maths.h"
 
 //Initializes player
-void Player::Init(GameData& game)
+void Player::Init(GameData& game, const Dim2Df& spawnPosition)
 {
 	//Stats
 	speed = GC::MEDIUM_MOVEMENT_SPEED;
@@ -18,7 +18,7 @@ void Player::Init(GameData& game)
 	entity.sprite.setTexture(*entity.texture);
 	entity.sprite.setTextureRect({ 0, 0, GC::KNIGHT_DIMENSIONS.x, GC::KNIGHT_DIMENSIONS.y });
 	entity.sprite.setOrigin(Dim2Df(GC::KNIGHT_BODY_CENTRE));
-	entity.sprite.setPosition(GC::START_POSITION);
+	entity.sprite.setPosition(spawnPosition);
 
 	//Weapon
 	entity.weapon = GC::SWORD;

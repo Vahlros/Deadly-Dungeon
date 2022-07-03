@@ -167,13 +167,6 @@ namespace GC
 	//Weapon: Rusted Sword
 	const sf::IntRect R_SWORD_RECT = { 307, 26, 10, 21 }; //Where the rusted sword is on the spritesheet
 	const Dim2Df R_SWORD_ORIGIN = { 5.f, 18.f }; //The point at which the weapon is held
-	//Weapon: Fancy Sword
-	const sf::IntRect F_SWORD_RECT = { 307, 86, 10, 25 }; //Where the rusted sword is on the spritesheet
-	const Dim2Df F_SWORD_ORIGIN = { 5.f, 23.f }; //The point at which the weapon is held
-	//Weapon: Spear
-	const sf::IntRect SPEAR_RECT = { 293, 177, 6, 30 }; //Where the sword is on the spritesheet
-	const Dim2Df SPEAR_ORIGIN = { 3.f, 22.f }; //The point at which the weapon is held
-	//Weapon: <enter stuff here>
 
 	//Projectile data
 	const ProjectileData PROJECTILE_DATA_STRAIGHT_THROW = { &STRAIGHT_THROW_SLOW, 0.f, 1, 1, 0.f };

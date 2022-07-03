@@ -83,6 +83,9 @@ void GameData::Init(sf::RenderWindow& window)
 
 	//Sprites
 	mapSprite.setTexture(textures[GC::MAP_FLOOR_TEXTURE], true);
+
+	//Font
+	font.loadFromFile("tiny.regular.ttf");
 }
 
 //Renders the map

@@ -52,11 +52,10 @@ struct GameData
 	std::vector<sf::Texture> textures; //Vector of all textures
 	std::vector<std::vector<char>> collisionMap; //Vector of map collision data
 
-	//Images
+	//SFML
 	sf::Image spritesheetImg{}; //Spritesheet in Image format, for texture.loadFromImage()
-
-	//Sprites
 	sf::Sprite mapSprite{}; //Sprite for the environment
+	sf::Font font{}; //Game font
 
 	//Timers
 	float elapsed = 0.f; //Time elapsed since last frame
@@ -193,7 +192,6 @@ namespace GC
 	const short MAP_SIZE_PIXELS = MAP_SIZE_TILES * TILE_SIZE; //Maximum size of map, in pixels
 
 	//Player: General
-	const Dim2Df START_POSITION = { 640.f, 640.f }; //Start position
 	const float PLAYER_HIT_INVULNERABILITY = 2.f; //How long the player is invulnerable after being hit
 	const float PLAYER_DODGE_INVULNERABILITY = 0.5f; //Invulnerability while dodging
 	//Player: Animation
@@ -247,6 +245,12 @@ namespace GC
 	const unsigned char MAX_ATTACKS = 2; //Maximum number of attacks per weapon
 	const float WEAPON_HOVER = 0.5f; //Hover distance from centre, in tiles
 	const float WEAPON_HOVER_ROTATION = 30.f; //Hover rotation, in degrees
+	//Weapon: Fancy Sword
+	const sf::IntRect F_SWORD_RECT = { 307, 86, 10, 25 }; //Where the rusted sword is on the spritesheet
+	const Dim2Df F_SWORD_ORIGIN = { 5.f, 23.f }; //The point at which the weapon is held
+	//Weapon: Spear
+	const sf::IntRect SPEAR_RECT = { 293, 177, 6, 30 }; //Where the sword is on the spritesheet
+	const Dim2Df SPEAR_ORIGIN = { 3.f, 22.f }; //The point at which the weapon is held
 
 	//Projectiles: General
 	const short MAX_PROJECTILES = 256;
@@ -275,4 +279,7 @@ namespace GC
 	//Colours
 	const sf::Color PLAYER_HIT_COLOUR = sf::Color(51, 102, 255); //Softer blue than default
 	const sf::Color PLAYER_PROJECTILE_COLOUR = sf::Color(153, 204, 0); //Softer green than default
+
+	//Text
+	const char TEXT_CHARACTER_SIZE = 12;
 }

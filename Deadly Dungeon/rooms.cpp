@@ -1,9 +1,126 @@
 #include "rooms.h"
 
+//Assigns shop values based on the item given
+void Shop::SetupShop(const GameData& game, const char& ID)
+{
+	//Assign shop values
+	name.setFont(game.font);
+	name.setCharacterSize(GC::TEXT_CHARACTER_SIZE);
+	sprite.setTexture(game.textures[GC::SPRITESHEET_TEXTURE]);
+
+	switch (ID)
+	{
+	case GC::WS_HEALTH:
+		itemID = ID;
+		price = 10;
+		name.setString("Max Health: 10");
+		sprite.setTextureRect(GC::POTION_RECT_R1);
+		sprite.setOrigin(GC::POTION_ORIGIN);
+		break;
+
+	case GC::WS_SPEED:
+		itemID = ID;
+		price = 15;
+		name.setString("Speed: 15");
+		sprite.setTextureRect(GC::POTION_RECT_Y1);
+		sprite.setOrigin(GC::POTION_ORIGIN);
+		break;
+
+	case GC::WS_POWER:
+		itemID = ID;
+		price = 15;
+		name.setString("Attack Power: 15");
+		sprite.setTextureRect(GC::POTION_RECT_R2);
+		sprite.setOrigin(GC::POTION_ORIGIN);
+		break;
+
+	case GC::WS_ATTACK_SPEED:
+		itemID = ID;
+		price = 10;
+		name.setString("Attack Speed: 10");
+		sprite.setTextureRect(GC::POTION_RECT_G1);
+		sprite.setOrigin(GC::POTION_ORIGIN);
+		break;
+
+	case GC::WS_KNOCKBACK:
+		itemID = ID;
+		price = 15;
+		name.setString("Knockback Power: 15");
+		sprite.setTextureRect(GC::POTION_RECT_B1);
+		sprite.setOrigin(GC::POTION_ORIGIN);
+		break;
+
+	case GC::WS_FULL_HEAL:
+		itemID = ID;
+		price = 15;
+		name.setString("Full Heal: 15");
+		sprite.setTextureRect(GC::POTION_RECT_R1);
+		sprite.setOrigin(GC::POTION_ORIGIN);
+		break;
+
+	case GC::LS_FANCY_SWORD:
+		itemID = ID;
+		price = 10;
+		name.setString("Fancy Sword: 10");
+		sprite.setTextureRect(GC::F_SWORD_RECT);
+		sprite.setOrigin(GC::F_SWORD_ORIGIN);
+		break;
+
+	case GC::LS_SPEAR:
+		itemID = ID;
+		price = 10;
+		name.setString("Spear: 10");
+		sprite.setTextureRect(GC::SPEAR_RECT);
+		sprite.setOrigin(GC::SPEAR_ORIGIN);
+		break;
+
+	case GC::LS_BIG_WEAPONS:
+		itemID = ID;
+		price = 20;
+		name.setString("Enlarge Weapons: 20");
+		sprite.setTextureRect(GC::POTION_RECT_B2);
+		sprite.setOrigin(GC::POTION_ORIGIN);
+		break;
+
+	case GC::LS_REFLECT:
+		itemID = ID;
+		price = 20;
+		name.setString("Melee Reflects: 20");
+		sprite.setTextureRect(GC::POTION_RECT_G2);
+		sprite.setOrigin(GC::POTION_ORIGIN);
+		break;
+
+	default: //GC::LS_MELEE_PROJECTILE
+		itemID = ID;
+		price = 20;
+		name.setString("Melee Bullets: 20");
+		sprite.setTextureRect(GC::POTION_RECT_Y2);
+		sprite.setOrigin(GC::POTION_ORIGIN);
+		break;
+	}
+
+	sf::FloatRect tempRect = name.getLocalBounds();
+	name.setOrigin({tempRect.width / 2.f, tempRect.height / 2.f});
+	name.setPosition({ position.x, position.y });
+	sprite.setPosition({ position.x, position.y - GC::TILE_SIZE });
+}
+
+//Renders the shop
+void Shop::Render(sf::RenderWindow& window)
+{
+	if (!sold)
+	{
+		window.draw(name);
+		window.draw(sprite);
+	}
+}
+
 //Initializes the tilemap editor
 void Room::Init(GameData& game, const int& roomNumber, const Dim2Di& position)
 {
 	data = &GC::ROOM_LIST[roomNumber];
+	spawners.resize(GC::MAX_SPAWNERS);
+	shops.resize(GC::MAX_SHOPS);
 
 	//Position
 	rect.left = position.x;
@@ -11,6 +128,8 @@ void Room::Init(GameData& game, const int& roomNumber, const Dim2Di& position)
 
 	//Dimensions
 	GetTypeDimensions(rect.width, rect.height);
+
+
 
 	//Draw tiles
 	unsigned char tileID = 0, tileAboveID = 1;
@@ -30,9 +149,14 @@ void Room::Init(GameData& game, const int& roomNumber, const Dim2Di& position)
 				TileDrawing(game, x, y, tileID, tileAboveID);
 				AlterCollisionMap(game, x, y, tileID);
 				CheckForAnimatedTiles(game, x, y, tileID);
+				CheckForSpawner(x, y, tileID);
+				CheckForShop(x, y, tileID);
 			}
 		}
 	}
+
+	//Adjust spawner vector to actual size
+	spawners.resize(spawnerCounter);
 }
 
 //Changes variables to dimensions of the room
@@ -298,7 +422,7 @@ void Room::AlterCollisionMap(GameData& game, const int& x, const int& y, const c
 	}
 }
 
-//Checks for animated tiles
+//Finds animated tiles
 void Room::CheckForAnimatedTiles(GameData& game, const int& x, const int& y, const char& tileID)
 {
 	if (tileID == 18) //Lava fountain
@@ -346,7 +470,51 @@ void Room::UpdateAnimatedTiles(const GameData& game, sf::RenderWindow& window)
 }
 
 //Finds enemy spawn locations
-void Room::FindSpawners()
+void Room::CheckForSpawner(const int& x, const int& y, const char& tileID)
 {
+	if (tileID == GC::T_ENEMY_SPAWNER)
+	{
+		Dim2Df position;
+		position.x = ((float)(rect.left + x) + 0.5f) * GC::TILE_SIZE;
+		position.y = ((float)(rect.top + y) + 0.5f) * GC::TILE_SIZE;
 
+		spawners[spawnerCounter] = position;
+		spawnerCounter += 1;
+	}
+}
+
+//Finds shop locations
+void Room::CheckForShop(const int& x, const int& y, const char& tileID)
+{
+	bool foundShop = false;
+
+	if (tileID == GC::T_WATER_SHOP)
+	{
+		foundShop = true;
+		shops[shopCounter].water = true;
+	}
+	else if (tileID == GC::T_LAVA_SHOP)
+	{
+		foundShop = true;
+		shops[shopCounter].water = false;
+	}
+
+	if (foundShop)
+	{
+		Dim2Df position;
+		position.x = (float)(rect.left + x + 0.5f) * GC::TILE_SIZE;
+		position.y = (float)(rect.top + y + 0.5f) * GC::TILE_SIZE;
+
+		shops[shopCounter].position = position;
+		shopCounter += 1;
+	}
+}
+
+//Render shops
+void Room::RenderShops(sf::RenderWindow& window)
+{
+	for (unsigned char index = 0; index < shops.size(); index++)
+	{
+		shops[index].Render(window);
+	}
 }

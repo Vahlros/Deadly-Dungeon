@@ -4,43 +4,33 @@
 //Initializes game session
 void Game::Init(sf::RenderWindow& window)
 {
+	//Random
+	srand((int)time(0)); //Sets random's seed to current time, for "true random"
+
 	//Game data
 	data.Init(window);
 
 	//Rooms
-	Room firstRoom;
-	firstRoom.Init(data, 0, { 32, 32 });
-	Room secondRoom;
-	secondRoom.Init(data, 1, { 64, 32 });
-	Room thirdRoom;
-	thirdRoom.Init(data, 2, { 64, 64 });
-	Room fourthRoom;
-	fourthRoom.Init(data, 3, { 32, 64 });
-
 	roomList.resize(GC::ROOM_NUM);
-	roomList[0] = firstRoom;
-	roomList[1] = secondRoom;
-	roomList[2] = thirdRoom;
-	roomList[3] = fourthRoom;
+	roomList[0].Init(data, 0, { 32, 32 });
+	roomList[1].Init(data, 1, { 64, 32 });
+	roomList[2].Init(data, 2, { 64, 64 });
+	roomList[3].Init(data, 3, { 32, 64 });
+
+	InitShops(data, roomList);
 
 	//Player
-	player1.Init(data);
+	player1.Init(data, GetRandomSpawn(roomList, true, 0));
 	data.playerHit = &player1.hit;
 
 	//Enemy
-	Enemy enemy1;
-	enemy1.ID = 1;
-	enemy1.Init(data, { 732.f, 732.f });
-
-	enemyList.resize(10);
-	enemyList[0] = enemy1;
+	enemyList.resize(GC::MAX_ENEMIES);
+	enemyList[0].ID = 1;
+	enemyList[0].Init(data, { 732.f, 732.f });
 
 	//Projectiles
 	projectiles.resize(GC::MAX_PROJECTILES);
 	InitProjectiles(data, projectiles);
-
-	//Random
-	srand((int)time(0)); //Sets random's seed to current time, for "true random"
 }
 
 //Main game loop
@@ -63,10 +53,8 @@ void Game::GameLoop(sf::RenderWindow& window)
 	//Update the window
 	data.RenderMap(window, player1.entity.sprite.getPosition());
 
-	//Render animated tiles
-	roomList[0].UpdateAnimatedTiles(data, window);
-	//roomList[1].UpdateAnimatedTiles(data, window);
-	//roomList[2].UpdateAnimatedTiles(data, window);
+	//Render rooms
+	RenderMapNearPlayer(data, window, roomList, player1.entity.sprite);
 
 	//Render enemies
 	if (enemyList[0].active)
@@ -166,4 +154,101 @@ void CheckProjectileCollision(Projectile& proj, std::vector<Enemy>& enemies, Pla
 			}
 		}
 	}
+}
+
+//Randomly initializes shops
+void InitShops(const GameData& game, std::vector<Room>& rooms)
+{
+	//Create item vectors
+	std::vector<char> waterItems(GC::TOTAL_WATER_SHOPS - 1);
+	waterItems = { GC::WS_HEALTH, GC::WS_SPEED, GC::WS_POWER, GC::WS_ATTACK_SPEED, GC::WS_KNOCKBACK };
+	std::vector<char> lavaItems(GC::TOTAL_LAVA_SHOPS);
+	lavaItems = { GC::LS_FANCY_SWORD, GC::LS_SPEAR, GC::LS_BIG_WEAPONS, GC::LS_REFLECT, GC::LS_MELEE_PROJECTILE, GC::LS_MELEE_PROJECTILE, GC::LS_MELEE_PROJECTILE };
+	
+	//Assign items to shops
+	rooms[3].shops[0].SetupShop(game, GC::WS_FULL_HEAL);
+
+	for (char roomID = 0; roomID < GC::ROOM_NUM - 1; roomID++)
+	{
+		for (char shopID = 0; shopID < GC::MAX_SHOPS; shopID++)
+		{
+			unsigned int item, index;
+
+			if (rooms[roomID].shops[shopID].water)
+			{
+				if (waterItems.size() != 1)
+				{
+					index = rand() % (waterItems.size() - 1);
+					item = waterItems[index];
+					waterItems.erase(waterItems.begin() + index);
+				}
+				else
+				{
+					item = waterItems[0];
+				}
+			}
+			else //Lava
+			{
+				if (lavaItems.size() != 1)
+				{
+					index = rand() % (lavaItems.size() - 1);
+					item = lavaItems[index];
+					lavaItems.erase(lavaItems.begin() + index);
+				}
+				else
+				{
+					item = lavaItems[0];
+				}
+			}
+
+			rooms[roomID].shops[shopID].SetupShop(game, item);
+		}
+	}
+}
+
+//Render shops and fountains near the player
+void RenderMapNearPlayer(const GameData& game, sf::RenderWindow& window, std::vector<Room>& rooms, sf::Sprite playerSprite)
+{
+	bool foundRoom = false;
+	char index = 0;
+
+	for (unsigned char index = 0; index < rooms.size(); index++)
+	{
+		sf::FloatRect roomRect = { (float)rooms[index].rect.left * GC::TILE_SIZE, (float)rooms[index].rect.top * GC::TILE_SIZE,
+			(float)rooms[index].rect.width * GC::TILE_SIZE, (float)rooms[index].rect.height * GC::TILE_SIZE };
+
+		if (playerSprite.getGlobalBounds().intersects(roomRect))
+		{
+			foundRoom = true;
+		}
+
+		if (foundRoom)
+		{
+			for (unsigned char shopIndex = 0; shopIndex < rooms[index].shops.size(); shopIndex++)
+			{
+				rooms[index].shops[shopIndex].Render(window);
+			}
+
+			rooms[index].UpdateAnimatedTiles(game, window);
+		}
+	}
+}
+
+//Find a random spawn position
+Dim2Df GetRandomSpawn(std::vector<Room>& rooms, const bool& randRoom, const char& roomID)
+{
+	unsigned int roomIndex;
+
+	if (randRoom)
+	{
+		roomIndex = rand() % (GC::ROOM_NUM - 1);
+	}
+	else
+	{
+		roomIndex = roomID;
+	}
+
+	unsigned int randomSpawner = rand() % (rooms[roomIndex].spawners.size() - 1);
+
+	return rooms[roomIndex].spawners[randomSpawner];
 }
