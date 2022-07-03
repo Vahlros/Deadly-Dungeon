@@ -43,8 +43,16 @@ struct Player
 	void CheckAttackCollision(std::vector<Enemy>& enemies);
 
 	//Updates player state
-	void Update(sf::RenderWindow& window, const GameData& game, std::vector<Projectile> projectiles, std::vector<Enemy>& enemies);
+	void Update(sf::RenderWindow& window, GameData& game, std::vector<Projectile> projectiles, std::vector<Enemy>& enemies);
 
 	//Initiates after hit invulnerability
-	void UpdateInvulnerability(const GameData& game);
+	void UpdateInvulnerability(GameData& game);
+
+	//Player death
+	void Dead(GameData& game);
 };
+
+namespace GC
+{
+	const char PLAYER_HEALTH = 10; //Player starting health
+}

@@ -13,75 +13,26 @@ void Room::Init(GameData& game, const int& roomNumber, const Dim2Di& position)
 	GetTypeDimensions(rect.width, rect.height);
 
 	//Draw tiles
-	unsigned char tileID;
+	unsigned char tileID = 0, tileAboveID = 1;
 	for (char y = 0; y < rect.height; ++y)
 	{
 		for (char x = 0; x < rect.width; ++x)
 		{
 			tileID = data->tilemap[y][x];
+
+			if (y > 0)
+			{
+				tileAboveID = data->tilemap[y - 1][x];
+			}
+
 			if (tileID < GC::DOOR_START_NUM)
 			{
-				TileDrawing(game, x, y, tileID);
+				TileDrawing(game, x, y, tileID, tileAboveID);
 				AlterCollisionMap(game, x, y, tileID);
 				CheckForAnimatedTiles(game, x, y, tileID);
 			}
 		}
 	}
-
-	//Draw doors
-	FindDoors();
-	unsigned char doorID;
-
-	for (char z = 0; z < doorCounter; ++z)
-	{
-		doorID = data->tilemap[doorsList[z].top][doorsList[z].left];
-		game.textures[GC::DOOR_TEXTURE].loadFromImage(game.spritesheetImg, GC::TILE_LIST[doorID].rect);
-		game.textures[GC::MAP_FLOOR_TEXTURE].update(game.textures[GC::DOOR_TEXTURE], (rect.left + doorsList[z].left) * GC::TILE_SIZE, (rect.top + doorsList[z].top) * GC::TILE_SIZE);
-	}
-}
-
-//Finds doors in this room
-void Room::FindDoors()
-{
-	bool firstDoor = true;
-
-	for (char y = 0; y < rect.height; ++y)
-	{
-		for (char x = 0; x < rect.width; ++x)
-		{
-			if (data->tilemap[y][x] >= GC::DOOR_START_NUM)
-			{
-				if (firstDoor)
-				{
-					doorsList[doorCounter] = { x, y, GC::DOOR_TILE_WIDTH, GC::DOOR_TILE_HEIGHT };
-					doorCounter += 1;
-					firstDoor = false;
-				}
-				else if (!CheckIfFoundDoor(doorsList, doorCounter, x, y))
-				{
-					doorsList[doorCounter] = { x, y, GC::DOOR_TILE_WIDTH, GC::DOOR_TILE_HEIGHT };
-					doorCounter += 1;
-				}
-			}
-		}
-	}
-}
-
-//Check if this door tile is part of an already found door
-bool Room::CheckIfFoundDoor(std::vector<sf::IntRect>& doorsList, const int& doorCounter, const int& x, const int& y)
-{
-	bool found = false;
-	for (int z = 0; z < doorCounter; ++z)
-	{
-		if ((x >= doorsList[z].left) && (x < (doorsList[z].left + doorsList[z].width)))
-		{
-			if ((y >= doorsList[z].top) && (y < (doorsList[z].top + doorsList[z].height)))
-			{
-				found = true;
-			}
-		}
-	}
-	return found;
 }
 
 //Changes variables to dimensions of the room
@@ -110,18 +61,22 @@ void Room::GetTypeDimensions(int& width, int& height)
 }
 
 //Updates the 
-void Room::TileDrawing(GameData& game, const int& x, const int& y, const char& tileID)
+void Room::TileDrawing(GameData& game, const int& x, const int& y, const char& tileID, const char& tileAboveID)
 {
 	//Complicated alterations based on tile ID
-	bool requiresFloor = false, wallside = false, walltop = false, corner = false, right = false;
+	bool requiresFloor = false, wallside = false, walltop = false, corner = false, right = false, smallWalltop = false;
 	char correction = 0;
 	Tile tile = GC::TILE_LIST[tileID];
 
-	TileDrawingBools(tile, requiresFloor, wallside, walltop, corner, right);
+	TileDrawingBools(tile, requiresFloor, wallside, walltop, corner, right, smallWalltop);
 
-	if (requiresFloor && (y != 0))
+	if (requiresFloor && (wallside || (y != 0)))
 	{
-		DrawRandomFloor(game, x, y);
+		//Check if random floor should be drawn
+		if (!(walltop && (tileAboveID == GC::T_DARKNESS)))
+		{
+			DrawRandomFloor(game, x, y);
+		}
 
 		//Draw tile
 		if (wallside)
@@ -187,6 +142,20 @@ void Room::TileDrawing(GameData& game, const int& x, const int& y, const char& t
 				game.textures[GC::MAP_FLOOR_TEXTURE].update(game.textures[GC::WALL_SIDE_TEXTURE], (rect.left + x) * GC::TILE_SIZE, (rect.top + y) * GC::TILE_SIZE);
 			}
 		}
+		else if (smallWalltop)
+		{
+			correction = GC::TILE_SIZE - GC::WALL_TOP_HEIGHT;
+			char correction2 = 0;
+
+			if (right)
+			{
+				correction2 = GC::TILE_SIZE - GC::WALL_SIDE_WIDTH;
+			}
+
+			game.textures[GC::WALL_SIDE_TOP_TEXTURE].loadFromImage(game.spritesheetImg, tile.rect);
+
+			game.textures[GC::MAP_FLOOR_TEXTURE].update(game.textures[GC::WALL_SIDE_TOP_TEXTURE], ((rect.left + x) * GC::TILE_SIZE) + correction2, ((rect.top + y) * GC::TILE_SIZE) + correction);
+		}
 		else
 		{
 			game.textures[GC::TILE_TEXTURE].loadFromImage(game.spritesheetImg, tile.rect);
@@ -201,7 +170,7 @@ void Room::TileDrawing(GameData& game, const int& x, const int& y, const char& t
 }
 
 //Gets booleans for current tile
-void Room::TileDrawingBools(const Tile& tile, bool& requiresFloor, bool& wallside, bool& walltop, bool& corner, bool& right)
+void Room::TileDrawingBools(const Tile& tile, bool& requiresFloor, bool& wallside, bool& walltop, bool& corner, bool& right, bool& smallWalltop)
 {
 	if ((tile.ID >= GC::WALL_TOP_RANGE.x) && (tile.ID <= GC::WALL_TOP_RANGE.y))
 	{
@@ -212,9 +181,14 @@ void Room::TileDrawingBools(const Tile& tile, bool& requiresFloor, bool& wallsid
 	{
 		requiresFloor = true;
 
-		if ((tile.ID == GC::T_WALL_SIDE_TOP_LEFT) || (tile.ID == GC::T_WALL_SIDE_TOP_RIGHT))
+		if (tile.ID == GC::T_WALL_SIDE_TOP_LEFT)
 		{
-			walltop = true;
+			smallWalltop = true;
+		}
+		else if (tile.ID == GC::T_WALL_SIDE_TOP_RIGHT)
+		{
+			smallWalltop = true;
+			right = true;
 		}
 		else if ((tile.ID == GC::T_WALL_SIDE_MID_RIGHT) || (tile.ID == GC::T_WALL_SIDE_FRONT_RIGHT))
 		{
@@ -313,7 +287,7 @@ void Room::AlterCollisionMap(GameData& game, const int& x, const int& y, const c
 		{
 			game.collisionMap[tileY][tileX] = GC::C_CORNER_BOTTOM_RIGHT;
 		}
-		else //Doors
+		else
 		{
 			game.collisionMap[tileY][tileX] = GC::C_FREE_MOVEMENT;
 		}

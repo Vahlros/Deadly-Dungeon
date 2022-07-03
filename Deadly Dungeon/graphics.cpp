@@ -37,7 +37,7 @@ void Animation::Init(const AnimationData* animData)
 }
 
 /* Requirements:
-- tileTexture with exact size of the tile being drawn to it (Different sizes for tiles and doors)
+- tileTexture with exact size of the tile being drawn to it
 - position is in pixels
 How it works:
 - Uses tile's data to draw it onto a texture at a specific location

@@ -145,14 +145,17 @@ void Entity::CheckMapCollision(const GameData& game, const bool& entityBodyAttac
 	sf::IntRect collisionBox = sf::IntRect(sprite.getGlobalBounds()); //Entity's collision rectangle
 	collisionBox.top = collisionBox.top + collisionBox.height - GC::FEET_COLLISION_HEIGHT;
 	collisionBox.height = GC::FEET_COLLISION_HEIGHT;
+	char wallSideWidth = GC::WALL_SIDE_WIDTH; //Modified wall side width
 
-	//Enlarge collision box for attacks 
+	//Enlarge collision boxes for attacks 
 	if (entityBodyAttack)
 	{
 		collisionBox.left -= GC::ENEMY_ATTACK_C_OFFSET;
 		collisionBox.width += GC::ENEMY_ATTACK_C_OFFSET * 2;
 		collisionBox.top -= GC::ENEMY_ATTACK_C_OFFSET;
 		collisionBox.height += GC::ENEMY_ATTACK_C_OFFSET * 2;
+
+		wallSideWidth *= GC::ENEMY_ATTACK_C_OFFSET;
 	}
 	
 

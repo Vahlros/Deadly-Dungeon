@@ -8,17 +8,20 @@ void Game::Init(sf::RenderWindow& window)
 	data.Init(window);
 
 	//Rooms
-	Room startRoom;
-	startRoom.Init(data, 0, { 32, 32 });
-	Room enemyRoom;
-	enemyRoom.Init(data, 1, { 32, 56 });
-	Room itemRoom;
-	itemRoom.Init(data, 2, { 32, 8 });
+	Room firstRoom;
+	firstRoom.Init(data, 0, { 32, 32 });
+	Room secondRoom;
+	secondRoom.Init(data, 1, { 64, 32 });
+	Room thirdRoom;
+	thirdRoom.Init(data, 2, { 64, 64 });
+	Room fourthRoom;
+	fourthRoom.Init(data, 3, { 32, 64 });
 
-	roomList.resize(3);
-	roomList[0] = startRoom;
-	roomList[1] = enemyRoom;
-	roomList[2] = itemRoom;
+	roomList.resize(GC::ROOM_NUM);
+	roomList[0] = firstRoom;
+	roomList[1] = secondRoom;
+	roomList[2] = thirdRoom;
+	roomList[3] = fourthRoom;
 
 	//Player
 	player1.Init(data);
@@ -27,7 +30,7 @@ void Game::Init(sf::RenderWindow& window)
 	//Enemy
 	Enemy enemy1;
 	enemy1.ID = 1;
-	enemy1.Init(data, { 700.f, 700.f });
+	enemy1.Init(data, { 732.f, 732.f });
 
 	enemyList.resize(10);
 	enemyList[0] = enemy1;
@@ -62,8 +65,8 @@ void Game::GameLoop(sf::RenderWindow& window)
 
 	//Render animated tiles
 	roomList[0].UpdateAnimatedTiles(data, window);
-	roomList[1].UpdateAnimatedTiles(data, window);
-	roomList[2].UpdateAnimatedTiles(data, window);
+	//roomList[1].UpdateAnimatedTiles(data, window);
+	//roomList[2].UpdateAnimatedTiles(data, window);
 
 	//Render enemies
 	if (enemyList[0].active)
@@ -76,6 +79,15 @@ void Game::GameLoop(sf::RenderWindow& window)
 
 	//Render player last
 	player1.entity.Render(window, data);
+}
+
+//Check player death
+void Game::IsPlayerDead()
+{
+	if (data.playerDead)
+	{
+		//END THE GAME SESSION
+	}
 }
 
 //Initializes all projectiles
@@ -132,22 +144,25 @@ void CheckProjectileCollision(Projectile& proj, std::vector<Enemy>& enemies, Pla
 	}
 	else
 	{
-		//Calculate distance to enemy
-		Dim2Df position = player.entity.sprite.getPosition();
-		float distanceToEnemy = CalculateMagnitudeOfVector(proj.sprite.getPosition() - position);
-
-		//If in range, check collision
-		if (distanceToEnemy <= GC::CHECK_ATTACK_COLLISION_RANGE)
+		if (!player.entity.invulnerable)
 		{
-			if (proj.sprite.getGlobalBounds().intersects(player.entity.sprite.getGlobalBounds()))
-			{
-				//Hit player
-				player.entity.TakeDamage(GC::DEFAULT_DAMAGE, DirectionalAngle{}, GC::ZERO);
-				player.entity.invulnerable = true;
-				player.hit = true;
+			//Calculate distance to player
+			Dim2Df position = player.entity.sprite.getPosition();
+			float distanceToEnemy = CalculateMagnitudeOfVector(proj.sprite.getPosition() - position);
 
-				//Deactivate projectile
-				proj.active = false;
+			//If in range, check collision
+			if (distanceToEnemy <= GC::CHECK_ATTACK_COLLISION_RANGE)
+			{
+				if (proj.sprite.getGlobalBounds().intersects(player.entity.sprite.getGlobalBounds()))
+				{
+					//Hit player
+					player.entity.TakeDamage(GC::DEFAULT_DAMAGE, DirectionalAngle{}, GC::ZERO);
+					player.entity.invulnerable = true;
+					player.hit = true;
+
+					//Deactivate projectile
+					proj.active = false;
+				}
 			}
 		}
 	}

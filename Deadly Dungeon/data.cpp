@@ -27,11 +27,9 @@ void GameData::Init(sf::RenderWindow& window)
 	//Map & Camera Textures
 	textures[GC::MAP_FLOOR_TEXTURE].create(GC::MAP_SIZE_PIXELS, GC::MAP_SIZE_PIXELS);
 	textures[GC::TILE_TEXTURE].create(GC::TILE_SIZE, GC::TILE_SIZE);
-	textures[GC::DOOR_TEXTURE].create(GC::DOOR_TILESIZE.x, GC::DOOR_TILESIZE.y);
-	textures[GC::DOOR_OPEN_TEXTURE].create(GC::DOOR_TILESIZE.y, GC::DOOR_TILESIZE.y); //32 x 32 centre
-	textures[GC::DOOR_OPEN_TEXTURE].loadFromImage(spritesheetImg, GC::TILE_LIST[66].rect); //Always the same
 	textures[GC::WALL_SIDE_TEXTURE].create(GC::WALL_SIDE_WIDTH, GC::TILE_SIZE);
 	textures[GC::WALL_TOP_TEXTURE].create(GC::TILE_SIZE, GC::WALL_TOP_HEIGHT);
+	textures[GC::WALL_SIDE_TOP_TEXTURE].create(GC::WALL_SIDE_WIDTH, GC::WALL_TOP_HEIGHT);
 	textures[GC::LAVA_FOUNTAIN_TEXTURE].create(GC::FOUNTAIN_ANIM_LAVA_RECT.width, GC::FOUNTAIN_ANIM_LAVA_RECT.height);
 	textures[GC::LAVA_FOUNTAIN_TEXTURE].loadFromImage(spritesheetImg, GC::FOUNTAIN_ANIM_LAVA_RECT);
 	textures[GC::WATER_FOUNTAIN_TEXTURE].create(GC::FOUNTAIN_ANIM_WATER_RECT.width, GC::FOUNTAIN_ANIM_WATER_RECT.height);
@@ -58,7 +56,9 @@ void GameData::Init(sf::RenderWindow& window)
 	//Projectile Textures
 	textures[GC::FIRE_SKULL_TEXTURE].create(GC::FIRE_SKULL_ANIM_RECT.width, GC::FIRE_SKULL_ANIM_RECT.height);
 	textures[GC::FIRE_SKULL_TEXTURE].loadFromImage(spritesheetImg, GC::FIRE_SKULL_ANIM_RECT);
-
+	textures[GC::FIRE_BALL_TEXTURE].create(GC::FIRE_BALL_ANIM_RECT.width, GC::FIRE_BALL_ANIM_RECT.height);
+	textures[GC::FIRE_BALL_TEXTURE].loadFromImage(spritesheetImg, GC::FIRE_BALL_ANIM_RECT);
+	
 	//Scaling
 	if ((screenResolution.x == 3840) && (screenResolution.y == 2160))
 	{

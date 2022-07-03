@@ -9,7 +9,7 @@ void Player::Init(GameData& game)
 
 	//Entity stats
 	entity.isPlayer = true;
-	entity.health = 10;
+	entity.health = GC::PLAYER_HEALTH;
 	entity.collisionRect = GC::KNIGHT_BODY_RECT;
 	entity.anim.Init(&GC::PLAYER_ANIM_IDLE);
 
@@ -101,14 +101,11 @@ void Player::KeyboardControls(const sf::Event& event, const GameData& game)
 	}
 	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::C))
 	{
-		//entity.weapon.attack0 = GC::SWORD_OF_DOOM_ATTACK;
 		entity.weapon = GC::RUSTED_SWORD;
 		entity.weapon.Init(game, entity.isPlayer);
 	}
 	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::V))
 	{
-		//entity.weapon.attack0 = GC::NORMAL_STRAIGHT_THROW_ATTACK;
-		//entity.weapon.attack1 = GC::NORMAL_SPINNING_THROW_ATTACK;
 		entity.weapon = GC::FANCY_SWORD;
 		entity.weapon.Init(game, entity.isPlayer);
 	}
@@ -287,8 +284,15 @@ void Player::CheckAttackCollision(std::vector<Enemy>& enemies)
 							damage *= heavyAttackMultiplier;
 						}
 
+						//Hit enemy
 						unsigned char actualDamage = (unsigned char)round(damage);
 						enemies[index].entity.TakeDamage(actualDamage, entity.facing, knockbackPower);
+
+						if (enemies[index].entity.weapon.attacking)
+						{
+							enemies[index].entity.weapon.attack0.Stop();
+							enemies[index].entity.weapon.attack1.Stop();
+						}
 					}
 				}
 			}
@@ -297,7 +301,7 @@ void Player::CheckAttackCollision(std::vector<Enemy>& enemies)
 }
 
 //Updates player state
-void Player::Update(sf::RenderWindow& window, const GameData& game, std::vector<Projectile> projectiles, std::vector<Enemy>& enemies)
+void Player::Update(sf::RenderWindow& window, GameData& game, std::vector<Projectile> projectiles, std::vector<Enemy>& enemies)
 {
 	//Invulnerability
 	UpdateInvulnerability(game);
@@ -317,14 +321,14 @@ void Player::Update(sf::RenderWindow& window, const GameData& game, std::vector<
 }
 
 //Handles invulnerability
-void Player::UpdateInvulnerability(const GameData& game)
+void Player::UpdateInvulnerability(GameData& game)
 {
 	//Invulnerability
 	if (hit)
 	{
 		if (entity.health <= 0)
 		{
-			printf("my balls tingle when your mum touches them\n");
+			Dead(game);
 		}
 
 		entity.invulnerable = true;
@@ -346,4 +350,11 @@ void Player::UpdateInvulnerability(const GameData& game)
 			entity.invulnerabilityTimer -= game.elapsed;
 		}
 	}
+}
+
+//Player death
+void Player::Dead(GameData& game)
+{
+	printf("my balls tingle when your mum touches them\n");
+	//game.
 }

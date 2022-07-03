@@ -24,6 +24,9 @@ struct Game
 
 	//Main game loop
 	void GameLoop(sf::RenderWindow& window);
+
+	//Check player death
+	void IsPlayerDead();
 };
 
 //Initializes all projectiles

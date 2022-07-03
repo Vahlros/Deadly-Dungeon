@@ -17,7 +17,7 @@ void Projectile::Update(const GameData& game)
 		sprite.setPosition(origin);
 
 		//Animation
-		if (data.fireSkull)
+		if (data.type == GC::FIRE_SKULL_PROJECTILE || data.type == GC::FIRE_BALL_PROJECTILE)
 		{
 			anim.UpdateAnimation(sprite, game.elapsed);
 		}
@@ -28,8 +28,7 @@ void Projectile::Update(const GameData& game)
 		//Time
 		if (!motion.loop)
 		{
-			//motion.timer -= game.elapsed;
-			motion.timer -= (1.f / (float)GC::FRAMERATE);
+			motion.timer -= game.elapsed;
 		}
 	}
 }
@@ -310,7 +309,15 @@ void Attack::SpawnProjectiles(const GameData& game, std::vector<Projectile>& pro
 			projList[index].data = *projectileData;
 			projList[index].motion = *projList[index].data.motion;
 
-			if (projectileData->fireSkull)
+			if (projectileData->type == GC::WEAPON_PROJECTILE)
+			{
+				projList[index].sprite.setTexture(game.textures[GC::SPRITESHEET_TEXTURE]);
+				projList[index].sprite.setTextureRect(sprite->getTextureRect());
+				projList[index].sprite.setOrigin(sprite->getOrigin());
+				projList[index].sprite.setPosition(sprite->getPosition());
+				projList[index].origin = sprite->getPosition();
+			}
+			else if (projectileData->type == GC::FIRE_SKULL_PROJECTILE)
 			{
 				projList[index].sprite.setTexture(game.textures[GC::FIRE_SKULL_TEXTURE]);
 				projList[index].sprite.setTextureRect(GC::FIRE_SKULL_BODY_RECT);
@@ -321,13 +328,16 @@ void Attack::SpawnProjectiles(const GameData& game, std::vector<Projectile>& pro
 				projList[index].anim.data = &GC::FIRE_SKULL_ANIM;
 				projList[index].anim.currentFrame = projList[index].anim.data->startFrame;
 			}
-			else
+			else //if (projectileData->type == GC::FIRE_BALL_PROJECTILE)
 			{
-				projList[index].sprite.setTexture(game.textures[GC::SPRITESHEET_TEXTURE]);
-				projList[index].sprite.setTextureRect(sprite->getTextureRect());
-				projList[index].sprite.setOrigin(sprite->getOrigin());
+				projList[index].sprite.setTexture(game.textures[GC::FIRE_BALL_TEXTURE]);
+				projList[index].sprite.setTextureRect(GC::FIRE_BALL_BODY_RECT);
+				projList[index].sprite.setOrigin(Dim2Df(GC::FIRE_BALL_BODY_CENTRE));
 				projList[index].sprite.setPosition(sprite->getPosition());
 				projList[index].origin = sprite->getPosition();
+
+				projList[index].anim.data = &GC::FIRE_BALL_ANIM;
+				projList[index].anim.currentFrame = projList[index].anim.data->startFrame;
 			}
 
 			projList[index].playerProjectile = projectileShotByPlayer;
@@ -348,7 +358,7 @@ void Attack::SpawnProjectiles(const GameData& game, std::vector<Projectile>& pro
 
 			projList[index].motion.Init(game, GetDirectionalAngleFrom360Angle(projList[index].angle, false), *attackSpeed, 1, true);
 			projList[index].sprite.setRotation(projList[index].angle);
-			projList[index].followingFacing = followingFacing; //Need to change this
+			projList[index].followingFacing = followingFacing;
 
 			if (followingFacing)
 			{

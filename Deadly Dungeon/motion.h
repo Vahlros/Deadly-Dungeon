@@ -100,6 +100,9 @@ namespace GC
 	const LineMotionData WINDUP_ARC_FAST_LINE = { { 4.f, -1.f }, 0.5f }; //Fast arc attack windup's backward movement
 	const LineMotionData WINDUP_SWING_LINE = { { 16.f, 1.f }, 0.2f }; //Weapon swing arc's forward movement
 	const LineMotionData WINDUP_F_SWING_LINE = { { 20.f, 1.f }, 0.2f }; //Weapon fancy swing arc's forward movement
+	const LineMotionData FIRE_SPIT_WINDUP_LINE = { { 6.f, -1.f }, 0.3f }; //Weapon swing arc's forward movement
+	const LineMotionData FIRE_SPIT_RELEASE_LINE = { { 8.f, 1.f }, 0.2f }; //Weapon fancy swing arc's forward movement
+	//Projectiles
 	//Projectiles
 	const LineMotionData PROJECTILE_THROW = { { 8.f, 1.f }, 0.1f }; //Projectile throw
 	const LineMotionData PROJECTILE_LINE_SLOW = { { 160.f, 1.f }, 1.f }; //Slow projectile
@@ -116,7 +119,9 @@ namespace GC
 	const CircularMotionData SPIN_FAST = { 360.f, 0.2f }; //Fast spin
 	const CircularMotionData SPIN_HELL = { 3600.f, 2.f }; //Hell spin... of doom
 	const CircularMotionData JUMP_SPIN = { 45.f, 0.3f }; //Jump attack, spin
-	const CircularMotionData CHARGE_WINDUP_SPIN = { 45.f, 0.5f }; //Charge winup spin
+	const CircularMotionData CHARGE_WINDUP_SPIN = { 45.f, 0.5f }; //Charge windup spin
+	const CircularMotionData FIRE_SPIT_WINDUP_SPIN = { -30.f, 0.3f }; //Fire spit windup spin
+	const CircularMotionData FIRE_SPIT_RELEASE_SPIN = { 40.f, 0.2f }; //Fire spit windup spin
 	const CircularMotionData NEGLIGIBLE_SPIN = { 0.1f, 1.f }; //No spin, to maintain a spin from previous motion
 
 	//Motions																							(bools: circular, line, spin, damage, loop)
@@ -133,13 +138,13 @@ namespace GC
 	const Motion THROW_PROJECTILE_FAST = { {}, &PROJECTILE_THROW, {},											false, true, false, false, false };
 	const Motion SPINNING_THROW_SLOW = { {}, &PROJECTILE_LINE_SLOW, &SPIN_FAST,									false, true, true, true, false };
 	const Motion STRAIGHT_THROW_SLOW = { {}, &PROJECTILE_LINE_SLOW, {},											false, true, false, true, false };
-	//Heavy projectile motions
-
 	//Enemy unique attack motions
 	const Motion HORN_STAB_JUMP = { {}, &JUMP_LINE, &JUMP_SPIN,													false, true, true, true, false };
 	const Motion CHARGE_WINDUP = { {}, {}, &CHARGE_WINDUP_SPIN,													false, false, true, false, false };
 	const Motion CHARGE_RELEASE = { {}, &CHARGE_RELEASE_LINE, &NEGLIGIBLE_SPIN,									false, true, true, true, false };
 	const Motion BITE_WINDUP = { {}, {}, &NEGLIGIBLE_SPIN,														false, false, true, false, false };
+	const Motion FIRE_BALL_SPIT_WINDUP = { {}, &FIRE_SPIT_WINDUP_LINE, &FIRE_SPIT_WINDUP_SPIN,					false, true, true, false, false };
+	const Motion FIRE_BALL_SPIT_RELEASE = { {}, &FIRE_SPIT_RELEASE_LINE, &FIRE_SPIT_RELEASE_SPIN,				false, true, true, false, false };
 	//Super attack motions
 	const Motion CIRCLE_OF_DOOM = { &SPIN_HELL, &PROJECTILE_LINE_SLOW_LONG, &SPIN_HELL,							true, true, true, true, false };
 }

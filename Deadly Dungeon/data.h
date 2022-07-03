@@ -45,6 +45,9 @@ struct GameData
 	char gameState = 0; //Current game state
 	char input = 0; //Keyboard or controller
 
+	//Operational bools
+	bool playerDead = false;
+
 	//Vectors
 	std::vector<sf::Texture> textures; //Vector of all textures
 	std::vector<std::vector<char>> collisionMap; //Vector of map collision data
@@ -75,8 +78,8 @@ namespace GC
 	enum GAME_STATE { MAIN_MENU, PLAYING, WIN, LOSE }; //Current game state
 	enum DIRECTIONS { NORTH, EAST, SOUTH, WEST }; //NESW directions
 	enum TEXTURE_LIST {
-		SPRITESHEET_TEXTURE, MAP_FLOOR_TEXTURE, TILE_TEXTURE, DOOR_TEXTURE, DOOR_OPEN_TEXTURE, WALL_SIDE_TEXTURE, WALL_TOP_TEXTURE, WATER_FOUNTAIN_TEXTURE,
-		LAVA_FOUNTAIN_TEXTURE, KNIGHT_TEXTURE, IMP_TEXTURE, L_DEMON_TEXTURE, ABERRANT_TEXTURE, G_DEMON_TEXTURE, FIRE_SKULL_TEXTURE
+		SPRITESHEET_TEXTURE, MAP_FLOOR_TEXTURE, TILE_TEXTURE, WALL_SIDE_TEXTURE, WALL_TOP_TEXTURE, WALL_SIDE_TOP_TEXTURE, WATER_FOUNTAIN_TEXTURE, LAVA_FOUNTAIN_TEXTURE,
+		KNIGHT_TEXTURE, IMP_TEXTURE, L_DEMON_TEXTURE, ABERRANT_TEXTURE, G_DEMON_TEXTURE, FIRE_SKULL_TEXTURE, FIRE_BALL_TEXTURE
 	};
 	enum PLAYER_INPUT { KEYBOARD, GAMEPAD }; //Player input states
 	enum ROOM_TYPES { R32X32, R16X16, R32X16, R16X32 }; //Room types
@@ -100,7 +103,6 @@ namespace GC
 
 	//Tile: General
 	const char TILE_SIZE = 16; //Tile size, in pixels
-	const Dim2Di DOOR_TILESIZE = { 64, 32 }; //Door size, in pixels
 	const unsigned char TILE_NUM = 67; //Total number of tiles
 	//Tile: Tile dimensions
 	const char WALL_SIDE_WIDTH = 5; //Width of a wall side, in pixels
@@ -109,7 +111,6 @@ namespace GC
 	const char FOUNTAIN_TOP_HEIGHT = 7;
 	const char COLUMN_BASE_HEIGHT = 5;
 	const char COLUMN_TOP_HEIGHT = 12;
-	const char DOOR_OPEN_WIDTH = 7;
 	//Tile: Animated tiles
 	const AnimationData FOUNTAIN_ANIM_LAVA = { 0, 2, 0.3f }; //Animation data for lava fountain
 	const sf::IntRect FOUNTAIN_ANIM_LAVA_RECT = { 64, 9, 48, 27 }; //Where the animation is on the spritesheet
@@ -163,8 +164,8 @@ namespace GC
 		{42, "Floor Ladder", {48, 96, 16, 16} },
 		{43, "Hole", {96, 144, 16, 16} },
 		{44, "Stairs", {80, 176, 16, 16} },
-		{45, "Wall Side Top Right", {0, 112, 16, 16} },
-		{46, "Wall Side Top Left", {16, 112, 16, 16} },
+		{45, "Wall Side Top Right", {11, 124, 5, 4} },
+		{46, "Wall Side Top Left", {16, 124, 5, 4} },
 		{47, "Wall Side Mid Right", {0, 128, 16, 16} },
 		{48, "Wall Side Front Right", {0, 144, 16, 16} },
 		{49, "Wall Side Mid Left", {16, 128, 16, 16} },
@@ -180,8 +181,8 @@ namespace GC
 		{59, "Wall In Corner L Top Left", {80, 128, 16, 16} },
 		{60, "Wall Corner Bottom Right", {48, 144, 16, 16} },
 		{61, "Wall In Corner L Top Right", {64, 128, 16, 16}},
-		{62, "Blank", {0, 426, 16, 16}},
-		{63, "Blank", {0, 426, 16, 16}},
+		{62, "Water Shop", {0, 32, 16, 16}},
+		{63, "Lava Shop", {0, 48, 16, 16}},
 		{64, "Door Up", {16, 208, 64, 32}},
 		{65, "Door Down", {16, 240, 64, 32}},
 		{66, "Door Open", {80, 208, 32, 32}}
@@ -192,7 +193,7 @@ namespace GC
 	const short MAP_SIZE_PIXELS = MAP_SIZE_TILES * TILE_SIZE; //Maximum size of map, in pixels
 
 	//Player: General
-	const Dim2Df START_POSITION = { 684.f, 684.f }; //Start position
+	const Dim2Df START_POSITION = { 640.f, 640.f }; //Start position
 	const float PLAYER_HIT_INVULNERABILITY = 2.f; //How long the player is invulnerable after being hit
 	const float PLAYER_DODGE_INVULNERABILITY = 0.5f; //Invulnerability while dodging
 	//Player: Animation
@@ -249,13 +250,20 @@ namespace GC
 
 	//Projectiles: General
 	const short MAX_PROJECTILES = 256;
-	//Projectiles: Fiery Skull
+	//Projectiles: Fire Skull
 	const unsigned char FIRE_SKULL_FRAMES = 6; //Number of frames
 	const AnimationData FIRE_SKULL_ANIM = { 0, FIRE_SKULL_FRAMES - 1, 0.09f }; //Idle animation data for the player
 	const Dim2Di FIRE_SKULL_DIMENSIONS = { 6, 6 }; //Dimensions of the player texture
 	const sf::IntRect FIRE_SKULL_ANIM_RECT = { 293, 341, 36, FIRE_SKULL_DIMENSIONS.y }; //Where the animation is on the spritesheet
 	const sf::IntRect FIRE_SKULL_BODY_RECT = { 0, 0, 6, 6 }; //Where the character's body is on the un-scaled sprite
 	const Dim2Di FIRE_SKULL_BODY_CENTRE = { 2, 2 }; //Where the centre of the character's body is on the un-scaled sprite
+	//Projectiles: Fire Ball
+	const unsigned char FIRE_BALL_FRAMES = 6; //Number of frames
+	const AnimationData FIRE_BALL_ANIM = { 0, FIRE_BALL_FRAMES - 1, 0.09f }; //Idle animation data for the player
+	const Dim2Di FIRE_BALL_DIMENSIONS = { 6, 6 }; //Dimensions of the player texture
+	const sf::IntRect FIRE_BALL_ANIM_RECT = { 293, 349, 36, FIRE_BALL_DIMENSIONS.y }; //Where the animation is on the spritesheet
+	const sf::IntRect FIRE_BALL_BODY_RECT = { 0, 0, 6, 6 }; //Where the character's body is on the un-scaled sprite
+	const Dim2Di FIRE_BALL_BODY_CENTRE = { 2, 2 }; //Where the centre of the character's body is on the un-scaled sprite
 
 	//Collision
 	const char CHECK_ATTACK_COLLISION_RANGE = TILE_SIZE * 4; //The distance between two origins in which collisions will be checked

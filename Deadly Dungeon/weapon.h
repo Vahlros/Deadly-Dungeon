@@ -12,7 +12,7 @@ struct ProjectileData
 	char baseDamage = 0; //Base damage of the projectile
 	char num = 0; //Number of projectiles in this attack
 	float spread = 0.f; //How far apart the extra projectiles are spread, from the initial angle, in degrees
-	bool fireSkull = false; //If the projectile is fire skull
+	char type = 0; //What type of projectile is spawned (0 is the weapon, 1 is fire skull, 2 is fire ball)
 };
 
 //Projectile
@@ -20,7 +20,6 @@ struct Projectile
 {
 	//Setup stats
 	Motion motion{};
-	//char damage = 0;
 
 	//Setup bools
 	bool followingFacing = true; //If the projectile is actively following the entity facing
@@ -159,6 +158,9 @@ void UpdateRotation(const Motion& motion, sf::Sprite& sprite, const float& initi
 //Game constants
 namespace GC
 {
+	//Enums
+	enum PROJECTILE_TYPES{ WEAPON_PROJECTILE, FIRE_SKULL_PROJECTILE, FIRE_BALL_PROJECTILE }; //Projectile type
+
 	//Weapon: Sword
 	const sf::IntRect SWORD_RECT = { 323, 26, 10, 21 }; //Where the sword is on the spritesheet
 	const Dim2Df SWORD_ORIGIN = { 5.f, 18.f }; //The point at which the weapon is held
@@ -176,9 +178,9 @@ namespace GC
 	//Projectile data
 	const ProjectileData PROJECTILE_DATA_STRAIGHT_THROW = { &STRAIGHT_THROW_SLOW, 0.f, 1, 1, 0.f };
 	const ProjectileData PROJECTILE_DATA_SPINNING_THROW = { &SPINNING_THROW_SLOW, 0.f, 1, 1, 0.f };
-	const ProjectileData FIRE_SKULL = { &STRAIGHT_THROW_SLOW, 0.f, 1, 4, 15.f, true };
-	const ProjectileData FIRE_SKULL_BARRAGE = { &STRAIGHT_THROW_SLOW, 0.f, 1, 15, 12.f, true };
-	const ProjectileData FIRE_SKULL_VORTEX = { &CIRCLE_OF_DOOM, 8.f, 1, 12, 30.f, true };
+	const ProjectileData FIRE_BALL = { &STRAIGHT_THROW_SLOW, 0.f, 1, 2, 15.f, FIRE_BALL_PROJECTILE };
+	const ProjectileData FIRE_BALL_BARRAGE = { &STRAIGHT_THROW_SLOW, 0.f, 1, 15, 12.f, FIRE_BALL_PROJECTILE };
+	const ProjectileData FIRE_BALL_VORTEX = { &CIRCLE_OF_DOOM, 8.f, 1, 12, 30.f, FIRE_BALL_PROJECTILE };
 
 	//Attacks										(bools: summonProjectile, movingWithEntity, followingFacing, hasTwoMotions, arcCentredOnInitialAngle, hasRandomSwingDirection, uniqueAnimation -> if true -> animOnMotion0, animOnMotion1)
 	//Swing
@@ -196,16 +198,16 @@ namespace GC
 	//Enemy attacks
 	const Attack HORN_STAB = { {HORN_STAB_JUMP}, {}, {}, 64,															false, false, false, false, false, false, false }; //Horn stab jump attack
 	const Attack CHARGE = { {CHARGE_WINDUP, CHARGE_RELEASE}, {}, &ENEMY_ANIM_MOVE, 160,									false, false, false, true, false, false, true, false, true }; //Horn charge attack
-	const Attack BITE = { {BITE_WINDUP}, &FIRE_SKULL, &ENEMY_ANIM_BITE, 32,												true, false, true, false, false, false, true, true, false }; //Bite attack
-	const Attack BITE_BARRAGE = { {BITE_WINDUP}, &FIRE_SKULL_BARRAGE, &ENEMY_ANIM_BITE, 64,								true, false, true, false, false, false, true, true, false }; //Bite attack
-	const Attack BITE_WAVE = { {BITE_WINDUP}, &FIRE_SKULL_VORTEX, &ENEMY_ANIM_BITE, 64,									true, false, true, false, false, false, true, true, false }; //Bite attack
-
+	const Attack BITE = { {BITE_WINDUP}, &FIRE_BALL, &ENEMY_ANIM_BITE, 32,												true, false, true, false, false, false, true, true, false }; //Bite attack
+	const Attack BITE_BARRAGE = { {BITE_WINDUP}, &FIRE_BALL_BARRAGE, &ENEMY_ANIM_BITE, 64,								true, false, true, false, false, false, true, true, false }; //Bite barrage attack
+	const Attack BITE_WAVE = { {BITE_WINDUP}, &FIRE_BALL_VORTEX, &ENEMY_ANIM_BITE, 64,									true, false, true, false, false, false, true, true, false }; //Bite wave attack
+	const Attack FIRE_BALL_SPIT = { {FIRE_BALL_SPIT_WINDUP, FIRE_BALL_SPIT_RELEASE}, &FIRE_BALL, {}, 64,				true, false, true, true, false, false, false, false, false }; //Fire spit attack
 	//Weapons																						(bools: hasTwoAttacks, entityIsWeapon)
 	const Weapon SWORD = { NORMAL_SWING_ATTACK, HEAVY_SWING_ATTACK, &SWORD_RECT, &SWORD_ORIGIN,					true, false }; //Normal sword, starting weapon for the knight?
 	const Weapon RUSTED_SWORD = { NORMAL_SWING_ATTACK, HEAVY_SWING_ATTACK, &R_SWORD_RECT, &R_SWORD_ORIGIN,		true, false }; //Rusted sword, used by Abberants
 	const Weapon FANCY_SWORD = { NORMAL_SWING_ATTACK, HEAVY_F_SWING_ATTACK, &F_SWORD_RECT, &F_SWORD_ORIGIN,		true, false }; //Big fancy sword, used by the knight?
 	const Weapon SPEAR = { NORMAL_THRUST_ATTACK, HEAVY_THRUST_ATTACK, &SPEAR_RECT, &SPEAR_ORIGIN,				true, false }; //Tribal spear, used by the lizard?
 	const Weapon IMP_WEAPON = { HORN_STAB, CHARGE, {}, {},														true, true }; //Imp attacks
-	const Weapon L_DEMON_WEAPON = { BITE, CHARGE, {}, {},														true, true }; //Lesser Demon attacks
+	const Weapon L_DEMON_WEAPON = { BITE, FIRE_BALL_SPIT, {}, {},												true, true }; //Lesser Demon attacks
 	const Weapon G_DEMON_WEAPON = { BITE_BARRAGE, BITE_WAVE, {}, {},											true, true }; //Greater Demon attacks
 }
