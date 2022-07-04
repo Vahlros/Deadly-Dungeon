@@ -45,6 +45,7 @@ struct Entity
 	Dim2Di frameMovementVector = { 0, 0 }; //Current movement this frame
 	sf::IntRect collisionRect = { 0, 0, 0, 0 }; //Collision rect of the sprite
 	char roomID = 0; //Which room the entity is in
+	char uniqueID = -1;
 
 	//Timer
 	float invulnerabilityTimer = 0.f; //How long the entity is invulnerable for

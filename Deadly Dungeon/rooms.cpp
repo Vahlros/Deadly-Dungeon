@@ -159,7 +159,8 @@ void Shop::IncreasePrice()
 
 void Room::Init(GameData& game, const int& roomNumber, const Dim2Di& position)
 {
-	data = &GC::ROOM_LIST[roomNumber];
+	ID = roomNumber;
+	data = &GC::ROOM_LIST[ID];
 	spawners.resize(GC::MAX_SPAWNERS);
 	shops.resize(GC::MAX_SHOPS);
 

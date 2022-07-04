@@ -144,20 +144,20 @@ void RenderRooms(const GameData& game, sf::RenderWindow& window, std::vector<Roo
 }
 
 //Find a random spawn position
-Dim2Df GetRandomSpawn(std::vector<Room>& rooms, const bool& randRoom, const char& roomID)
+Dim2Df GetRandomSpawn(const std::vector<Room>& rooms, const bool& randRoom, const char& roomID)
 {
 	unsigned int roomIndex;
 
 	if (randRoom)
 	{
-		roomIndex = rand() % (GC::ROOM_NUM - 1);
+		roomIndex = rand() % GC::ROOM_NUM;
 	}
 	else
 	{
 		roomIndex = roomID;
 	}
 
-	unsigned int randomSpawner = rand() % (rooms[roomIndex].spawners.size() - 1);
+	unsigned int randomSpawner = rand() % rooms[roomIndex].spawners.size();
 
 	return rooms[roomIndex].spawners[randomSpawner];
 }
@@ -172,110 +172,110 @@ short GetDifficultyRating(const float& totalTime)
 }
 
 //Creates an enemy wave based on difficulty, returns number of enemies
-char CreateEnemyWave(Enemy enemies[], const short& difficulty)
+char CreateEnemyWave(std::vector<Enemy>& enemies, const short& difficulty)
 {
-	Enemy enemy0, enemy1, enemy2, enemy3, enemy4, enemy5, enemy6;
 	char enemiesCreated = 0;
-	enemy0.ID = 0;
-	enemy1.ID = 0;
+	enemies[0].ID = 0;
+	enemies[1].ID = 0;
+	short diff = 11;
 
-	switch (difficulty)
+	switch (diff)
 	{
 	case GC::D_TRIVIAL:
 		enemiesCreated = 2;
 		break;
 
 	case GC::D_WALK_IN_THE_PARK:
-		enemy2.ID = rand() % 2;
+		enemies[2].ID = rand() % 2;
 		enemiesCreated = 3;
 		break;
 
 	case GC::D_VERY_EASY:
-		enemy2.ID = rand() % 2;
-		enemy3.ID = 0;
+		enemies[2].ID = rand() % 2;
+		enemies[3].ID = 0;
 		enemiesCreated = 4;
 		break;
 
 	case GC::D_EASY:
-		enemy2.ID = rand() % 2;
-		enemy2.ID = rand() % 2;
+		enemies[2].ID = rand() % 2;
+		enemies[3].ID = rand() % 2;
 		enemiesCreated = 4;
 		break;
 
 	case GC::D_KINDA_EASY:
-		enemy2.ID = rand() % 2;
-		enemy2.ID = rand() % 2;
-		enemy3.ID = 0;
+		enemies[2].ID = rand() % 2;
+		enemies[3].ID = rand() % 2;
+		enemies[4].ID = 0;
 		enemiesCreated = 5;
 		break;
 
 	case GC::D_NORMAL:
-		enemy2.ID = rand() % 2;
-		enemy2.ID = (rand() % 2) + 1;
-		enemy4.ID = 0;
+		enemies[2].ID = rand() % 2;
+		enemies[3].ID = (rand() % 2) + 1;
+		enemies[4].ID = 0;
 		enemiesCreated = 5;
 		break;
 
 	case GC::D_KINDA_HARD:
-		enemy2.ID = rand() % 2;
-		enemy2.ID = rand() % 2;
-		enemy4.ID = (rand() % 2) + 1;
+		enemies[2].ID = rand() % 2;
+		enemies[3].ID = rand() % 2;
+		enemies[4].ID = (rand() % 2) + 1;
 		enemiesCreated = 5;
 		break;
 
 	case GC::D_HARD:
-		enemy2.ID = (rand() % 2) + 1;
-		enemy2.ID = (rand() % 2) + 1;
-		enemy4.ID = (rand() % 2) + 1;
+		enemies[2].ID = (rand() % 2) + 1;
+		enemies[3].ID = (rand() % 2) + 1;
+		enemies[4].ID = (rand() % 2) + 1;
 		enemiesCreated = 5;
 		break;
 
 	case GC::D_VERY_HARD:
-		enemy2.ID = (rand() % 2) + 1;
-		enemy2.ID = (rand() % 2) + 1;
-		enemy4.ID = (rand() % 2) + 1;
-		enemy5.ID = rand() % 2;
+		enemies[2].ID = (rand() % 2) + 1;
+		enemies[3].ID = (rand() % 2) + 1;
+		enemies[4].ID = (rand() % 2) + 1;
+		enemies[5].ID = rand() % 2;
 		enemiesCreated = 6;
 		break;
 
 	case GC::D_BRUTAL:
-		enemy2.ID = rand() % 2;
-		enemy2.ID = (rand() % 2) + 1;
-		enemy4.ID = (rand() % 2) + 1;
-		enemy5.ID = 3;
+		enemies[2].ID = rand() % 2;
+		enemies[3].ID = (rand() % 2) + 1;
+		enemies[4].ID = (rand() % 2) + 1;
+		enemies[5].ID = 3;
 		enemiesCreated = 6;
 		break;
 
 	case GC::D_NIGHTMARE:
-		enemy0.ID = rand() % 2;
-		enemy1.ID = rand() % 2;
-		enemy2.ID = rand() % 2;
-		enemy2.ID = (rand() % 2) + 1;
-		enemy4.ID = (rand() % 2) + 1;
-		enemy5.ID = 3;
-		enemy6.ID = 3;
+		enemies[0].ID = rand() % 2;
+		enemies[1].ID = rand() % 2;
+		enemies[2].ID = rand() % 2;
+		enemies[3].ID = (rand() % 2) + 1;
+		enemies[4].ID = (rand() % 2) + 1;
+		enemies[5].ID = 3;
+		enemies[6].ID = 3;
 		enemiesCreated = 7;
 		break;
 
+	//default:
+	//	enemies[0].ID = rand() % 2;
+	//	enemies[1].ID = rand() % 2;
+	//	enemies[2].ID = rand() % 2;
+	//	enemies[3].ID = (rand() % 2) + 1;
+	//	enemies[4].ID = (rand() % 2) + 1;
+	//	enemies[5].ID = 3;
+	//	enemies[6].ID = 3;
+	//	enemiesCreated = 7;
 	default:
-		enemy0.ID = rand() % 2;
-		enemy1.ID = rand() % 2;
-		enemy2.ID = rand() % 2;
-		enemy2.ID = (rand() % 2) + 1;
-		enemy4.ID = (rand() % 2) + 1;
-		enemy5.ID = 3;
-		enemy6.ID = 3;
+		enemies[0].ID = 0;
+		enemies[1].ID = 0;
+		enemies[2].ID = 0;
+		enemies[3].ID = 0;
+		enemies[4].ID = 0;
+		enemies[5].ID = 0;
+		enemies[6].ID = 0;
 		enemiesCreated = 7;
-		break;
 	}
-
-	enemies[0] = enemy0;
-	enemies[1] = enemy1;
-	enemies[2] = enemy2;
-	enemies[3] = enemy3;
-	enemies[4] = enemy4;
-	enemies[5] = enemy5;
-	enemies[6] = enemy6;
 
 	return enemiesCreated;
 }
@@ -288,6 +288,9 @@ void Game::Init(sf::RenderWindow& window)
 	//Game data
 	data.Init(window);
 
+	//UI
+	ui.Init(data);
+
 	//Rooms
 	roomList.resize(GC::ROOM_NUM);
 	roomList[0].Init(data, 0, { 32, 32 });
@@ -298,7 +301,8 @@ void Game::Init(sf::RenderWindow& window)
 	InitShops(data, roomList);
 
 	//Player
-	player1.Init(data, GetRandomSpawn(roomList, true, 0), roomList);
+	data.playerPosition = GetRandomSpawn(roomList, false, 1);
+	player1.Init(data, data.playerPosition, roomList);
 	data.playerHit = &player1.hit;
 
 	//Enemy
@@ -340,8 +344,11 @@ void Game::GameLoop(sf::RenderWindow& window)
 	//Render Projectiles
 	UpdateProjectiles(data, window, projectiles, enemyList, player1);
 
-	//Render player last
+	//Render player
 	player1.entity.Render(window, data);
+
+	//Render UI last
+	ui.Render(data, window, player1.entity.health, player1.coins);
 }
 
 void Game::IsPlayerDead()
@@ -377,10 +384,14 @@ void Game::EnemyManager(sf::RenderWindow& window)
 
 void Game::SpawnEnemies()
 {
+	//Get difficulty rating
 	short difficulty = GetDifficultyRating(data.metrics.totalTime);
-	Enemy enemies[GC::MAX_ENEMIES_SPAWNED];
 
+	//Create an enemy wave based on difficulty
+	std::vector<Enemy> enemies(GC::MAX_ENEMIES_SPAWNED);
 	char numEnemies = CreateEnemyWave(enemies, difficulty);
+
+	//Spawn the wave
 	bool found = false;
 	unsigned char enemyListIndex = 0;
 	for (char index = 0; index < numEnemies; index++)
@@ -391,7 +402,15 @@ void Game::SpawnEnemies()
 			{
 				found = true;
 				enemyList[enemyListIndex] = enemies[index];
-				enemyList[enemyListIndex].Init(data, GetRandomSpawn(roomList, false, player1.entity.roomID));
+				Dim2Df spawnLocation = GetRandomSpawn(roomList, false, player1.entity.roomID);
+
+				//Ensure an enemy doesn't spawn in the exact same place as the player
+				while (spawnLocation == data.playerPosition)
+				{
+					spawnLocation = GetRandomSpawn(roomList, false, player1.entity.roomID);
+				}
+
+				enemyList[enemyListIndex].Init(data, spawnLocation, enemyListIndex);
 			}
 
 			enemyListIndex++;

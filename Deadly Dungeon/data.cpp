@@ -124,7 +124,6 @@ void Metrics::UpdatePurchases(const char& itemID, const char& price)
 
 	default:
 		printf("Item ID not recognised, player damage was not updated\n");
-		break;
 	}
 }
 
@@ -185,6 +184,10 @@ void GameData::Init(sf::RenderWindow& window)
 	textures[GC::FIRE_SKULL_TEXTURE].loadFromImage(spritesheetImg, GC::FIRE_SKULL_ANIM_RECT);
 	textures[GC::FIRE_BALL_TEXTURE].create(GC::FIRE_BALL_ANIM_RECT.width, GC::FIRE_BALL_ANIM_RECT.height);
 	textures[GC::FIRE_BALL_TEXTURE].loadFromImage(spritesheetImg, GC::FIRE_BALL_ANIM_RECT);
+
+	//UI Textures
+	textures[GC::FIRE_SKULL_TEXTURE].create(GC::FIRE_SKULL_ANIM_RECT.width, GC::FIRE_SKULL_ANIM_RECT.height);
+	textures[GC::FIRE_SKULL_TEXTURE].loadFromImage(spritesheetImg, GC::FIRE_SKULL_ANIM_RECT);
 	
 	//Scaling
 	if ((screenResolution.x == 3840) && (screenResolution.y == 2160))
@@ -217,7 +220,8 @@ void GameData::Init(sf::RenderWindow& window)
 
 void GameData::RenderMap(sf::RenderWindow& window, const Dim2Df position)
 {
-	camera.setCenter(position);
+	playerPosition = position;
+	camera.setCenter(playerPosition);
 	window.setView(camera);
 	window.draw(mapSprite);
 }

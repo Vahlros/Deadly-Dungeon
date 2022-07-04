@@ -7,25 +7,30 @@ void AssignProjectileData(Weapon& weapon, const unsigned char& bulletNum)
 	weapon.attack0.summonProjectile = true;
 	weapon.attack1.summonProjectile = true;
 
-	if (bulletNum == 4)
+	switch (bulletNum)
 	{
+	case 4:
 		weapon.attack0.projectileData = &GC::PLAYER_FIRE_BALL4;
 		weapon.attack1.projectileData = &GC::PLAYER_FIRE_BALL4;
-	}
-	else if (bulletNum == 3)
-	{
+		break;
+
+	case 3:
 		weapon.attack0.projectileData = &GC::PLAYER_FIRE_BALL3;
 		weapon.attack1.projectileData = &GC::PLAYER_FIRE_BALL3;
-	}
-	else if (bulletNum == 2)
-	{
+		break;
+
+	case 2:
 		weapon.attack0.projectileData = &GC::PLAYER_FIRE_BALL2;
 		weapon.attack1.projectileData = &GC::PLAYER_FIRE_BALL2;
-	}
-	else
-	{
+		break;
+
+	case 1:
 		weapon.attack0.projectileData = &GC::PLAYER_FIRE_BALL1;
 		weapon.attack1.projectileData = &GC::PLAYER_FIRE_BALL1;
+		break;
+
+	default:
+		printf("No melee bullet upgrades have been purchased, or purchases are not being recorded correctly\n");
 	}
 }
 
@@ -47,7 +52,10 @@ void Player::Init(GameData& game, const Dim2Df& spawnPosition, std::vector<Room>
 	entity.sprite.setTexture(*entity.texture);
 	entity.sprite.setTextureRect({ 0, 0, GC::KNIGHT_DIMENSIONS.x, GC::KNIGHT_DIMENSIONS.y });
 	entity.sprite.setOrigin(Dim2Df(GC::KNIGHT_BODY_CENTRE));
+
+	//Position
 	entity.sprite.setPosition(spawnPosition);
+	entity.FindCurrentRoom(rooms);
 
 	//Weapon
 	entity.weapon = GC::SWORD;
@@ -475,7 +483,6 @@ void Player::ApplyItemEffects(const GameData& game, const char& itemID)
 
 	default:
 		printf("Item ID not recognised, player was not updated\n");
-		break;
 	}
 
 	if (newWeapon)

@@ -23,10 +23,10 @@ struct Enemy
 	float checkRoomTimer = 3.f; //Time until next room check
 
 	//Structs
-	Entity entity{};
+	Entity entity;
 
 	//Initialize enemy
-	void Init(GameData& game, const Dim2Df spawnPosition);
+	void Init(GameData& game, const Dim2Df& spawnPosition, const char& uID);
 
 	//Face enemy towards player
 	void TargetPlayer(const Entity& playerEntity);

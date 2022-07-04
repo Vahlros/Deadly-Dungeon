@@ -67,10 +67,8 @@ struct Player
 namespace GC
 {
 	//Player: General
-	const char PLAYER_HEALTH = 10; //Player starting health
 	const char BUY_ITEM_RANGE = TILE_SIZE * 2;
 	//Player: Upgrades
-	const char BOOSTED_HEALTH = 16; //Upgraded health
 	const float BOOSTED_SPEED = FAST_MOVEMENT_SPEED; //Upgraded speed
 	const float BOOSTED_POWER = 2.f; //Upgraded power
 	const float BOOSTED_ATTACK_SPEED = 1.5f; //Upgraded attack speed

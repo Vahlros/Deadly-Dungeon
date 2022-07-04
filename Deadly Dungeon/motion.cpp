@@ -167,7 +167,6 @@ void Motion::UpdatePosition(sf::Sprite* sprite, const bool& followingFacing, con
 		circularTranslation = CalculateCircularMotionVector(radius, angle);
 	}
 
-	//Translate globalRect
 	sprite->move(lineTranslation.x + circularTranslation.x, lineTranslation.y + circularTranslation.y);
 }
 

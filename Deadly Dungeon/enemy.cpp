@@ -2,13 +2,18 @@
 #include "maths.h"
 
 //Initialize enemy
-void Enemy::Init(GameData& game, const Dim2Df spawnPosition)
+void Enemy::Init(GameData& game, const Dim2Df& spawnPosition, const char& uID)
 {
+	entity = Entity();
+	entity.sprite = sf::Sprite();
+
+	entity.uniqueID = uID;
 	active = true;
 	checkRoomTimer = GC::CHECK_ROOM_TIMER;
 
-	if (ID == GC::ID_IMP)
+	switch (ID)
 	{
+	case GC::ID_IMP:
 		//Entity
 		entity.health = GC::IMP_HEALTH;
 		entity.collisionRect = GC::IMP_BODY_RECT;
@@ -21,9 +26,9 @@ void Enemy::Init(GameData& game, const Dim2Df spawnPosition)
 
 		//Weapon
 		entity.weapon = GC::IMP_WEAPON;
-	}
-	else if (ID == GC::ID_LESSER_DEMON)
-	{
+		break;
+
+	case GC::ID_LESSER_DEMON:
 		//Entity
 		entity.health = GC::L_DEMON_HEALTH;
 		entity.collisionRect = GC::L_DEMON_BODY_RECT;
@@ -36,9 +41,9 @@ void Enemy::Init(GameData& game, const Dim2Df spawnPosition)
 
 		//Weapon
 		entity.weapon = GC::LESSER_DEMON_WEAPON;
-	}
-	else if (ID == GC::ID_ABERRANT)
-	{
+		break;
+
+	case GC::ID_ABERRANT:
 		//Entity
 		entity.health = GC::ABERRANT_HEALTH;
 		entity.collisionRect = GC::ABERRANT_BODY_RECT;
@@ -51,9 +56,9 @@ void Enemy::Init(GameData& game, const Dim2Df spawnPosition)
 
 		//Weapon
 		entity.weapon = GC::RUSTED_SWORD;
-	}
-	else if (ID == GC::ID_GREATER_DEMON)
-	{
+		break;
+
+	case GC::ID_GREATER_DEMON:
 		//Entity
 		entity.health = GC::G_DEMON_HEALTH;
 		entity.collisionRect = GC::G_DEMON_BODY_RECT;
@@ -66,11 +71,15 @@ void Enemy::Init(GameData& game, const Dim2Df spawnPosition)
 
 		//Weapon
 		entity.weapon = GC::GREATER_DEMON_WEAPON;
+		break;
+
+	default:
+		printf("Enemy ID not recognised, enemy not initialized properly");
 	}
 
+	entity.sprite.setPosition(spawnPosition);
 	entity.weapon.Init(game, entity.isPlayer, entity.anim);
 	entity.anim.Init(&GC::ENEMY_ANIM_IDLE);
-	entity.sprite.setPosition(spawnPosition);
 }
 
 //Face enemy towards player
@@ -81,7 +90,14 @@ void Enemy::TargetPlayer(const Entity& playerEntity)
 	Dim2Df targetPosition = playerEntity.sprite.getPosition();
 
 	//Get vector between points, then calculate directional angle using vector
-	entity.facing = CalculateDirectionalAngleFromVector(CalculateVectorBetweenPoints(centre, targetPosition));
+	if (centre == targetPosition)
+	{
+		entity.facing = DirectionalAngle{};
+	}
+	else
+	{
+		entity.facing = CalculateDirectionalAngleFromVector(targetPosition - centre);
+	}
 }
 
 //Move enemy towards player

@@ -104,6 +104,9 @@ struct GameData
 	//Timers
 	float elapsed = 0.f; //Time elapsed since last frame
 
+	//Positioning
+	Dim2Df playerPosition{};
+
 	//Vectors
 	std::vector<sf::Texture> textures; //Vector of all textures
 	std::vector<std::vector<char>> collisionMap; //Vector of map collision data
@@ -131,7 +134,7 @@ namespace GC
 	enum DIRECTIONS { NORTH, EAST, SOUTH, WEST }; //NESW directions
 	enum TEXTURE_LIST { //Texture IDs
 		SPRITESHEET_TEXTURE, MAP_FLOOR_TEXTURE, TILE_TEXTURE, WALL_SIDE_TEXTURE, WALL_TOP_TEXTURE, WALL_SIDE_TOP_TEXTURE, WATER_FOUNTAIN_TEXTURE, LAVA_FOUNTAIN_TEXTURE,
-		KNIGHT_TEXTURE, IMP_TEXTURE, L_DEMON_TEXTURE, ABERRANT_TEXTURE, G_DEMON_TEXTURE, FIRE_SKULL_TEXTURE, FIRE_BALL_TEXTURE
+		KNIGHT_TEXTURE, IMP_TEXTURE, L_DEMON_TEXTURE, ABERRANT_TEXTURE, G_DEMON_TEXTURE, FIRE_SKULL_TEXTURE, FIRE_BALL_TEXTURE, COIN_TEXTURE
 	};
 	enum PLAYER_INPUT { KEYBOARD, GAMEPAD }; //Player input states
 	enum ROOM_TYPES { R32X32, R16X16, R32X16, R16X32 }; //Room types
@@ -157,7 +160,7 @@ namespace GC
 	const float APPROX_ELAPSED = 1.f / (float)GC::FRAMERATE; //Approximate elapsed time
 
 	//Textures: General
-	const char NUM_TEXTURES = 15; //Number of textures used in the game
+	const char NUM_TEXTURES = 16; //Number of textures used in the game
 
 	//Tile: General
 	const char TILE_SIZE = 16; //Tile size, in pixels
@@ -253,6 +256,9 @@ namespace GC
 	//Player: General
 	const float PLAYER_HIT_INVULNERABILITY = 2.f; //How long the player is invulnerable after being hit
 	const float PLAYER_DODGE_INVULNERABILITY = 0.5f; //Invulnerability while dodging
+	//Player: Health
+	const char PLAYER_HEALTH = 10; //Player starting health
+	const char BOOSTED_HEALTH = 16; //Upgraded player health
 	//Player: Animation
 	const unsigned char PLAYER_ANIM_FRAMES = 9; //Number of frames
 	const AnimationData PLAYER_ANIM_IDLE = { IDLE, MOVE - 1, 0.12f }; //Idle animation data for the player
@@ -343,6 +349,6 @@ namespace GC
 	const sf::Color PLAYER_HIT_COLOUR = sf::Color(51, 102, 255); //Softer blue than default
 	const sf::Color PLAYER_PROJECTILE_COLOUR = sf::Color(153, 204, 0); //Softer green than default
 
-	//Text
+	//Shop: Text
 	const char TEXT_CHARACTER_SIZE = 12;
 }

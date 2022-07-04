@@ -7,14 +7,15 @@ struct Game
 {
 	//Game setup
 	GameData data{};
-	Player player1;
+	Player player1{};
+	UI ui{};
 	std::vector<Dim2Df> spawnPoints;
 	std::vector<Enemy> enemyList;
 	std::vector<Projectile> projectiles;
 	std::vector<Room> roomList;
 
 	//SFML
-	sf::Clock clock;
+	sf::Clock clock{};
 
 	//Timers
 	float enemySpawnTimer = 0.f;
@@ -35,6 +36,9 @@ struct Game
 
 	//Spawn enemies
 	void SpawnEnemies();
+
+	//Handles all SFML events
+	void EventHandling();
 };
 
 namespace GC //Game constants

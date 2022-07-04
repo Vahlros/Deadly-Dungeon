@@ -48,14 +48,13 @@ void Attack::Init(const GameData& game, sf::Sprite& motionSprite, sf::Sprite* eS
 	entityIsWeapon = eIsWep;
 
 	//Setup origin point, where the motion will reset to
-	if (entityIsWeapon || movingWithEntity)
+	if (movingWithEntity)
 	{
 		entitySprite = eSprite;
 	}
-	if (!movingWithEntity)
+	else
 	{
-		origin.x = sprite->getPosition().x;
-		origin.y = sprite->getPosition().y;
+		origin = sprite->getPosition();
 	}
 
 	//Motion crucial stats
