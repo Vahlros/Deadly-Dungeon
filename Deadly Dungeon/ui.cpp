@@ -168,24 +168,68 @@ void RenderHearts(sf::RenderWindow& window, sf::Sprite& heartSprite, char hearts
 	}
 }
 
+//Came from help from the SFML discord server, centres text origin
+void CentreTextYOrigin(sf::Text& text)
+{
+	const auto localBounds = sf::Vector2f(0.f, text.getLocalBounds().top);
+	const auto globalOrigin = sf::Vector2f(0.f, text.getGlobalBounds().height / 2.0f);
+
+	text.setOrigin(localBounds + globalOrigin);
+}
+
+//Returns the top left corner of the current view
+Dim2Df GetGameUIPosition(const GameData& game, const bool& timeUI)
+{
+	Dim2Df position;
+
+	if (timeUI)
+	{
+		position = { game.playerPosition.x + (game.cameraDimensions.x / 2) - (GC::UI_BORDER * 3), game.playerPosition.y - (game.cameraDimensions.y / 2) + GC::UI_BORDER };
+	}
+	else
+	{
+		position = { game.playerPosition.x - (game.cameraDimensions.x / 2) + GC::UI_BORDER, game.playerPosition.y - (game.cameraDimensions.y / 2) + GC::UI_BORDER };
+	}
+
+	return position;
+}
+
 void UI::Init(const GameData& game)
 {
 	//Sprites
 	heartSprite.setTexture(game.textures[GC::SPRITESHEET_TEXTURE]);
 	heartSprite.setTextureRect(GC::HEART_FULL_TEXTURE_RECT);
+	heartSprite.setOrigin(GC::HEART_ORIGIN);
+
+	coinSprite.setTexture(game.textures[GC::COIN_TEXTURE]);
+	coinSprite.setTextureRect({ 0, 0, GC::COINS_DIMENSIONS.x, GC::COINS_DIMENSIONS.y});
+	coinSprite.setOrigin(GC::COINS_ORIGIN);
+
+	//Animation
+	coinAnim.Init(&GC::COINS_ANIM_DATA);
+
+	//Text
+	coinText.setFont(game.font);
+	coinText.setCharacterSize(GC::TEXT_CHARACTER_SIZE);
+	coinText.setString("0");
+	CentreTextYOrigin(coinText);
+
+	timeText.setFont(game.font);
+	timeText.setCharacterSize(GC::TEXT_CHARACTER_SIZE);
 }
 
 void UI::Render(const GameData& game, sf::RenderWindow &window, const short& health, const short& coins)
 {
+	coinAnim.UpdateAnimation(coinSprite, game.elapsed);
 	RenderHealthBar(game, window, health);
-	//RenderCoins(window, coins);
+	RenderCoins(game, window, coins);
+	RenderTime(game, window);
 }
 
 void UI::RenderHealthBar(const GameData& game, sf::RenderWindow& window, const short& health)
 {
 	//Get health bar position, relative to player position
-	Dim2Df position = { game.playerPosition.x - (game.cameraDimensions.x / 2) + GC::UI_BORDER, game.playerPosition.y - (game.cameraDimensions.y / 2) + GC::UI_BORDER };
-	heartSprite.setPosition(position);
+	heartSprite.setPosition(GetGameUIPosition(game, false));
 
 	//Get sprite states
 	const char upgradedMaxHearts = GC::BOOSTED_HEALTH / 2, defaultMaxHearts = GC::PLAYER_HEALTH / 2;
@@ -201,4 +245,56 @@ void UI::RenderHealthBar(const GameData& game, sf::RenderWindow& window, const s
 	{
 		RenderHearts(window, heartSprite, hearts, defaultMaxHearts);
 	}
+}
+
+void UI::RenderCoins(const GameData& game, sf::RenderWindow& window, const short& coins)
+{
+	Dim2Df position = GetGameUIPosition(game, false);
+	position.y += GC::HEART_DIMENSIONS.y + GC::UI_BORDER;
+
+	//Coin sprite
+	coinSprite.setPosition(position);
+
+	//Coin Text
+	position.x += GC::COINS_DIMENSIONS.x;
+	coinText.setString(std::to_string(coins));
+	coinText.setPosition(position);
+
+	window.draw(coinSprite);
+	window.draw(coinText);
+}
+
+void UI::RenderTime(const GameData& game, sf::RenderWindow& window)
+{
+	Dim2Df position = GetGameUIPosition(game, true);
+
+	//Format current time
+	unsigned int time = (unsigned int)floor(game.metrics.totalTime);
+	std::string minutes, colon, seconds;
+	colon = ":";
+
+	if ((time / 60) < 10)
+	{
+		minutes = "0" + std::to_string(time / 60);
+	}
+	else
+	{
+		minutes = std::to_string(time / 60);
+	}
+
+	if ((time % 60) < 10)
+	{
+		seconds = "0" + std::to_string(time % 60);
+	}
+	else
+	{
+		seconds = std::to_string(time % 60);
+	}
+
+	//Update text
+	timeText.setString(minutes + colon + seconds);
+	CentreTextOrigin(timeText);
+	timeText.setPosition(position);
+
+	window.draw(timeText);
 }

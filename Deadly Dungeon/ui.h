@@ -1,5 +1,6 @@
 #pragma once
 #include "data.h"
+#include "graphics.h"
 
 //Structs
 
@@ -12,8 +13,16 @@ struct UI
 
 
 	//Gameplay
-	//Sprites
+	//Health
 	sf::Sprite heartSprite{};
+
+	//Coins
+	sf::Sprite coinSprite{};
+	sf::Text coinText{};
+	Animation coinAnim{};
+
+	//Time
+	sf::Text timeText{};
 
 	//Initialize UI
 	void Init(const GameData& game);
@@ -21,8 +30,14 @@ struct UI
 	//Render all UI elements
 	void Render(const GameData& game, sf::RenderWindow& window, const short& health, const short& coins);
 
-	//Changes the health bar's texture
+	//Renders the health bar by altering the texture and position of heartSprite
 	void RenderHealthBar(const GameData& game, sf::RenderWindow& window, const short& health);
+
+	//Renders an animated coin and the player's current amount
+	void RenderCoins(const GameData& game, sf::RenderWindow& window, const short& coins);
+
+	//Renders formatted time in the top right of the view
+	void RenderTime(const GameData& game, sf::RenderWindow& window);
 };
 
 //Game constants
@@ -32,14 +47,10 @@ namespace GC
 
 	//UI: General
 	const char UI_BORDER = 8;
-	//UI: Coins
-	const sf::IntRect COINS_ANIM_RECT = { 288, 272, 32, 8 };
-	const unsigned char COINS_FRAMES = 4;
-	const Dim2Di COINS_ORIGIN = { 4, 5 };
 	//UI: Health
 	const Dim2Di HEART_DIMENSIONS = { 16, 13 };
 	const sf::IntRect HEART_FULL_TEXTURE_RECT = { 288, 257, HEART_DIMENSIONS.x, HEART_DIMENSIONS.y };
 	const sf::IntRect HEART_HALF_TEXTURE_RECT = { 304, 257, HEART_DIMENSIONS.x, HEART_DIMENSIONS.y };
 	const sf::IntRect HEART_EMPTY_TEXTURE_RECT = { 320, 257, HEART_DIMENSIONS.x, HEART_DIMENSIONS.y };
-	const Dim2Di HEART_ORIGIN = { 8, 7 };
+	const Dim2Df HEART_ORIGIN = { 8.f, 7.f };
 }

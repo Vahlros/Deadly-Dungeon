@@ -56,4 +56,6 @@ namespace GC //Game constants
 	const float ENEMY_SPAWN_TIME = 15.f; //Time until the next wave
 	const char MAX_ENEMIES_SPAWNED = 7; //Maximum number of enemies spawned per wave
 	const char MAX_SPECIALS_SPAWNED = 3; //Maximum number of powerful enemies spawned per wave
+	const float VALID_SPAWN_DISTANCE = GC::TILE_SIZE * 2;
+	const short MAX_SPAWN_ATTEMPTS = 10;
 }

@@ -340,7 +340,7 @@ void Attack::SpawnProjectiles(const GameData& game, std::vector<Projectile>& pro
 			{
 				projList[index].sprite.setTexture(game.textures[GC::FIRE_SKULL_TEXTURE]);
 				projList[index].sprite.setTextureRect(GC::FIRE_SKULL_BODY_RECT);
-				projList[index].sprite.setOrigin(Dim2Df(GC::FIRE_SKULL_BODY_CENTRE));
+				projList[index].sprite.setOrigin(GC::FIRE_SKULL_BODY_CENTRE);
 				projList[index].sprite.setPosition(sprite->getPosition());
 				projList[index].origin = sprite->getPosition();
 
@@ -351,7 +351,7 @@ void Attack::SpawnProjectiles(const GameData& game, std::vector<Projectile>& pro
 			{
 				projList[index].sprite.setTexture(game.textures[GC::FIRE_BALL_TEXTURE]);
 				projList[index].sprite.setTextureRect(GC::FIRE_BALL_BODY_RECT);
-				projList[index].sprite.setOrigin(Dim2Df(GC::FIRE_BALL_BODY_CENTRE));
+				projList[index].sprite.setOrigin(GC::FIRE_BALL_BODY_CENTRE);
 				projList[index].sprite.setPosition(sprite->getPosition());
 				projList[index].origin = sprite->getPosition();
 
@@ -363,6 +363,10 @@ void Attack::SpawnProjectiles(const GameData& game, std::vector<Projectile>& pro
 			if (projectileShotByPlayer)
 			{
 				projList[index].sprite.setColor(GC::PLAYER_PROJECTILE_COLOUR);
+			}
+			else
+			{
+				projList[index].enemyID = enemyID;
 			}
 
 			if (hasSpread)

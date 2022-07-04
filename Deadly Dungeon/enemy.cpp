@@ -4,9 +4,6 @@
 //Initialize enemy
 void Enemy::Init(GameData& game, const Dim2Df& spawnPosition, const char& uID)
 {
-	entity = Entity();
-	entity.sprite = sf::Sprite();
-
 	entity.uniqueID = uID;
 	active = true;
 	checkRoomTimer = GC::CHECK_ROOM_TIMER;
@@ -19,10 +16,9 @@ void Enemy::Init(GameData& game, const Dim2Df& spawnPosition, const char& uID)
 		entity.collisionRect = GC::IMP_BODY_RECT;
 
 		//SFML
-		entity.texture = &game.textures[GC::IMP_TEXTURE];
-		entity.sprite.setTexture(*entity.texture);
+		entity.sprite.setTexture(game.textures[GC::IMP_TEXTURE]);
 		entity.sprite.setTextureRect({ 0, 0, GC::IMP_DIMENSIONS.x, GC::IMP_DIMENSIONS.y });
-		entity.sprite.setOrigin(Dim2Df(GC::IMP_BODY_CENTRE));
+		entity.sprite.setOrigin(GC::IMP_BODY_CENTRE);
 
 		//Weapon
 		entity.weapon = GC::IMP_WEAPON;
@@ -34,10 +30,9 @@ void Enemy::Init(GameData& game, const Dim2Df& spawnPosition, const char& uID)
 		entity.collisionRect = GC::L_DEMON_BODY_RECT;
 
 		//SFML
-		entity.texture = &game.textures[GC::L_DEMON_TEXTURE];
-		entity.sprite.setTexture(*entity.texture);
+		entity.sprite.setTexture(game.textures[GC::L_DEMON_TEXTURE]);
 		entity.sprite.setTextureRect({ 0, 0, GC::L_DEMON_DIMENSIONS.x, GC::L_DEMON_DIMENSIONS.y });
-		entity.sprite.setOrigin(Dim2Df(GC::L_DEMON_BODY_CENTRE));
+		entity.sprite.setOrigin(GC::L_DEMON_BODY_CENTRE);
 
 		//Weapon
 		entity.weapon = GC::LESSER_DEMON_WEAPON;
@@ -49,10 +44,9 @@ void Enemy::Init(GameData& game, const Dim2Df& spawnPosition, const char& uID)
 		entity.collisionRect = GC::ABERRANT_BODY_RECT;
 
 		//SFML
-		entity.texture = &game.textures[GC::ABERRANT_TEXTURE];
-		entity.sprite.setTexture(*entity.texture);
+		entity.sprite.setTexture(game.textures[GC::ABERRANT_TEXTURE]);
 		entity.sprite.setTextureRect({ 0, 0, GC::ABERRANT_DIMENSIONS.x, GC::ABERRANT_DIMENSIONS.y });
-		entity.sprite.setOrigin(Dim2Df(GC::ABERRANT_BODY_CENTRE));
+		entity.sprite.setOrigin(GC::ABERRANT_BODY_CENTRE);
 
 		//Weapon
 		entity.weapon = GC::RUSTED_SWORD;
@@ -64,10 +58,9 @@ void Enemy::Init(GameData& game, const Dim2Df& spawnPosition, const char& uID)
 		entity.collisionRect = GC::G_DEMON_BODY_RECT;
 
 		//SFML
-		entity.texture = &game.textures[GC::G_DEMON_TEXTURE];
-		entity.sprite.setTexture(*entity.texture);
+		entity.sprite.setTexture(game.textures[GC::G_DEMON_TEXTURE]);
 		entity.sprite.setTextureRect({ 0, 0, GC::G_DEMON_DIMENSIONS.x, GC::G_DEMON_DIMENSIONS.y });
-		entity.sprite.setOrigin(Dim2Df(GC::G_DEMON_BODY_CENTRE));
+		entity.sprite.setOrigin(GC::G_DEMON_BODY_CENTRE);
 
 		//Weapon
 		entity.weapon = GC::GREATER_DEMON_WEAPON;
@@ -79,6 +72,8 @@ void Enemy::Init(GameData& game, const Dim2Df& spawnPosition, const char& uID)
 
 	entity.sprite.setPosition(spawnPosition);
 	entity.weapon.Init(game, entity.isPlayer, entity.anim);
+	entity.weapon.attack0.enemyID = ID;
+	entity.weapon.attack1.enemyID = ID;
 	entity.anim.Init(&GC::ENEMY_ANIM_IDLE);
 }
 

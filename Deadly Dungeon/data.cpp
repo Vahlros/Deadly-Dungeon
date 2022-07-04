@@ -1,5 +1,14 @@
 #include "data.h"
 
+//Came from help from the SFML discord server, centres text origin
+void CentreTextOrigin(sf::Text& text)
+{
+	const auto localBounds = sf::Vector2f(text.getLocalBounds().left, text.getLocalBounds().top);
+	const auto globalOrigin = sf::Vector2f(text.getGlobalBounds().width / 2.0f, text.getGlobalBounds().height / 2.0f);
+
+	text.setOrigin(localBounds + globalOrigin);
+}
+
 void Metrics::UpdatePlayerDamage(const char& enemyID, const char& damage)
 {
 	switch (enemyID)
@@ -41,6 +50,10 @@ void Metrics::UpdateKills(const char& weaponID, const char& enemyID)
 
 	case GC::ID_SPEAR:
 		spearKills += 1;
+		break;
+
+	case GC::ID_PROJECTILE:
+		projectileKills += 1;
 		break;
 
 	default:
@@ -186,8 +199,8 @@ void GameData::Init(sf::RenderWindow& window)
 	textures[GC::FIRE_BALL_TEXTURE].loadFromImage(spritesheetImg, GC::FIRE_BALL_ANIM_RECT);
 
 	//UI Textures
-	textures[GC::FIRE_SKULL_TEXTURE].create(GC::FIRE_SKULL_ANIM_RECT.width, GC::FIRE_SKULL_ANIM_RECT.height);
-	textures[GC::FIRE_SKULL_TEXTURE].loadFromImage(spritesheetImg, GC::FIRE_SKULL_ANIM_RECT);
+	textures[GC::COIN_TEXTURE].create(GC::COINS_ANIM_RECT.width, GC::COINS_ANIM_RECT.height);
+	textures[GC::COIN_TEXTURE].loadFromImage(spritesheetImg, GC::COINS_ANIM_RECT);
 	
 	//Scaling
 	if ((screenResolution.x == 3840) && (screenResolution.y == 2160))

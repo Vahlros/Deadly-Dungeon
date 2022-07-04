@@ -28,6 +28,9 @@ struct Projectile
 	bool active = false; //If the projectile is currently active
 	bool playerProjectile = false; //If it is a player or enemy projectile
 
+	//Operational stats
+	char enemyID = -1;
+
 	//Positioning
 	Dim2Df origin = { 0.f, 0.f };
 	float angle = 0.f;
@@ -76,6 +79,9 @@ struct Attack //Setup: {motion0, motion1}, ProjectileData*, AnimationData*, shor
 	bool entityIsWeapon = false; //If the entity sprite is the attacking object
 	bool animStarted = false; //Has the animation been initiated
 	bool projectileShotByPlayer = false; //If the spawned projectile is being shot from the player or an enemy
+
+	//Metrics
+	char enemyID = -1;
 
 	//Positioning
 	Dim2Df origin{};

@@ -11,7 +11,7 @@ void InitProjectiles(const GameData& game, std::vector<Projectile>& projList)
 }
 
 //Projectile collision detection
-void CheckProjectileCollision(Projectile& proj, std::vector<Enemy>& enemies, Player& player)
+void CheckProjectileCollision(GameData& game, Projectile& proj, std::vector<Enemy>& enemies, Player& player)
 {
 	if (proj.playerProjectile)
 	{
@@ -34,6 +34,21 @@ void CheckProjectileCollision(Projectile& proj, std::vector<Enemy>& enemies, Pla
 
 						//Deactivate projectile
 						proj.active = false;
+
+						if (enemies[index].entity.isAlive)
+						{
+							//Interrupt enemy attacks
+							if (enemies[index].entity.weapon.attacking)
+							{
+								enemies[index].entity.StopAttackIfTrue(true);
+							}
+						}
+						else
+						{
+							//Update metrics
+							game.metrics.UpdateKills(GC::ID_PROJECTILE, enemies[index].ID);
+							player.EarnCoins(enemies[index].ID);
+						}
 					}
 				}
 			}
@@ -59,6 +74,9 @@ void CheckProjectileCollision(Projectile& proj, std::vector<Enemy>& enemies, Pla
 
 					//Deactivate projectile
 					proj.active = false;
+
+					//Update metrics
+					game.metrics.UpdatePlayerDamage(proj.enemyID, GC::DEFAULT_DAMAGE);
 				}
 			}
 		}
@@ -66,14 +84,14 @@ void CheckProjectileCollision(Projectile& proj, std::vector<Enemy>& enemies, Pla
 }
 
 //Updates all active projectiles
-void UpdateProjectiles(const GameData& game, sf::RenderWindow& window, std::vector<Projectile>& projList, std::vector<Enemy>& enemies, Player& player)
+void UpdateProjectiles(GameData& game, sf::RenderWindow& window, std::vector<Projectile>& projList, std::vector<Enemy>& enemies, Player& player)
 {
 	for (short index = 0; index < GC::MAX_PROJECTILES; ++index)
 	{
 		if (projList[index].active)
 		{
 			projList[index].Update(game);
-			CheckProjectileCollision(projList[index], enemies, player);
+			CheckProjectileCollision(game, projList[index], enemies, player);
 			projList[index].Render(window);
 		}
 	}
@@ -162,6 +180,41 @@ Dim2Df GetRandomSpawn(const std::vector<Room>& rooms, const bool& randRoom, cons
 	return rooms[roomIndex].spawners[randomSpawner];
 }
 
+//Finds a random spawn position that's not too close to the player
+Dim2Df GetValidEnemySpawn(const std::vector<Room>& rooms, const Dim2Df& playerPosition, const char& roomID)
+{
+	Dim2Df spawnPosition = GetRandomSpawn(rooms, false, roomID);
+	float distanceToPlayer;
+	bool found = false;
+	short attempts = 0;
+
+	while (!found && (attempts != GC::MAX_SPAWN_ATTEMPTS))
+	{
+		//Ensure spawn is not the same as the player's
+		while (spawnPosition == playerPosition)
+		{
+			spawnPosition = GetRandomSpawn(rooms, false, roomID);
+		}
+
+		distanceToPlayer = CalculateMagnitudeOfVector(spawnPosition - playerPosition);
+
+		//Ensure valid distance
+		if (distanceToPlayer >= GC::VALID_SPAWN_DISTANCE)
+		{
+			found = true;
+		}
+		
+		attempts += 1;
+	}
+
+	if (attempts == GC::MAX_SPAWN_ATTEMPTS)
+	{
+		spawnPosition = GetRandomSpawn(rooms, false, roomID);
+	}
+
+	return spawnPosition;
+}
+
 //Returns the difficulty rating based on play time
 short GetDifficultyRating(const float& totalTime)
 {
@@ -177,9 +230,8 @@ char CreateEnemyWave(std::vector<Enemy>& enemies, const short& difficulty)
 	char enemiesCreated = 0;
 	enemies[0].ID = 0;
 	enemies[1].ID = 0;
-	short diff = 11;
 
-	switch (diff)
+	switch (difficulty)
 	{
 	case GC::D_TRIVIAL:
 		enemiesCreated = 2;
@@ -257,23 +309,14 @@ char CreateEnemyWave(std::vector<Enemy>& enemies, const short& difficulty)
 		enemiesCreated = 7;
 		break;
 
-	//default:
-	//	enemies[0].ID = rand() % 2;
-	//	enemies[1].ID = rand() % 2;
-	//	enemies[2].ID = rand() % 2;
-	//	enemies[3].ID = (rand() % 2) + 1;
-	//	enemies[4].ID = (rand() % 2) + 1;
-	//	enemies[5].ID = 3;
-	//	enemies[6].ID = 3;
-	//	enemiesCreated = 7;
 	default:
-		enemies[0].ID = 0;
-		enemies[1].ID = 0;
-		enemies[2].ID = 0;
-		enemies[3].ID = 0;
-		enemies[4].ID = 0;
-		enemies[5].ID = 0;
-		enemies[6].ID = 0;
+		enemies[0].ID = rand() % 2;
+		enemies[1].ID = rand() % 2;
+		enemies[2].ID = rand() % 2;
+		enemies[3].ID = (rand() % 2) + 1;
+		enemies[4].ID = (rand() % 2) + 1;
+		enemies[5].ID = 3;
+		enemies[6].ID = 3;
 		enemiesCreated = 7;
 	}
 
@@ -402,14 +445,7 @@ void Game::SpawnEnemies()
 			{
 				found = true;
 				enemyList[enemyListIndex] = enemies[index];
-				Dim2Df spawnLocation = GetRandomSpawn(roomList, false, player1.entity.roomID);
-
-				//Ensure an enemy doesn't spawn in the exact same place as the player
-				while (spawnLocation == data.playerPosition)
-				{
-					spawnLocation = GetRandomSpawn(roomList, false, player1.entity.roomID);
-				}
-
+				Dim2Df spawnLocation = GetValidEnemySpawn(roomList, data.playerPosition, player1.entity.roomID);
 				enemyList[enemyListIndex].Init(data, spawnLocation, enemyListIndex);
 			}
 

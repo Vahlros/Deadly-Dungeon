@@ -19,10 +19,6 @@ struct Knockback
 //An interactive creature
 struct Entity
 {
-	//SFML
-	sf::Texture* texture;
-	sf::Sprite sprite;
-
 	//Bools
 	bool isPlayer = false; //Player or Enemy
 	bool isAlive = true; //Alive or dead
@@ -55,6 +51,9 @@ struct Entity
 	DirectionalAngle facing; //Direction the entity is facing
 	Weapon weapon; //Weapon the entity is holding
 	Animation anim; //Animation of the entity
+
+	//SFML
+	sf::Sprite sprite;
 
 	//Initiates an attack
 	void InitAttack(const GameData& game, const char& attack);

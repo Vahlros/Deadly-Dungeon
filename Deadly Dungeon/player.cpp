@@ -39,7 +39,6 @@ void Player::Init(GameData& game, const Dim2Df& spawnPosition, std::vector<Room>
 	//Stats
 	maxHealth = GC::PLAYER_HEALTH;
 	speed = GC::MEDIUM_MOVEMENT_SPEED;
-	coins = 20000;
 
 	//Entity stats
 	entity.isPlayer = true;
@@ -48,10 +47,9 @@ void Player::Init(GameData& game, const Dim2Df& spawnPosition, std::vector<Room>
 	entity.anim.Init(&GC::PLAYER_ANIM_IDLE);
 
 	//SFML
-	entity.texture = &game.textures[GC::KNIGHT_TEXTURE];
-	entity.sprite.setTexture(*entity.texture);
+	entity.sprite.setTexture(game.textures[GC::KNIGHT_TEXTURE]);
 	entity.sprite.setTextureRect({ 0, 0, GC::KNIGHT_DIMENSIONS.x, GC::KNIGHT_DIMENSIONS.y });
-	entity.sprite.setOrigin(Dim2Df(GC::KNIGHT_BODY_CENTRE));
+	entity.sprite.setOrigin(GC::KNIGHT_BODY_CENTRE);
 
 	//Position
 	entity.sprite.setPosition(spawnPosition);

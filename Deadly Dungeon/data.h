@@ -145,7 +145,7 @@ namespace GC
 	};
 	enum ANIMATION { IDLE = 0, MOVE = 4, DODGE = 8 }; //Animation frames
 	enum ENEMY_ID { ID_IMP, ID_LESSER_DEMON, ID_ABERRANT, ID_GREATER_DEMON }; //Enemy IDs
-	enum WEAPON_ID { ID_SWORD, ID_FANCY_SWORD, ID_SPEAR, ID_IMP_WEAPON, ID_LESSER_DEMON_WEAPON, ID_RUSTED_SWORD, ID_GREATER_DEMON_WEAPON }; //Weapon IDs
+	enum WEAPON_ID { ID_SWORD, ID_FANCY_SWORD, ID_SPEAR, ID_IMP_WEAPON, ID_LESSER_DEMON_WEAPON, ID_RUSTED_SWORD, ID_GREATER_DEMON_WEAPON, ID_PROJECTILE }; //Weapon IDs
 	enum SHOP_ITEMS { WS_HEALTH, WS_SPEED, WS_POWER, WS_ATTACK_SPEED, WS_KNOCKBACK, WS_FULL_HEAL, //Shop items
 		LS_FANCY_SWORD, LS_SPEAR, LS_BIG_WEAPONS, LS_MELEE_PROJECTILE };
 
@@ -267,7 +267,7 @@ namespace GC
 	const Dim2Di KNIGHT_DIMENSIONS = { 16, 22 }; //Dimensions of the player texture
 	const sf::IntRect KNIGHT_ANIM_RECT = { 128, 106, 144, KNIGHT_DIMENSIONS.y }; //Where the animation is on the spritesheet
 	const sf::IntRect KNIGHT_BODY_RECT = { 0, 6, 16, 16 }; //Where the character's body is on the un-scaled sprite
-	const Dim2Di KNIGHT_BODY_CENTRE = { 8, 14 }; //Where the centre of the character's body is on the un-scaled sprite
+	const Dim2Df KNIGHT_BODY_CENTRE = { 8.f, 14.f }; //Where the centre of the character's body is on the un-scaled sprite
 	
 	//Enemy: General
 	const float ATTACK_COOLDOWN = 1.f; //Cooldown timer between attacks
@@ -286,25 +286,25 @@ namespace GC
 	const Dim2Di IMP_DIMENSIONS = { 16, 14 }; //Dimensions of the imp texture
 	const sf::IntRect IMP_ANIM_RECT = { 369, 50, 128, IMP_DIMENSIONS.y }; //Where the animation is on the spritesheet
 	const sf::IntRect IMP_BODY_RECT = { 4, 0, 10, IMP_DIMENSIONS.y }; //Where the character's body is on the un-scaled sprite
-	const Dim2Di IMP_BODY_CENTRE = { 8, 9 }; //Where the centre of the character's body is on the un-scaled sprite
+	const Dim2Df IMP_BODY_CENTRE = { 8.f, 9.f }; //Where the centre of the character's body is on the un-scaled sprite
 	//Enemy: Lesser Demon
 	const unsigned char L_DEMON_HEALTH = 3; //Lesser Demon health
 	const Dim2Di L_DEMON_DIMENSIONS = { 16, 23 }; //Dimensions of the lesser demon texture
 	const sf::IntRect L_DEMON_ANIM_RECT = { 369, 329, 128, L_DEMON_DIMENSIONS.y }; //Where the animation is on the spritesheet
 	const sf::IntRect L_DEMON_BODY_RECT = { 2, 0, 11, L_DEMON_DIMENSIONS.y }; //Where the character's body is on the un-scaled sprite
-	const Dim2Di L_DEMON_BODY_CENTRE = { 8, 14 }; //Where the centre of the character's body is on the un-scaled sprite
+	const Dim2Df L_DEMON_BODY_CENTRE = { 8.f, 14.f }; //Where the centre of the character's body is on the un-scaled sprite
 	//Enemy: Aberrant
 	const unsigned char ABERRANT_HEALTH = 4; //Lesser Demon health
 	const Dim2Di ABERRANT_DIMENSIONS = { 16, 18 }; //Dimensions of the lesser demon texture
 	const sf::IntRect ABERRANT_ANIM_RECT = { 368, 302, 128, ABERRANT_DIMENSIONS.y }; //Where the animation is on the spritesheet
 	const sf::IntRect ABERRANT_BODY_RECT = { 3, 0, 10, ABERRANT_DIMENSIONS.y }; //Where the character's body is on the un-scaled sprite
-	const Dim2Di ABERRANT_BODY_CENTRE = { 8, 12 }; //Where the centre of the character's body is on the un-scaled sprite
+	const Dim2Df ABERRANT_BODY_CENTRE = { 8.f, 12.f }; //Where the centre of the character's body is on the un-scaled sprite
 	//Enemy: Greater Demon
 	const unsigned char G_DEMON_HEALTH = 8; //Lesser Demon health
 	const Dim2Di G_DEMON_DIMENSIONS = { 32, 34 }; //Dimensions of the lesser demon texture
 	const sf::IntRect G_DEMON_ANIM_RECT = { 16, 366, 256, G_DEMON_DIMENSIONS.y }; //Where the animation is on the spritesheet
 	const sf::IntRect G_DEMON_BODY_RECT = { 5, 2, 10, G_DEMON_DIMENSIONS.y }; //Where the character's body is on the un-scaled sprite
-	const Dim2Di G_DEMON_BODY_CENTRE = { 17, 20 }; //Where the centre of the character's body is on the un-scaled sprite
+	const Dim2Df G_DEMON_BODY_CENTRE = { 17.f, 20.f }; //Where the centre of the character's body is on the un-scaled sprite
 
 	//Attack: General
 	const unsigned char MAX_MOTIONS = 2; //Maximum number of motions per attack
@@ -329,14 +329,14 @@ namespace GC
 	const Dim2Di FIRE_SKULL_DIMENSIONS = { 6, 6 }; //Dimensions of the player texture
 	const sf::IntRect FIRE_SKULL_ANIM_RECT = { 293, 341, 36, FIRE_SKULL_DIMENSIONS.y }; //Where the animation is on the spritesheet
 	const sf::IntRect FIRE_SKULL_BODY_RECT = { 0, 0, 6, 6 }; //Where the character's body is on the un-scaled sprite
-	const Dim2Di FIRE_SKULL_BODY_CENTRE = { 2, 2 }; //Where the centre of the character's body is on the un-scaled sprite
+	const Dim2Df FIRE_SKULL_BODY_CENTRE = { 2.f, 2.f }; //Where the centre of the character's body is on the un-scaled sprite
 	//Projectiles: Fire Ball
 	const unsigned char FIRE_BALL_FRAMES = 6; //Number of frames
 	const AnimationData FIRE_BALL_ANIM = { 0, FIRE_BALL_FRAMES - 1, 0.09f }; //Idle animation data for the player
 	const Dim2Di FIRE_BALL_DIMENSIONS = { 6, 6 }; //Dimensions of the player texture
 	const sf::IntRect FIRE_BALL_ANIM_RECT = { 293, 349, 36, FIRE_BALL_DIMENSIONS.y }; //Where the animation is on the spritesheet
 	const sf::IntRect FIRE_BALL_BODY_RECT = { 0, 0, 6, 6 }; //Where the character's body is on the un-scaled sprite
-	const Dim2Di FIRE_BALL_BODY_CENTRE = { 2, 2 }; //Where the centre of the character's body is on the un-scaled sprite
+	const Dim2Df FIRE_BALL_BODY_CENTRE = { 2.f, 2.f }; //Where the centre of the character's body is on the un-scaled sprite
 
 	//Collision
 	const char CHECK_ATTACK_COLLISION_RANGE = TILE_SIZE * 4; //The distance between two origins in which collisions will be checked
@@ -351,4 +351,14 @@ namespace GC
 
 	//Shop: Text
 	const char TEXT_CHARACTER_SIZE = 12;
+
+	//UI: Coins
+	const Dim2Di COINS_DIMENSIONS = { 8, 8 };
+	const sf::IntRect COINS_ANIM_RECT = { 288, 272, 32, 8 };
+	const unsigned char COINS_FRAMES = 4;
+	const AnimationData COINS_ANIM_DATA = { 0, COINS_FRAMES - 1, 0.09f }; //Idle animation data for enemies
+	const Dim2Df COINS_ORIGIN = { 4.f, 5.f };
 }
+
+//Came from help from the SFML discord server, centres text origin
+void CentreTextOrigin(sf::Text& text);
