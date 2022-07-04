@@ -68,7 +68,7 @@ struct Motion
 	//Updates motion totals
 	void UpdateTotals(const GameData& game);
 
-	//Updates the position of the global rect
+	//Updates the position of the sprite
 	void UpdatePosition(sf::Sprite* sprite, const bool& followingFacing, const DirectionalAngle& facing, const float& initialAngle, const float& radius);
 
 	//Resets the motion back to original values

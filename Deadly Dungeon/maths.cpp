@@ -194,7 +194,7 @@ void ConstrainAngle(float& angle, const bool& isRadians)
 		{
 			angle -= GC::RADS_360DEGREES;
 		}
-		else if (angle < 0.f)
+		else if (angle < GC::ZERO)
 		{
 			angle += GC::RADS_360DEGREES;
 		}
@@ -205,7 +205,7 @@ void ConstrainAngle(float& angle, const bool& isRadians)
 		{
 			angle -= GC::DEGREES_360;
 		}
-		else if (angle < 0.f)
+		else if (angle < GC::ZERO)
 		{
 			angle += GC::DEGREES_360;
 		}

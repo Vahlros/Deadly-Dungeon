@@ -1,103 +1,12 @@
 #include "game.h"
 #include "maths.h"
 
-//Initializes game session
-void Game::Init(sf::RenderWindow& window)
-{
-	//Random
-	srand((int)time(0)); //Sets random's seed to current time, for "true random"
-
-	//Game data
-	data.Init(window);
-
-	//Rooms
-	roomList.resize(GC::ROOM_NUM);
-	roomList[0].Init(data, 0, { 32, 32 });
-	roomList[1].Init(data, 1, { 64, 32 });
-	roomList[2].Init(data, 2, { 64, 64 });
-	roomList[3].Init(data, 3, { 32, 64 });
-
-	InitShops(data, roomList);
-
-	//Player
-	player1.Init(data, GetRandomSpawn(roomList, true, 0));
-	data.playerHit = &player1.hit;
-
-	//Enemy
-	enemyList.resize(GC::MAX_ENEMIES);
-	enemyList[0].ID = 1;
-	enemyList[0].Init(data, { 732.f, 732.f });
-
-	//Projectiles
-	projectiles.resize(GC::MAX_PROJECTILES);
-	InitProjectiles(data, projectiles);
-}
-
-//Main game loop
-void Game::GameLoop(sf::RenderWindow& window)
-{
-	//Clock
-	data.elapsed = clock.getElapsedTime().asSeconds();
-	if (data.elapsed > GC::APPROX_ELAPSED)
-	{
-		data.elapsed = GC::APPROX_ELAPSED; //Clamp elapsed time, for testing purposes
-	}
-	clock.restart();
-
-	//Player input
-	player1.Update(window, data, projectiles, enemyList);
-
-	//Enemy
-	enemyList[0].Update(data, projectiles, player1.entity);
-
-	//Update the window
-	data.RenderMap(window, player1.entity.sprite.getPosition());
-
-	//Render rooms
-	RenderMapNearPlayer(data, window, roomList, player1.entity.sprite);
-
-	//Render enemies
-	if (enemyList[0].active)
-	{
-		enemyList[0].entity.Render(window, data);
-	}
-
-	//Render Projectiles
-	UpdateProjectiles(data, window, projectiles, enemyList, player1);
-
-	//Render player last
-	player1.entity.Render(window, data);
-}
-
-//Check player death
-void Game::IsPlayerDead()
-{
-	if (data.playerDead)
-	{
-		//END THE GAME SESSION
-	}
-}
-
 //Initializes all projectiles
 void InitProjectiles(const GameData& game, std::vector<Projectile>& projList)
 {
 	for (short index = 0; index < GC::MAX_PROJECTILES; ++index)
 	{
 		projList[index].sprite.setTexture(game.textures[GC::SPRITESHEET_TEXTURE]);
-	}
-}
-
-//Updates all active projectiles
-void UpdateProjectiles(const GameData& game, sf::RenderWindow& window, std::vector<Projectile>& projList, std::vector<Enemy>& enemies, Player& player)
-{
-	for (short index = 0; index < GC::MAX_PROJECTILES; ++index)
-	{
-		if (projList[index].active)
-		{
-			projList[index].Update(game);
-			CheckProjectileCollision(projList[index], enemies, player);
-			projList[index].Render(window);
-		}
 	}
 }
 
@@ -156,6 +65,20 @@ void CheckProjectileCollision(Projectile& proj, std::vector<Enemy>& enemies, Pla
 	}
 }
 
+//Updates all active projectiles
+void UpdateProjectiles(const GameData& game, sf::RenderWindow& window, std::vector<Projectile>& projList, std::vector<Enemy>& enemies, Player& player)
+{
+	for (short index = 0; index < GC::MAX_PROJECTILES; ++index)
+	{
+		if (projList[index].active)
+		{
+			projList[index].Update(game);
+			CheckProjectileCollision(projList[index], enemies, player);
+			projList[index].Render(window);
+		}
+	}
+}
+
 //Randomly initializes shops
 void InitShops(const GameData& game, std::vector<Room>& rooms)
 {
@@ -163,8 +86,8 @@ void InitShops(const GameData& game, std::vector<Room>& rooms)
 	std::vector<char> waterItems(GC::TOTAL_WATER_SHOPS - 1);
 	waterItems = { GC::WS_HEALTH, GC::WS_SPEED, GC::WS_POWER, GC::WS_ATTACK_SPEED, GC::WS_KNOCKBACK };
 	std::vector<char> lavaItems(GC::TOTAL_LAVA_SHOPS);
-	lavaItems = { GC::LS_FANCY_SWORD, GC::LS_SPEAR, GC::LS_BIG_WEAPONS, GC::LS_REFLECT, GC::LS_MELEE_PROJECTILE, GC::LS_MELEE_PROJECTILE, GC::LS_MELEE_PROJECTILE };
-	
+	lavaItems = { GC::LS_FANCY_SWORD, GC::LS_SPEAR, GC::LS_BIG_WEAPONS, GC::LS_MELEE_PROJECTILE, GC::LS_MELEE_PROJECTILE, GC::LS_MELEE_PROJECTILE, GC::LS_MELEE_PROJECTILE };
+
 	//Assign items to shops
 	rooms[3].shops[0].SetupShop(game, GC::WS_FULL_HEAL);
 
@@ -178,7 +101,7 @@ void InitShops(const GameData& game, std::vector<Room>& rooms)
 			{
 				if (waterItems.size() != 1)
 				{
-					index = rand() % (waterItems.size() - 1);
+					index = rand() % waterItems.size();
 					item = waterItems[index];
 					waterItems.erase(waterItems.begin() + index);
 				}
@@ -191,7 +114,7 @@ void InitShops(const GameData& game, std::vector<Room>& rooms)
 			{
 				if (lavaItems.size() != 1)
 				{
-					index = rand() % (lavaItems.size() - 1);
+					index = rand() % lavaItems.size();
 					item = lavaItems[index];
 					lavaItems.erase(lavaItems.begin() + index);
 				}
@@ -207,30 +130,16 @@ void InitShops(const GameData& game, std::vector<Room>& rooms)
 }
 
 //Render shops and fountains near the player
-void RenderMapNearPlayer(const GameData& game, sf::RenderWindow& window, std::vector<Room>& rooms, sf::Sprite playerSprite)
+void RenderRooms(const GameData& game, sf::RenderWindow& window, std::vector<Room>& rooms)
 {
-	bool foundRoom = false;
-	char index = 0;
-
-	for (unsigned char index = 0; index < rooms.size(); index++)
+	for (unsigned char roomIndex = 0; roomIndex < rooms.size(); roomIndex++)
 	{
-		sf::FloatRect roomRect = { (float)rooms[index].rect.left * GC::TILE_SIZE, (float)rooms[index].rect.top * GC::TILE_SIZE,
-			(float)rooms[index].rect.width * GC::TILE_SIZE, (float)rooms[index].rect.height * GC::TILE_SIZE };
-
-		if (playerSprite.getGlobalBounds().intersects(roomRect))
+		for (unsigned char shopIndex = 0; shopIndex < rooms[roomIndex].shops.size(); shopIndex++)
 		{
-			foundRoom = true;
+			rooms[roomIndex].shops[shopIndex].Render(window);
 		}
 
-		if (foundRoom)
-		{
-			for (unsigned char shopIndex = 0; shopIndex < rooms[index].shops.size(); shopIndex++)
-			{
-				rooms[index].shops[shopIndex].Render(window);
-			}
-
-			rooms[index].UpdateAnimatedTiles(game, window);
-		}
+		rooms[roomIndex].UpdateAnimatedTiles(game, window);
 	}
 }
 
@@ -251,4 +160,243 @@ Dim2Df GetRandomSpawn(std::vector<Room>& rooms, const bool& randRoom, const char
 	unsigned int randomSpawner = rand() % (rooms[roomIndex].spawners.size() - 1);
 
 	return rooms[roomIndex].spawners[randomSpawner];
+}
+
+//Returns the difficulty rating based on play time
+short GetDifficultyRating(const float& totalTime)
+{
+	float halfMinute = 30.f;
+	float difficulty = totalTime / halfMinute;
+
+	return (short)floor(difficulty);
+}
+
+//Creates an enemy wave based on difficulty, returns number of enemies
+char CreateEnemyWave(Enemy enemies[], const short& difficulty)
+{
+	Enemy enemy0, enemy1, enemy2, enemy3, enemy4, enemy5, enemy6;
+	char enemiesCreated = 0;
+	enemy0.ID = 0;
+	enemy1.ID = 0;
+
+	switch (difficulty)
+	{
+	case GC::D_TRIVIAL:
+		enemiesCreated = 2;
+		break;
+
+	case GC::D_WALK_IN_THE_PARK:
+		enemy2.ID = rand() % 2;
+		enemiesCreated = 3;
+		break;
+
+	case GC::D_VERY_EASY:
+		enemy2.ID = rand() % 2;
+		enemy3.ID = 0;
+		enemiesCreated = 4;
+		break;
+
+	case GC::D_EASY:
+		enemy2.ID = rand() % 2;
+		enemy2.ID = rand() % 2;
+		enemiesCreated = 4;
+		break;
+
+	case GC::D_KINDA_EASY:
+		enemy2.ID = rand() % 2;
+		enemy2.ID = rand() % 2;
+		enemy3.ID = 0;
+		enemiesCreated = 5;
+		break;
+
+	case GC::D_NORMAL:
+		enemy2.ID = rand() % 2;
+		enemy2.ID = (rand() % 2) + 1;
+		enemy4.ID = 0;
+		enemiesCreated = 5;
+		break;
+
+	case GC::D_KINDA_HARD:
+		enemy2.ID = rand() % 2;
+		enemy2.ID = rand() % 2;
+		enemy4.ID = (rand() % 2) + 1;
+		enemiesCreated = 5;
+		break;
+
+	case GC::D_HARD:
+		enemy2.ID = (rand() % 2) + 1;
+		enemy2.ID = (rand() % 2) + 1;
+		enemy4.ID = (rand() % 2) + 1;
+		enemiesCreated = 5;
+		break;
+
+	case GC::D_VERY_HARD:
+		enemy2.ID = (rand() % 2) + 1;
+		enemy2.ID = (rand() % 2) + 1;
+		enemy4.ID = (rand() % 2) + 1;
+		enemy5.ID = rand() % 2;
+		enemiesCreated = 6;
+		break;
+
+	case GC::D_BRUTAL:
+		enemy2.ID = rand() % 2;
+		enemy2.ID = (rand() % 2) + 1;
+		enemy4.ID = (rand() % 2) + 1;
+		enemy5.ID = 3;
+		enemiesCreated = 6;
+		break;
+
+	case GC::D_NIGHTMARE:
+		enemy0.ID = rand() % 2;
+		enemy1.ID = rand() % 2;
+		enemy2.ID = rand() % 2;
+		enemy2.ID = (rand() % 2) + 1;
+		enemy4.ID = (rand() % 2) + 1;
+		enemy5.ID = 3;
+		enemy6.ID = 3;
+		enemiesCreated = 7;
+		break;
+
+	default:
+		enemy0.ID = rand() % 2;
+		enemy1.ID = rand() % 2;
+		enemy2.ID = rand() % 2;
+		enemy2.ID = (rand() % 2) + 1;
+		enemy4.ID = (rand() % 2) + 1;
+		enemy5.ID = 3;
+		enemy6.ID = 3;
+		enemiesCreated = 7;
+		break;
+	}
+
+	enemies[0] = enemy0;
+	enemies[1] = enemy1;
+	enemies[2] = enemy2;
+	enemies[3] = enemy3;
+	enemies[4] = enemy4;
+	enemies[5] = enemy5;
+	enemies[6] = enemy6;
+
+	return enemiesCreated;
+}
+
+void Game::Init(sf::RenderWindow& window)
+{
+	//Random
+	srand((int)time(0)); //Sets random's seed to current time, for "true random"
+
+	//Game data
+	data.Init(window);
+
+	//Rooms
+	roomList.resize(GC::ROOM_NUM);
+	roomList[0].Init(data, 0, { 32, 32 });
+	roomList[1].Init(data, 1, { 64, 32 });
+	roomList[2].Init(data, 2, { 64, 64 });
+	roomList[3].Init(data, 3, { 32, 64 });
+
+	InitShops(data, roomList);
+
+	//Player
+	player1.Init(data, GetRandomSpawn(roomList, true, 0), roomList);
+	data.playerHit = &player1.hit;
+
+	//Enemy
+	enemySpawnTimer = GC::ENEMY_SPAWN_TIME;
+	enemyList.resize(GC::MAX_ENEMIES);
+	SpawnEnemies();
+
+	//Projectiles
+	projectiles.resize(GC::MAX_PROJECTILES);
+	InitProjectiles(data, projectiles);
+}
+
+void Game::GameLoop(sf::RenderWindow& window)
+{
+	//Check for end game
+	IsPlayerDead();
+
+	//Clock
+	data.elapsed = clock.getElapsedTime().asSeconds();
+	data.metrics.totalTime += data.elapsed;
+	if (data.elapsed > GC::APPROX_ELAPSED)
+	{
+		data.elapsed = GC::APPROX_ELAPSED; //Clamp elapsed time, for testing purposes
+	}
+	clock.restart();
+
+	//Player input
+	player1.Update(window, data, projectiles, enemyList, roomList);
+
+	//Update the window
+	data.RenderMap(window, player1.entity.sprite.getPosition());
+
+	//Render rooms
+	RenderRooms(data, window, roomList);
+
+	//Enemy
+	EnemyManager(window);
+
+	//Render Projectiles
+	UpdateProjectiles(data, window, projectiles, enemyList, player1);
+
+	//Render player last
+	player1.entity.Render(window, data);
+}
+
+void Game::IsPlayerDead()
+{
+	if (data.playerDead)
+	{
+		//END THE GAME SESSION
+		printf("I need to do things because the player is dead!\n");
+	}
+}
+
+void Game::EnemyManager(sf::RenderWindow& window)
+{
+	//Update all active enemies
+	for (unsigned char index = 0; index < enemyList.size(); index++)
+	{
+		if (enemyList[index].active)
+		{
+			enemyList[index].Update(data, projectiles, roomList, player1.entity);
+			enemyList[index].entity.Render(window, data);
+		}
+	}
+
+	//Enemy wave spawning
+	enemySpawnTimer -= data.elapsed;
+
+	if (enemySpawnTimer < GC::ZERO)
+	{
+		enemySpawnTimer = GC::ENEMY_SPAWN_TIME;
+		SpawnEnemies();
+	}
+}
+
+void Game::SpawnEnemies()
+{
+	short difficulty = GetDifficultyRating(data.metrics.totalTime);
+	Enemy enemies[GC::MAX_ENEMIES_SPAWNED];
+
+	char numEnemies = CreateEnemyWave(enemies, difficulty);
+	bool found = false;
+	unsigned char enemyListIndex = 0;
+	for (char index = 0; index < numEnemies; index++)
+	{
+		while (!found && (enemyListIndex < enemyList.size()))
+		{
+			if (!enemyList[enemyListIndex].active)
+			{
+				found = true;
+				enemyList[enemyListIndex] = enemies[index];
+				enemyList[enemyListIndex].Init(data, GetRandomSpawn(roomList, false, player1.entity.roomID));
+			}
+
+			enemyListIndex++;
+		}
+
+		found = false;
+	}
 }

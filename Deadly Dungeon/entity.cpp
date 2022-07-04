@@ -47,12 +47,12 @@ void Entity::UpdateKnockback(const GameData& game)
 	knock.timer -= game.elapsed;
 	invulnerabilityTimer -= game.elapsed;
 
-	if (knock.timer < 0.f)
+	if (knock.timer < GC::ZERO)
 	{
 		knockback = false;
 	}
 
-	if (invulnerabilityTimer < 0.f)
+	if (invulnerabilityTimer < GC::ZERO)
 	{
 		invulnerable = false;
 	}
@@ -140,22 +140,22 @@ void Entity::CheckMapCollision(const GameData& game, const bool& entityBodyAttac
 		}
 	}
 
-	//Initialize collision rectangles, left and right rects based on the direction the entity is moving
+		//Initialize collision rectangles, left and right rects based on the direction the entity is moving
 	//example: When facing the south/down direction, left is south east and right is south west
-	sf::IntRect collisionBox = sf::IntRect(sprite.getGlobalBounds()); //Entity's collision rectangle
-	collisionBox.top = collisionBox.top + collisionBox.height - GC::FEET_COLLISION_HEIGHT;
-	collisionBox.height = GC::FEET_COLLISION_HEIGHT;
+	sf::IntRect collisionBox; //Entity's collision rectangle
 	char wallSideWidth = GC::WALL_SIDE_WIDTH; //Modified wall side width
+
+	collisionBox = sf::IntRect(sprite.getGlobalBounds());
 
 	//Enlarge collision boxes for attacks 
 	if (entityBodyAttack)
 	{
-		collisionBox.left -= GC::ENEMY_ATTACK_C_OFFSET;
-		collisionBox.width += GC::ENEMY_ATTACK_C_OFFSET * 2;
-		collisionBox.top -= GC::ENEMY_ATTACK_C_OFFSET;
-		collisionBox.height += GC::ENEMY_ATTACK_C_OFFSET * 2;
-
 		wallSideWidth *= GC::ENEMY_ATTACK_C_OFFSET;
+	}
+	else
+	{
+		collisionBox.top += collisionBox.height - GC::FEET_COLLISION_HEIGHT;
+		collisionBox.height = GC::FEET_COLLISION_HEIGHT;
 	}
 	
 
@@ -310,7 +310,7 @@ void Entity::CheckMapCollision(const GameData& game, const bool& entityBodyAttac
 	//Check attack collision and reset
 	if (entityBodyAttack)
 	{
-		StopAttackIfMapCollided(collided);
+		StopAttackIfTrue(collided);
 	}
 	collided = false;
 
@@ -335,16 +335,16 @@ void Entity::CheckMapCollision(const GameData& game, const bool& entityBodyAttac
 			}
 			else if ((leftTile == GC::C_WALL_SIDE_LEFT) || (leftTile == GC::C_CORNER_BOTTOM_LEFT))
 			{
-				leftTileRect = { leftPoint.x * GC::TILE_SIZE, leftPoint.y * GC::TILE_SIZE, GC::WALL_SIDE_WIDTH + GC::C_OFFSET, GC::TILE_SIZE };
+				leftTileRect = { leftPoint.x * GC::TILE_SIZE, leftPoint.y * GC::TILE_SIZE, wallSideWidth + GC::C_OFFSET, GC::TILE_SIZE };
 			}
 			else if ((leftTile == GC::C_WALL_SIDE_RIGHT) || (leftTile == GC::C_CORNER_BOTTOM_RIGHT))
 			{
-				leftTileRect = { (leftPoint.x * GC::TILE_SIZE) + GC::TILE_SIZE - (GC::WALL_SIDE_WIDTH + GC::C_OFFSET), leftPoint.y * GC::TILE_SIZE, GC::WALL_SIDE_WIDTH + GC::C_OFFSET + GC::C_OFFSET, GC::TILE_SIZE };
+				leftTileRect = { (leftPoint.x * GC::TILE_SIZE) + GC::TILE_SIZE - (wallSideWidth + GC::C_OFFSET), leftPoint.y * GC::TILE_SIZE, wallSideWidth + GC::C_OFFSET + GC::C_OFFSET, GC::TILE_SIZE };
 			}
 			else if (leftTile == GC::C_WALL_TOP_BOTTOM_LEFT)
 			{
 				leftTileRect = { leftPoint.x * GC::TILE_SIZE, (leftPoint.y * GC::TILE_SIZE) + GC::TILE_SIZE - GC::WALL_TOP_HEIGHT,
-					(GC::WALL_SIDE_WIDTH + GC::C_OFFSET), GC::WALL_TOP_HEIGHT };
+					(wallSideWidth + GC::C_OFFSET), GC::WALL_TOP_HEIGHT };
 			}
 			else if (leftTile == GC::C_FOUNTAIN_TOP)
 			{
@@ -375,11 +375,11 @@ void Entity::CheckMapCollision(const GameData& game, const bool& entityBodyAttac
 				}
 				else if (rightTile == GC::C_WALL_SIDE_LEFT)
 				{
-					rightTileRect = { rightPoint.x * GC::TILE_SIZE, rightPoint.y * GC::TILE_SIZE, GC::WALL_SIDE_WIDTH + GC::C_OFFSET, GC::TILE_SIZE };
+					rightTileRect = { rightPoint.x * GC::TILE_SIZE, rightPoint.y * GC::TILE_SIZE, wallSideWidth + GC::C_OFFSET, GC::TILE_SIZE };
 				}
 				else if (rightTile == GC::C_WALL_SIDE_RIGHT)
 				{
-					rightTileRect = { (rightPoint.x * GC::TILE_SIZE) + GC::TILE_SIZE - (GC::WALL_SIDE_WIDTH + GC::C_OFFSET), rightPoint.y * GC::TILE_SIZE, GC::WALL_SIDE_WIDTH + GC::C_OFFSET + GC::C_OFFSET, GC::TILE_SIZE };
+					rightTileRect = { (rightPoint.x * GC::TILE_SIZE) + GC::TILE_SIZE - (wallSideWidth + GC::C_OFFSET), rightPoint.y * GC::TILE_SIZE, wallSideWidth + GC::C_OFFSET + GC::C_OFFSET, GC::TILE_SIZE };
 				}
 				else if (rightTile == GC::C_FOUNTAIN_BASIN)
 				{
@@ -411,11 +411,11 @@ void Entity::CheckMapCollision(const GameData& game, const bool& entityBodyAttac
 			}
 			else if (leftTile == GC::C_WALL_SIDE_LEFT)
 			{
-				leftTileRect = { (leftPoint.x * GC::TILE_SIZE) - GC::C_OFFSET, leftPoint.y * GC::TILE_SIZE, GC::WALL_SIDE_WIDTH + GC::C_OFFSET + GC::C_OFFSET, GC::TILE_SIZE };
+				leftTileRect = { (leftPoint.x * GC::TILE_SIZE) - GC::C_OFFSET, leftPoint.y * GC::TILE_SIZE, wallSideWidth + GC::C_OFFSET + GC::C_OFFSET, GC::TILE_SIZE };
 			}
 			else if (leftTile == GC::C_WALL_SIDE_RIGHT)
 			{
-				leftTileRect = { (leftPoint.x * GC::TILE_SIZE) + GC::TILE_SIZE - (GC::WALL_SIDE_WIDTH + GC::C_OFFSET), leftPoint.y * GC::TILE_SIZE, GC::WALL_SIDE_WIDTH + GC::C_OFFSET, GC::TILE_SIZE };
+				leftTileRect = { (leftPoint.x * GC::TILE_SIZE) + GC::TILE_SIZE - (wallSideWidth + GC::C_OFFSET), leftPoint.y * GC::TILE_SIZE, wallSideWidth + GC::C_OFFSET, GC::TILE_SIZE };
 			}
 			else if (leftTile == GC::C_FOUNTAIN_BASIN)
 			{
@@ -450,16 +450,16 @@ void Entity::CheckMapCollision(const GameData& game, const bool& entityBodyAttac
 				}
 				else if ((rightTile == GC::C_WALL_SIDE_LEFT) || (rightTile == GC::C_CORNER_BOTTOM_LEFT))
 				{
-					rightTileRect = { (rightPoint.x * GC::TILE_SIZE) - GC::C_OFFSET, rightPoint.y * GC::TILE_SIZE, GC::WALL_SIDE_WIDTH + GC::C_OFFSET + GC::C_OFFSET, GC::TILE_SIZE };
+					rightTileRect = { (rightPoint.x * GC::TILE_SIZE) - GC::C_OFFSET, rightPoint.y * GC::TILE_SIZE, wallSideWidth + GC::C_OFFSET + GC::C_OFFSET, GC::TILE_SIZE };
 				}
 				else if ((rightTile == GC::C_WALL_SIDE_RIGHT) || (rightTile == GC::C_CORNER_BOTTOM_RIGHT))
 				{
-					rightTileRect = { (rightPoint.x * GC::TILE_SIZE) + GC::TILE_SIZE - (GC::WALL_SIDE_WIDTH + GC::C_OFFSET), rightPoint.y * GC::TILE_SIZE, GC::WALL_SIDE_WIDTH + GC::C_OFFSET, GC::TILE_SIZE };
+					rightTileRect = { (rightPoint.x * GC::TILE_SIZE) + GC::TILE_SIZE - (wallSideWidth + GC::C_OFFSET), rightPoint.y * GC::TILE_SIZE, wallSideWidth + GC::C_OFFSET, GC::TILE_SIZE };
 				}
 				else if (rightTile == GC::C_WALL_TOP_BOTTOM_RIGHT)
 				{
-					rightTileRect = { (rightPoint.x * GC::TILE_SIZE) + GC::TILE_SIZE - (GC::WALL_SIDE_WIDTH + GC::C_OFFSET), (rightPoint.y * GC::TILE_SIZE) + GC::TILE_SIZE - GC::WALL_TOP_HEIGHT,
-						(GC::WALL_SIDE_WIDTH + GC::C_OFFSET), GC::WALL_TOP_HEIGHT };
+					rightTileRect = { (rightPoint.x * GC::TILE_SIZE) + GC::TILE_SIZE - (wallSideWidth + GC::C_OFFSET), (rightPoint.y * GC::TILE_SIZE) + GC::TILE_SIZE - GC::WALL_TOP_HEIGHT,
+						(wallSideWidth + GC::C_OFFSET), GC::WALL_TOP_HEIGHT };
 				}
 				else if (rightTile == GC::C_FOUNTAIN_TOP)
 				{
@@ -482,11 +482,10 @@ void Entity::CheckMapCollision(const GameData& game, const bool& entityBodyAttac
 	//Check attack collision
 	if (entityBodyAttack)
 	{
-		StopAttackIfMapCollided(collided);
+		StopAttackIfTrue(collided);
 	}
 }
 
-//Render the entity if it's on the rendered map area
 void Entity::Render(sf::RenderWindow& window, const GameData& game)
 {
 	anim.UpdateAnimation(sprite, game.elapsed);
@@ -498,6 +497,11 @@ void Entity::Render(sf::RenderWindow& window, const GameData& game)
 		{
 			sprite.setScale(1.f, 1.f);
 			facingRight = true;
+
+			if (weapon.visible)
+			{
+				weapon.sprite.setScale(weaponScale);
+			}
 		}
 	}
 	else
@@ -506,6 +510,11 @@ void Entity::Render(sf::RenderWindow& window, const GameData& game)
 		{
 			sprite.setScale(-1.f, 1.f);
 			facingRight = false;
+
+			if (weapon.visible)
+			{
+				weapon.sprite.setScale(-weaponScale.x, weaponScale.y);
+			}
 		}
 	}
 
@@ -528,7 +537,6 @@ void Entity::Render(sf::RenderWindow& window, const GameData& game)
 	}
 }
 
-//Updates any ongoing attacks
 void Entity::UpdateAttacks(const GameData& game, std::vector<Projectile>& proj)
 {
 	if (weapon.attack0.active)
@@ -551,7 +559,6 @@ void Entity::UpdateAttacks(const GameData& game, std::vector<Projectile>& proj)
 	}
 }
 
-//Update the weapon's state
 void Entity::UpdateWeapon(const GameData& game, std::vector<Projectile>& proj)
 {
 	float x = 0.f, y = 0.f;
@@ -599,7 +606,6 @@ void Entity::UpdateWeapon(const GameData& game, std::vector<Projectile>& proj)
 	weapon.sprite.move({ x, y });
 }
 
-//Entity takes damage
 bool Entity::TakeDamage(const unsigned char& damage, const DirectionalAngle& facing, const float& knockPower)
 {
 	health -= damage;
@@ -616,12 +622,36 @@ bool Entity::TakeDamage(const unsigned char& damage, const DirectionalAngle& fac
 	return !isAlive;
 }
 
-//Stop entity attack if map collision
-void Entity::StopAttackIfMapCollided(const bool& collided)
+void Entity::StopAttackIfTrue(const bool& boolean)
 {
-	if (collided)
+	if (boolean)
 	{
 		weapon.attack0.Stop();
 		weapon.attack1.Stop();
+	}
+}
+
+void Entity::FindCurrentRoom(std::vector<Room>& rooms)
+{
+	bool entityInside = false;
+	unsigned char index = 0;
+
+	while (!entityInside && (index < rooms.size()))
+	{
+		sf::FloatRect roomRect = { (float)rooms[index].rect.left * GC::TILE_SIZE, (float)rooms[index].rect.top * GC::TILE_SIZE,
+			(float)rooms[index].rect.width * GC::TILE_SIZE, (float)rooms[index].rect.height * GC::TILE_SIZE };
+
+		if (sprite.getGlobalBounds().intersects(roomRect))
+		{
+			entityInside = true;
+		}
+
+		if (entityInside)
+		{
+
+			roomID = index;
+		}
+
+		index++;
 	}
 }

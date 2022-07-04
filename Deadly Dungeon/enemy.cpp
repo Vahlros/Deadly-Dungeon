@@ -5,6 +5,7 @@
 void Enemy::Init(GameData& game, const Dim2Df spawnPosition)
 {
 	active = true;
+	checkRoomTimer = GC::CHECK_ROOM_TIMER;
 
 	if (ID == GC::ID_IMP)
 	{
@@ -34,7 +35,7 @@ void Enemy::Init(GameData& game, const Dim2Df spawnPosition)
 		entity.sprite.setOrigin(Dim2Df(GC::L_DEMON_BODY_CENTRE));
 
 		//Weapon
-		entity.weapon = GC::L_DEMON_WEAPON;
+		entity.weapon = GC::LESSER_DEMON_WEAPON;
 	}
 	else if (ID == GC::ID_ABERRANT)
 	{
@@ -64,10 +65,10 @@ void Enemy::Init(GameData& game, const Dim2Df spawnPosition)
 		entity.sprite.setOrigin(Dim2Df(GC::G_DEMON_BODY_CENTRE));
 
 		//Weapon
-		entity.weapon = GC::G_DEMON_WEAPON;
+		entity.weapon = GC::GREATER_DEMON_WEAPON;
 	}
 
-	entity.weapon.Init(game, entity.isPlayer);
+	entity.weapon.Init(game, entity.isPlayer, entity.anim);
 	entity.anim.Init(&GC::ENEMY_ANIM_IDLE);
 	entity.sprite.setPosition(spawnPosition);
 }
@@ -165,7 +166,7 @@ void Enemy::CheckAttackRange(const GameData& game)
 }
 
 //Enemy behaviour
-void Enemy::Update(GameData& game, std::vector<Projectile>& proj, Entity& playerEntity)
+void Enemy::Update(GameData& game, std::vector<Projectile>& proj, std::vector<Room>& rooms, Entity& playerEntity)
 {
 	if (entity.isAlive)
 	{
@@ -204,10 +205,35 @@ void Enemy::Update(GameData& game, std::vector<Projectile>& proj, Entity& player
 			entity.UpdateWeapon(game, proj); //Updates held weapons
 			cooldownTimer -= game.elapsed;
 
-			if (cooldownTimer < 0.f)
+			if (cooldownTimer < GC::ZERO)
 			{
 				attackCooldown = false;
 				cooldownTimer = GC::ATTACK_COOLDOWN;
+			}
+		}
+
+		//Check for stuck enemies, despawn if stuck for too long
+		checkRoomTimer -= game.elapsed;
+
+		if (checkRoomTimer < GC::ZERO)
+		{
+			checkRoomTimer = GC::CHECK_ROOM_TIMER;
+			entity.FindCurrentRoom(rooms);
+
+			if (entity.roomID != playerEntity.roomID)
+			{
+				differentRoomTimer += GC::CHECK_ROOM_TIMER;
+			}
+			else
+			{
+				differentRoomTimer = GC::ZERO;
+			}
+			
+			if (differentRoomTimer >= GC::DIFFERENT_ROOM_DESPAWN_TIMER)
+			{
+				differentRoomTimer = GC::ZERO;
+				entity.isAlive = false;
+				active = false;
 			}
 		}
 	}
@@ -254,8 +280,13 @@ void Enemy::CheckAttackCollision(GameData& game, Entity& playerEntity)
 				//Calculate damage
 				unsigned char actualDamage = (unsigned char)round(entity.power * GC::DEFAULT_DAMAGE);
 				playerEntity.TakeDamage(actualDamage, entity.facing, GC::ZERO);
+
+				//Immediately activate player invulnerability
 				playerEntity.invulnerable = true;
 				*game.playerHit = true;
+
+				//Update metrics
+				game.metrics.UpdatePlayerDamage(ID, actualDamage);
 			}
 		}
 	}

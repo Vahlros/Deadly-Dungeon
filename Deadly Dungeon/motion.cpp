@@ -1,7 +1,6 @@
 #include "motion.h"
 #include "maths.h"
 
-//Initiates motion
 void Motion::Init(const GameData& game, const DirectionalAngle& facing, const float& attackSpeed, const int& swingDirection, const bool& followingFacing)
 {
 	active = true;
@@ -71,11 +70,10 @@ void Motion::Init(const GameData& game, const DirectionalAngle& facing, const fl
 	}
 }
 
-//Updates motion totals
 void Motion::UpdateTotals(const GameData& game)
 {
 	//Motion end bools
-	if (timer < 0.f)
+	if (timer < GC::ZERO)
 	{
 		active = false;
 	}
@@ -102,7 +100,6 @@ void Motion::UpdateTotals(const GameData& game)
 	}
 }
 
-//Updates the position of the global rect
 void Motion::UpdatePosition(sf::Sprite* sprite, const bool& followingFacing, const DirectionalAngle& facing, const float& initialAngle, const float& radius)
 {
 	Dim2Df lineTranslation = { 0.f, 0.f }, circularTranslation = { 0.f, 0.f };
@@ -174,7 +171,6 @@ void Motion::UpdatePosition(sf::Sprite* sprite, const bool& followingFacing, con
 	sprite->move(lineTranslation.x + circularTranslation.x, lineTranslation.y + circularTranslation.y);
 }
 
-//Resets the motion back to original values
 void Motion::ResetTotals()
 {
 	circleTotal = 0.f;

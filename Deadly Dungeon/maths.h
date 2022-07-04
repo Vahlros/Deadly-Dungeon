@@ -21,7 +21,6 @@ namespace GC
 	const float DEGREES_135 = 135.f; //135 degrees
 	const float DEGREES_90 = 90.f; //90 degrees
 	const float DEGREES_45 = 45.f; //45 degrees
-	const float ZERO = 0.f; //Zero
 	const float SIN_COS_45_DEGREES = 0.707107f; //Sin or cos of 45 degrees
 }
 

@@ -58,6 +58,8 @@ struct Shop
 
 	//SFML
 	sf::Text name; //Shop name
+	std::string itemName; //Item name
+	std::string itemValue; //Item value
 	sf::Sprite sprite; //Shop sprite
 
 	//Assigns shop values based on the item given
@@ -65,6 +67,12 @@ struct Shop
 
 	//Renders the shop
 	void Render(sf::RenderWindow& window);
+
+	//Buys the item from the shop
+	char Buy(GameData& game, short& coins);
+
+	//Increases price and changes the name of the shop
+	void IncreasePrice();
 };
 
 //An interactive game room
@@ -137,6 +145,7 @@ namespace GC
 	const sf::IntRect POTION_RECT_Y1 = { 336, 225, 16, 16 };
 	const sf::IntRect POTION_RECT_Y2 = { 336, 241, 16, 16 };
 	const Dim2Df POTION_ORIGIN = { 8, 12 };
+	const char UNLIMITED_ITEM_PRICE_INCREASE = 5;
 
 	//Room: General
 	const char ROOM_NUM = 4; //Number of rooms
@@ -298,9 +307,5 @@ namespace GC
 		T_WALL_SIDE_FRONT_RIGHT, T_WALL_SIDE_MID_LEFT, T_WALL_SIDE_FRONT_LEFT, T_WALL_TOP_LEFT, T_WALL_TOP_MID, T_WALL_TOP_RIGHT, T_WALL_CORNER_TOP_LEFT,
 		T_WALL_CORNER_TOP_RIGHT, T_WALL_IN_CORNER_T_TOP_LEFT, T_WALL_IN_CORNER_T_TOP_RIGHT, T_WALL_CORNER_BOTTOM_LEFT, T_WALL_IN_CORNER_L_TOP_LEFT,
 		T_WALL_CORNER_BOTTOM_RIGHT, T_WALL_IN_CORNER_L_TOP_RIGHT, T_WATER_SHOP, T_LAVA_SHOP, T_DOOR_UP, T_DOOR_DOWN
-	};
-	enum SHOP_ITEMS { //Shop items
-		WS_HEALTH, WS_SPEED, WS_POWER, WS_ATTACK_SPEED, WS_KNOCKBACK, WS_FULL_HEAL, 
-		LS_FANCY_SWORD, LS_SPEAR, LS_BIG_WEAPONS, LS_REFLECT, LS_MELEE_PROJECTILE
 	};
 }

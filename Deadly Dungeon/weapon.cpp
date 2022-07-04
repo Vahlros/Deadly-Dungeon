@@ -1,7 +1,6 @@
 #include "weapon.h"
 #include "maths.h"
 
-//Updates the projectile
 void Projectile::Update(const GameData& game)
 {
 	//Motion
@@ -33,13 +32,11 @@ void Projectile::Update(const GameData& game)
 	}
 }
 
-//Renders the projectile
 void Projectile::Render(sf::RenderWindow& window)
 {
 	window.draw(sprite);
 }
 
-//Initiates attack
 void Attack::Init(const GameData& game, sf::Sprite& motionSprite, sf::Sprite* eSprite, DirectionalAngle& entityFacing, float& entityAttackSpeed, float& holdDistance, const bool& eIsWep, Animation* animation)
 {
 	//Bools
@@ -92,18 +89,31 @@ void Attack::Init(const GameData& game, sf::Sprite& motionSprite, sf::Sprite* eS
 	//Angle corrections
 	if (arcCentredOnInitialAngle)
 	{
-		if (facing->direction == GC::NORTH || facing->direction == GC::EAST) //Right
+		if (followingFacing)
 		{
-			initialAngle -= (motions[0].circleData->rotation / 2.f) * swingDirection;
+			if (facing->direction == GC::NORTH || facing->direction == GC::EAST) //Right
+			{
+				arcCentredAngleOffset = -(motions[0].circleData->rotation / 2.f) * swingDirection;
+			}
+			else //Left
+			{
+				arcCentredAngleOffset = (motions[0].circleData->rotation / 2.f) * swingDirection;
+			}
 		}
-		else //Left
+		else
 		{
-			initialAngle += (motions[0].circleData->rotation / 2.f) * swingDirection;
+			if (facing->direction == GC::NORTH || facing->direction == GC::EAST) //Right
+			{
+				initialAngle -= (motions[0].circleData->rotation / 2.f) * swingDirection;
+			}
+			else //Left
+			{
+				initialAngle += (motions[0].circleData->rotation / 2.f) * swingDirection;
+			}
 		}
 	}
 }
 
-//Updates attack
 void Attack::UpdateAttack(const GameData& game, std::vector<Projectile>& projList)
 {
 	if (motions[0].active) //First motion
@@ -191,7 +201,6 @@ void Attack::UpdateAttack(const GameData& game, std::vector<Projectile>& projLis
 	}
 }
 
-//Update loop for attack
 void Attack::UpdateAttackMotion(const GameData& game, Motion& motion)
 {
 	if (motion.timer < 0.f)
@@ -206,6 +215,11 @@ void Attack::UpdateAttackMotion(const GameData& game, Motion& motion)
 		if (followingFacing)
 		{
 			initialAngle = GetFullAngleInDegrees(*facing);
+
+			if (arcCentredOnInitialAngle)
+			{
+				initialAngle += arcCentredAngleOffset;
+			}
 		}
 
 		//Motion position
@@ -229,6 +243,13 @@ void Attack::UpdateAttackMotion(const GameData& game, Motion& motion)
 			UpdateRotation(motion, *sprite, initialAngle);
 		}
 
+		if (followingFacing && arcCentredOnInitialAngle)
+		{
+			//initialAngle = GetFullAngleInDegrees(*facing);
+
+			initialAngle -= arcCentredAngleOffset;
+		}
+
 		//Time
 		if (!motion.loop)
 		{
@@ -238,7 +259,6 @@ void Attack::UpdateAttackMotion(const GameData& game, Motion& motion)
 	}
 }
 
-//Adds projectiles to the list
 void Attack::SpawnProjectiles(const GameData& game, std::vector<Projectile>& projList)
 {
 	//Setup
@@ -375,7 +395,6 @@ void Attack::SpawnProjectiles(const GameData& game, std::vector<Projectile>& pro
 	}
 }
 
-//Immediately stops the attack and resets values
 void Attack::Stop()
 {
 	active = false;
@@ -388,12 +407,13 @@ void Attack::Stop()
 	}
 }
 
-//Initializes the weapon from a template
-void Weapon::Init(const GameData& game, const bool& isPlayer)
+void Weapon::Init(const GameData& game, const bool& isPlayer, Animation& entityAnim)
 {
 	active = true;
 	attack0.projectileShotByPlayer = isPlayer;
+	attack0.anim = &entityAnim;
 	attack1.projectileShotByPlayer = isPlayer;
+	attack1.anim = &entityAnim;
 
 	if (entityIsWeapon)
 	{
@@ -432,13 +452,11 @@ void Weapon::Init(const GameData& game, const bool& isPlayer)
 	}
 }
 
-//Updates the position of the weapon
 void Weapon::UpdateHoldPosition(const DirectionalAngle& facing, const Dim2Df holdOrigin)
 {
 	sprite.setPosition(holdOrigin + CalculateCircularMotionVector(holdDistance, GetFullAngleInRads(facing)));
 }
 
-//Updates the rotation of the weapon
 void Weapon::UpdateHoldRotation(const DirectionalAngle& facing)
 {
 	float rotation = GetFullAngleInDegrees(facing);
@@ -453,7 +471,6 @@ void Weapon::UpdateHoldRotation(const DirectionalAngle& facing)
 	}
 }
 
-//Checks if this motion can damage opponents
 bool Weapon::CheckIfMotionCanDamage()
 {
 	//Check if the motion can damage
@@ -485,7 +502,6 @@ bool Weapon::CheckIfMotionCanDamage()
 	return canDamage;
 }
 
-//Updates the rotation of the sprite
 void UpdateRotation(const Motion& motion, sf::Sprite& sprite, const float& initialAngle)
 {
 	if (motion.spin)

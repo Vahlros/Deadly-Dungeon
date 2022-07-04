@@ -1,6 +1,5 @@
 #include "graphics.h"
 
-//Updates animation
 void Animation::UpdateAnimation(sf::Sprite& sprite, const float& elapsed)
 {
 	if (frameTimer > data->frameChange)
@@ -28,7 +27,6 @@ void Animation::UpdateAnimation(sf::Sprite& sprite, const float& elapsed)
 	}
 }
 
-//Initiates a new animation
 void Animation::Init(const AnimationData* animData)
 {
 	data = animData;

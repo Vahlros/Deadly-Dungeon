@@ -1,11 +1,40 @@
 #include "player.h"
 #include "maths.h"
 
-//Initializes player
-void Player::Init(GameData& game, const Dim2Df& spawnPosition)
+//Assigns projectileData of player upgrades
+void AssignProjectileData(Weapon& weapon, const unsigned char& bulletNum)
+{
+	weapon.attack0.summonProjectile = true;
+	weapon.attack1.summonProjectile = true;
+
+	if (bulletNum == 4)
+	{
+		weapon.attack0.projectileData = &GC::PLAYER_FIRE_BALL4;
+		weapon.attack1.projectileData = &GC::PLAYER_FIRE_BALL4;
+	}
+	else if (bulletNum == 3)
+	{
+		weapon.attack0.projectileData = &GC::PLAYER_FIRE_BALL3;
+		weapon.attack1.projectileData = &GC::PLAYER_FIRE_BALL3;
+	}
+	else if (bulletNum == 2)
+	{
+		weapon.attack0.projectileData = &GC::PLAYER_FIRE_BALL2;
+		weapon.attack1.projectileData = &GC::PLAYER_FIRE_BALL2;
+	}
+	else
+	{
+		weapon.attack0.projectileData = &GC::PLAYER_FIRE_BALL1;
+		weapon.attack1.projectileData = &GC::PLAYER_FIRE_BALL1;
+	}
+}
+
+void Player::Init(GameData& game, const Dim2Df& spawnPosition, std::vector<Room>& rooms)
 {
 	//Stats
+	maxHealth = GC::PLAYER_HEALTH;
 	speed = GC::MEDIUM_MOVEMENT_SPEED;
+	coins = 20000;
 
 	//Entity stats
 	entity.isPlayer = true;
@@ -22,11 +51,10 @@ void Player::Init(GameData& game, const Dim2Df& spawnPosition)
 
 	//Weapon
 	entity.weapon = GC::SWORD;
-	entity.weapon.Init(game, entity.isPlayer);
+	entity.weapon.Init(game, entity.isPlayer, entity.anim);
 }
 
-//Get inputs and react
-void Player::InputHandling(sf::RenderWindow& window, const GameData& game)
+void Player::InputHandling(sf::RenderWindow& window, GameData& game, std::vector<Room>& rooms)
 {
 	sf::Event event;
 
@@ -45,13 +73,12 @@ void Player::InputHandling(sf::RenderWindow& window, const GameData& game)
 		}
 		else
 		{
-			KeyboardControls(event, game);
+			KeyboardControls(event, game, rooms);
 		}
 	}
 }
 
-//Controls for keyboard
-void Player::KeyboardControls(const sf::Event& event, const GameData& game)
+void Player::KeyboardControls(const sf::Event& event, GameData& game, std::vector<Room>& rooms)
 {
 	//Movement
 	KeyboardMovement(event);
@@ -87,40 +114,15 @@ void Player::KeyboardControls(const sf::Event& event, const GameData& game)
 			entity.weapon.attack1.attackRelease = true;
 		}
 	}
-
-	//Attack swapping for testing
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Z))
+	else if (event.type == sf::Event::KeyReleased)
 	{
-		entity.weapon = GC::SWORD;
-		entity.weapon.Init(game, entity.isPlayer);
-	}
-	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::X))
-	{
-		entity.weapon = GC::SPEAR;
-		entity.weapon.Init(game, entity.isPlayer);
-	}
-	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::C))
-	{
-		entity.weapon = GC::RUSTED_SWORD;
-		entity.weapon.Init(game, entity.isPlayer);
-	}
-	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::V))
-	{
-		entity.weapon = GC::FANCY_SWORD;
-		entity.weapon.Init(game, entity.isPlayer);
-	}
-	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::E))
-	{
-		//Do nothing
-	}
-	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Q))
-	{
-		entity.weapon = GC::IMP_WEAPON;
-		entity.weapon.Init(game, entity.isPlayer);
+		if (event.key.code == sf::Keyboard::E)
+		{
+			BuyItemFromShop(game, rooms[entity.roomID].shops);
+		}
 	}
 }
 
-//Find movement vector based on isKeyPressed booleans
 void Player::KeyboardMovement(const sf::Event& event)
 {
 	//Movement booleans
@@ -241,7 +243,6 @@ void Player::KeyboardMovement(const sf::Event& event)
 	}
 }
 
-//Find the entity's facing angle based on mouse position
 void Player::GetMouseAngle(const GameData& game)
 {
 	//Find origin and target points
@@ -252,18 +253,16 @@ void Player::GetMouseAngle(const GameData& game)
 	entity.facing = CalculateDirectionalAngleFromVector(CalculateVectorBetweenPoints(centre, mousePosition));
 }
 
-//Controls for gamepad
 void Player::GamepadControls(const sf::Event& event)
 {
 
 }
 
-//Checks attack collision against enemies
-void Player::CheckAttackCollision(std::vector<Enemy>& enemies)
+void Player::CheckAttackCollision(GameData& game, std::vector<Enemy>& enemies)
 {
 	if (entity.weapon.attacking && entity.weapon.CheckIfMotionCanDamage())
 	{
-		for (char index = 0; index < GC::MAX_ENEMIES; index++)
+		for (unsigned int index = 0; index < enemies.size(); index++)
 		{
 			if (enemies[index].active && !enemies[index].entity.invulnerable)
 			{
@@ -288,10 +287,19 @@ void Player::CheckAttackCollision(std::vector<Enemy>& enemies)
 						unsigned char actualDamage = (unsigned char)round(damage);
 						enemies[index].entity.TakeDamage(actualDamage, entity.facing, knockbackPower);
 
-						if (enemies[index].entity.weapon.attacking)
+						if (enemies[index].entity.isAlive)
 						{
-							enemies[index].entity.weapon.attack0.Stop();
-							enemies[index].entity.weapon.attack1.Stop();
+							//Interrupt enemy attacks
+							if (enemies[index].entity.weapon.attacking)
+							{
+								enemies[index].entity.StopAttackIfTrue(true);
+							}
+						}
+						else
+						{
+							//Update metrics
+							game.metrics.UpdateKills(entity.weapon.ID, enemies[index].ID);
+							EarnCoins(enemies[index].ID);
 						}
 					}
 				}
@@ -300,27 +308,26 @@ void Player::CheckAttackCollision(std::vector<Enemy>& enemies)
 	}
 }
 
-//Updates player state
-void Player::Update(sf::RenderWindow& window, GameData& game, std::vector<Projectile> projectiles, std::vector<Enemy>& enemies)
+void Player::Update(sf::RenderWindow& window, GameData& game, std::vector<Projectile>& projectiles, std::vector<Enemy>& enemies, std::vector<Room>& rooms)
 {
 	//Invulnerability
 	UpdateInvulnerability(game);
 
 	//Input
-	InputHandling(window, game);
+	InputHandling(window, game, rooms);
 
 	//Movement
 	if (entity.moving && !dodging)
 	{
 		entity.Move(game);
 	}
+	entity.FindCurrentRoom(rooms);
 
 	//Weapon
 	entity.UpdateWeapon(game, projectiles);
-	CheckAttackCollision(enemies);
+	CheckAttackCollision(game, enemies);
 }
 
-//Handles invulnerability
 void Player::UpdateInvulnerability(GameData& game)
 {
 	//Invulnerability
@@ -352,9 +359,136 @@ void Player::UpdateInvulnerability(GameData& game)
 	}
 }
 
-//Player death
 void Player::Dead(GameData& game)
 {
-	printf("my balls tingle when your mum touches them\n");
-	//game.
+	printf("Player Died\n");
+	game.playerDead = true;
+}
+
+void Player::EarnCoins(const char& enemyID)
+{
+	switch (enemyID)
+	{
+	case GC::ID_IMP:
+		coins += GC::IMP_COINS;
+		break;
+
+	case GC::ID_LESSER_DEMON:
+		coins += GC::LESSER_DEMON_COINS;
+		break;
+
+	case GC::ID_ABERRANT:
+		coins += GC::ABERRANT_COINS;
+		break;
+
+	case GC::ID_GREATER_DEMON:
+		coins += GC::GREATER_DEMON_COINS;
+		break;
+
+	default:
+		printf("Enemy ID not recognised, imp coins were given\n");
+		coins += GC::IMP_COINS;
+		break;
+	}
+}
+
+void Player::BuyItemFromShop(GameData& game, std::vector<Shop>& shops)
+{
+	bool found = false;
+	unsigned char index = 0;
+
+	while (!found && (index < shops.size()))
+	{
+		if (!shops[index].sold)
+		{
+			float distanceToShop = CalculateMagnitudeOfVector(entity.sprite.getPosition() - shops[index].position);
+
+			//If in range, check collision
+			if (distanceToShop <= GC::BUY_ITEM_RANGE)
+			{
+				found = true;
+				char itemID = shops[index].Buy(game, coins);
+				if (itemID != -1)
+				{
+					ApplyItemEffects(game, itemID);
+				}
+			}
+		}
+
+		index++;
+	}
+}
+
+void Player::ApplyItemEffects(const GameData& game, const char& itemID)
+{
+	bool newWeapon = false;
+	Dim2Df scale;
+
+	switch (itemID)
+	{
+	case GC::WS_HEALTH:
+		entity.health = GC::BOOSTED_HEALTH;
+		maxHealth = GC::BOOSTED_HEALTH;
+		break;
+
+	case GC::WS_SPEED:
+		speed = GC::BOOSTED_SPEED;
+		break;
+
+	case GC::WS_POWER:
+		entity.power = GC::BOOSTED_POWER;
+		break;
+
+	case GC::WS_ATTACK_SPEED:
+		entity.attackSpeed = GC::BOOSTED_ATTACK_SPEED;
+		break;
+
+	case GC::WS_KNOCKBACK:
+		knockbackPower = GC::BOOSTED_KNOCKBACK_POWER;
+		break;
+
+	case GC::WS_FULL_HEAL:
+		entity.health = maxHealth;
+		break;
+
+	case GC::LS_FANCY_SWORD:
+		newWeapon = true;
+		entity.weapon = GC::FANCY_SWORD;
+		entity.weapon.Init(game, true, entity.anim);
+		break;
+
+	case GC::LS_SPEAR:
+		newWeapon = true;
+		entity.weapon = GC::SPEAR;
+		entity.weapon.Init(game, true, entity.anim);
+		break;
+
+	case GC::LS_BIG_WEAPONS:
+		entity.weaponScale = GC::BIG_WEAPONS_SCALE;
+		scale = entity.weapon.sprite.getScale();
+		entity.weapon.sprite.setScale(scale.x * entity.weaponScale.x, scale.y * entity.weaponScale.y);
+		break;
+
+	case GC::LS_MELEE_PROJECTILE:
+		AssignProjectileData(entity.weapon, game.metrics.meleeBulletUpgrades);
+		break;
+
+	default:
+		printf("Item ID not recognised, player was not updated\n");
+		break;
+	}
+
+	if (newWeapon)
+	{
+		if (game.metrics.purchasedBigWeapons)
+		{
+			entity.weaponScale = GC::BIG_WEAPONS_SCALE;
+			Dim2Df scale = entity.weapon.sprite.getScale();
+			entity.weapon.sprite.setScale(scale.x * entity.weaponScale.x, scale.y * entity.weaponScale.y);
+		}
+		if (game.metrics.purchasedMeleeBullets)
+		{
+			AssignProjectileData(entity.weapon, game.metrics.meleeBulletUpgrades);
+		}
+	}
 }

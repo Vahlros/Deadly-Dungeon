@@ -1,6 +1,7 @@
 #pragma once
 #include "weapon.h"
 #include "graphics.h"
+#include "rooms.h"
 
 //Knockback
 struct Knockback
@@ -36,12 +37,14 @@ struct Entity
 	short health = 0; //Hit points
 	float attackSpeed = 1.f; //Attack speed multiplier
 	float power = 1.f; //Damage multiplier
+	Dim2Df weaponScale = { 1.f, 1.f }; //Weapon scaling
 
 	//Positioning
 	Dim2Df bodyCentre = { 0, 0 }; //Player sprite's body centre
 	Dim2Df movementVector = { 0.f, 0.f }; //Current movement values
 	Dim2Di frameMovementVector = { 0, 0 }; //Current movement this frame
 	sf::IntRect collisionRect = { 0, 0, 0, 0 }; //Collision rect of the sprite
+	char roomID = 0; //Which room the entity is in
 
 	//Timer
 	float invulnerabilityTimer = 0.f; //How long the entity is invulnerable for
@@ -80,7 +83,10 @@ struct Entity
 	bool TakeDamage(const unsigned char& damage, const DirectionalAngle& facing, const float& knockPower);
 
 	//Stop entity attack if map collision
-	void StopAttackIfMapCollided(const bool& collided);
+	void StopAttackIfTrue(const bool& boolean);
+
+	//Find current room
+	void FindCurrentRoom(std::vector<Room>& rooms);
 };
 
 //Game constants

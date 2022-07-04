@@ -16,6 +16,9 @@ struct Game
 	//SFML
 	sf::Clock clock;
 
+	//Timers
+	float enemySpawnTimer = 0.f;
+
 	//Other stuff currently unknown to those who seek to wield it
 
 	//Initializes the game session
@@ -26,29 +29,27 @@ struct Game
 
 	//Check player death
 	void IsPlayerDead();
+
+	//Keeps track of difficulty and enemy spawning
+	void EnemyManager(sf::RenderWindow& window);
+
+	//Spawn enemies
+	void SpawnEnemies();
 };
 
 namespace GC //Game constants
 {
+	//Enums
+	enum WAVE_DIFFICULTY_RATINGS { D_TRIVIAL, D_WALK_IN_THE_PARK, D_VERY_EASY, D_EASY, D_KINDA_EASY, D_NORMAL, //Wave difficulty
+		D_KINDA_HARD, D_HARD, D_VERY_HARD, D_BRUTAL, D_NIGHTMARE };
+
 	//Shop: General
 	const char TOTAL_WATER_SHOPS = 6; //How many water shops are in the game
 	const char TOTAL_LAVA_SHOPS = 7; //How many lava shops are in the game
+
+	//Enemy Spawner: General
+	const char MAX_ENEMIES = 30; //Maximum number of enemies
+	const float ENEMY_SPAWN_TIME = 15.f; //Time until the next wave
+	const char MAX_ENEMIES_SPAWNED = 7; //Maximum number of enemies spawned per wave
+	const char MAX_SPECIALS_SPAWNED = 3; //Maximum number of powerful enemies spawned per wave
 }
-
-//Initializes all projectiles
-void InitProjectiles(const GameData& game, std::vector<Projectile>& projList);
-
-//Updates all active projectiles
-void UpdateProjectiles(const GameData& game, sf::RenderWindow& window, std::vector<Projectile>& projList, std::vector<Enemy>& enemies, Player& player);
-
-//Projectile collision detection
-void CheckProjectileCollision(Projectile& proj, std::vector<Enemy>& enemies, Player& player);
-
-//Initializes shops
-void InitShops(const GameData& game, std::vector<Room>& rooms);
-
-//Render shops and fountains near the player
-void RenderMapNearPlayer(const GameData& game, sf::RenderWindow& window, std::vector<Room>& rooms, sf::Sprite playerSprite);
-
-//Find a random spawn position
-Dim2Df GetRandomSpawn(std::vector<Room>& rooms, const bool& randRoom, const char& roomID);

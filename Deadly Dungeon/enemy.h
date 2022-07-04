@@ -18,7 +18,9 @@ struct Enemy
 	float distanceToPlayer = 0.f; //Distance to the player
 	float cooldownTimer = GC::ATTACK_COOLDOWN; //Cooldown between attacks
 
-	//Positioning
+	//Timers
+	float differentRoomTimer = 0.f; //How long the enemy has been in a different room
+	float checkRoomTimer = 3.f; //Time until next room check
 
 	//Structs
 	Entity entity{};
@@ -36,7 +38,7 @@ struct Enemy
 	void CheckAttackRange(const GameData& game);
 
 	//Enemy behaviour
-	void Update(GameData& game, std::vector<Projectile>& proj, Entity& playerEntity);
+	void Update(GameData& game, std::vector<Projectile>& proj, std::vector<Room>& rooms, Entity& playerEntity);
 
 	//Check if attack hits player
 	void CheckAttackCollision(GameData& game, Entity& playerEntity);
@@ -47,4 +49,6 @@ namespace GC
 {
 	//Behaviour
 	const char RANGE_NERF = 5; //Reduce range before the enemy attacks
+	const float CHECK_ROOM_TIMER = 3.f; //How long between room checks
+	const float DIFFERENT_ROOM_DESPAWN_TIMER = 29.f; //How long an enemy is stuck in a different room before it despawns
 }

@@ -32,13 +32,66 @@ struct AnimationData
 	float frameChange = 0.f; //How frequent the frames will change, in seconds
 };
 
+//Data collected for scores
+struct Metrics
+{
+	//Counters: Game
+	unsigned short enemiesKilled = 0; //How many enemies the player has killed
+	unsigned short coinsEarned = 0; //How many coins the player has picked up
+	float totalTime = 0.f; //How long the player has survived
+	//Counters: Shop
+	unsigned char itemsPurchased = 0; //How many items the player has purchased
+	unsigned short healsPurchased = 0; //How many heals the player has purchased
+	unsigned char fancySwordsPurchased = 0; //How many fancy swords the player has purchased
+	unsigned char spearsPurchased = 0; //How many spears the player has purchased
+	unsigned short coinsSpent = 0; //How many coins the player has spent
+	unsigned char meleeBulletUpgrades = 0; //How many projectiles are fired upon weapon swing
+	//Counters: Weapon
+	unsigned short swordKills = 0; //How many enemies killed with the sword
+	unsigned short fancySwordKills = 0; //How many enemies killed with the fancy sword
+	unsigned short spearKills = 0; //How many enemies killed with the spear
+	unsigned short projectileKills = 0; //How many enemies killed with projectiles
+	//Counters: Enemy
+	unsigned short impKills = 0; //How many imps were killed
+	unsigned short lesserDemonKills = 0; //How many imps were killed
+	unsigned short aberrantKills = 0; //How many imps were killed
+	unsigned short greaterDemonKills = 0; //How many imps were killed
+	//Counters: Player Damage
+	unsigned short impPlayerDamage = 0; //How much damage imps dealt to the player
+	unsigned short lesserDemonPlayerDamage = 0; //How much damage lesser demons dealt to the player
+	unsigned short aberrantPlayerDamage = 0; //How much damage aberrants dealt to the player
+	unsigned short greaterDemonPlayerDamage = 0; //How much damage greater demons dealt to the player
+
+	//Bools
+	bool purchasedHealthMax = false; //If the player has the health boost active
+	bool purchasedSpeed = false; //If the player has the speed boost active
+	bool purchasedPower = false; //If the player has the power boost active
+	bool purchasedAttackSpeed = false; //If the player has the attacks speed boost active
+	bool purchasedKnockback = false; //If the player has the knockback boost active
+	bool purchasedBigWeapons = false; //If the player has the big weapons boost active
+	bool purchasedMeleeBullets = false; //If the player has the melee projectiles boost active
+
+	//Update player's damage taken 
+	void UpdatePlayerDamage(const char& enemyID, const char& damage);
+
+	//Update player's kills
+	void UpdateKills(const char& weaponID, const char& enemyID);
+
+	//Update player's purchases
+	void UpdatePurchases(const char& itemID, const char& price);
+};
+
+
 //Data for current game session
 struct GameData
 {
+	//Gameplay metrics
+	Metrics metrics{}; //Player metrics for this game
+
 	//Window and camera
 	Dim2Di screenResolution = { 0, 0 }; //Resolution of the player's screen
 	float scaling = 0.f; //Sprite scaling, varies based on the screen
-	sf::IntRect cameraRect = { 0, 0, 0, 0 }; //Global position and area of the camera, in pixels
+	Dim2Df cameraDimensions = { 0, 0 }; //Global position and area of the camera, in pixels
 	sf::View camera{}; //View for the window, zoomed in so that the map and sprites can be drawn in pixels
 
 	//States
@@ -46,7 +99,10 @@ struct GameData
 	char input = 0; //Keyboard or controller
 
 	//Operational bools
-	bool playerDead = false;
+	bool playerDead = false; //If the player has died
+
+	//Timers
+	float elapsed = 0.f; //Time elapsed since last frame
 
 	//Vectors
 	std::vector<sf::Texture> textures; //Vector of all textures
@@ -56,9 +112,6 @@ struct GameData
 	sf::Image spritesheetImg{}; //Spritesheet in Image format, for texture.loadFromImage()
 	sf::Sprite mapSprite{}; //Sprite for the environment
 	sf::Font font{}; //Game font
-
-	//Timers
-	float elapsed = 0.f; //Time elapsed since last frame
 
 	//Pointers
 	bool* playerHit = nullptr; //If the player has just been hit
@@ -76,19 +129,25 @@ namespace GC
 	//Enums
 	enum GAME_STATE { MAIN_MENU, PLAYING, WIN, LOSE }; //Current game state
 	enum DIRECTIONS { NORTH, EAST, SOUTH, WEST }; //NESW directions
-	enum TEXTURE_LIST {
+	enum TEXTURE_LIST { //Texture IDs
 		SPRITESHEET_TEXTURE, MAP_FLOOR_TEXTURE, TILE_TEXTURE, WALL_SIDE_TEXTURE, WALL_TOP_TEXTURE, WALL_SIDE_TOP_TEXTURE, WATER_FOUNTAIN_TEXTURE, LAVA_FOUNTAIN_TEXTURE,
 		KNIGHT_TEXTURE, IMP_TEXTURE, L_DEMON_TEXTURE, ABERRANT_TEXTURE, G_DEMON_TEXTURE, FIRE_SKULL_TEXTURE, FIRE_BALL_TEXTURE
 	};
 	enum PLAYER_INPUT { KEYBOARD, GAMEPAD }; //Player input states
 	enum ROOM_TYPES { R32X32, R16X16, R32X16, R16X32 }; //Room types
 	enum ATTACK_INPUTS { FIRST_ATTACK, SECOND_ATTACK }; //Attack inputs
-	enum COLLISION_TYPES {
+	enum COLLISION_TYPES { //Collision IDs
 		C_FREE_MOVEMENT, C_WALL, C_WALL_TOP, C_WALL_SIDE_LEFT, C_WALL_SIDE_RIGHT, C_WALL_TOP_BOTTOM_LEFT, C_WALL_TOP_BOTTOM_RIGHT, C_FOUNTAIN_TOP, C_FOUNTAIN_BASIN,
 		C_COLUMN_TOP, C_COLUMN_BASE, C_CORNER_BOTTOM_LEFT, C_CORNER_BOTTOM_RIGHT
-	}; //Collision map types
+	};
 	enum ANIMATION { IDLE = 0, MOVE = 4, DODGE = 8 }; //Animation frames
 	enum ENEMY_ID { ID_IMP, ID_LESSER_DEMON, ID_ABERRANT, ID_GREATER_DEMON }; //Enemy IDs
+	enum WEAPON_ID { ID_SWORD, ID_FANCY_SWORD, ID_SPEAR, ID_IMP_WEAPON, ID_LESSER_DEMON_WEAPON, ID_RUSTED_SWORD, ID_GREATER_DEMON_WEAPON }; //Weapon IDs
+	enum SHOP_ITEMS { WS_HEALTH, WS_SPEED, WS_POWER, WS_ATTACK_SPEED, WS_KNOCKBACK, WS_FULL_HEAL, //Shop items
+		LS_FANCY_SWORD, LS_SPEAR, LS_BIG_WEAPONS, LS_MELEE_PROJECTILE };
+
+	//Maths: General
+	const float ZERO = 0.f; //Zero
 
 	//Screen: General
 	const float SCALE_1080 = 5.f; //View zoom at 1080p
@@ -105,7 +164,7 @@ namespace GC
 	const unsigned char TILE_NUM = 67; //Total number of tiles
 	//Tile: Tile dimensions
 	const char WALL_SIDE_WIDTH = 5; //Width of a wall side, in pixels
-	const char WALL_TOP_HEIGHT = 4; //Width of a wall top, in pixels#
+	const char WALL_TOP_HEIGHT = 4; //Width of a wall top, in pixels
 	const char FOUNTAIN_BASIN_HEIGHT = 9;
 	const char FOUNTAIN_TOP_HEIGHT = 7;
 	const char COLUMN_BASE_HEIGHT = 5;
@@ -206,7 +265,11 @@ namespace GC
 	
 	//Enemy: General
 	const float ATTACK_COOLDOWN = 1.f; //Cooldown timer between attacks
-	const char MAX_ENEMIES = 10; //Maximum number of enemies
+	//Enemy: Coins
+	const char IMP_COINS = 2;
+	const char LESSER_DEMON_COINS = 4;
+	const char ABERRANT_COINS = 6;
+	const char GREATER_DEMON_COINS = 10;
 	//Enemy: Animation
 	const unsigned char ENEMY_ANIM_FRAMES = 8; //Number of frames
 	const AnimationData ENEMY_ANIM_IDLE = { IDLE, MOVE - 1, 0.12f }; //Idle animation data for enemies

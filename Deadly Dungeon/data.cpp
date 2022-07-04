@@ -1,6 +1,133 @@
 #include "data.h"
 
-//Initializes game session
+void Metrics::UpdatePlayerDamage(const char& enemyID, const char& damage)
+{
+	switch (enemyID)
+	{
+	case GC::ID_IMP:
+		impPlayerDamage += damage;
+		break;
+
+	case GC::ID_LESSER_DEMON:
+		lesserDemonPlayerDamage += damage;
+		break;
+
+	case GC::ID_ABERRANT:
+		aberrantPlayerDamage += damage;
+		break;
+
+	case GC::ID_GREATER_DEMON:
+		greaterDemonPlayerDamage += damage;
+		break;
+
+	default:
+		printf("Enemy ID not recognised, player damage was not updated\n");
+	}
+}
+
+void Metrics::UpdateKills(const char& weaponID, const char& enemyID)
+{
+	enemiesKilled += 1;
+
+	switch (weaponID)
+	{
+	case GC::ID_SWORD:
+		swordKills += 1;
+		break;
+
+	case GC::ID_FANCY_SWORD:
+		fancySwordKills += 1;
+		break;
+
+	case GC::ID_SPEAR:
+		spearKills += 1;
+		break;
+
+	default:
+		printf("Weapon ID not recognised, weapon kill was not updated\n");
+	}
+
+	switch (enemyID)
+	{
+	case GC::ID_IMP:
+		impKills += 1;
+		coinsEarned += GC::IMP_COINS;
+		break;
+
+	case GC::ID_LESSER_DEMON:
+		lesserDemonKills += 1;
+		coinsEarned += GC::LESSER_DEMON_COINS;
+		break;
+
+	case GC::ID_ABERRANT:
+		aberrantKills += 1;
+		coinsEarned += GC::ABERRANT_COINS;
+		break;
+
+	case GC::ID_GREATER_DEMON:
+		greaterDemonKills += 1;
+		coinsEarned += GC::GREATER_DEMON_COINS;
+		break;
+
+	default:
+		printf("Enemy ID not recognised, enemy kill was not updated\n");
+	}
+}
+
+void Metrics::UpdatePurchases(const char& itemID, const char& price)
+{
+	coinsSpent += price;
+	itemsPurchased += 1;
+
+	switch (itemID)
+	{
+	case GC::WS_HEALTH:
+		purchasedHealthMax = true;
+		break;
+
+	case GC::WS_SPEED:
+		purchasedSpeed = true;
+		break;
+
+	case GC::WS_POWER:
+		purchasedPower = true;
+		break;
+
+	case GC::WS_ATTACK_SPEED:
+		purchasedAttackSpeed = true;
+		break;
+
+	case GC::WS_KNOCKBACK:
+		purchasedKnockback = true;
+		break;
+
+	case GC::WS_FULL_HEAL:
+		healsPurchased += 1;
+		break;
+
+	case GC::LS_FANCY_SWORD:
+		fancySwordsPurchased += 1;
+		break;
+
+	case GC::LS_SPEAR:
+		spearsPurchased += 1;
+		break;
+
+	case GC::LS_BIG_WEAPONS:
+		purchasedBigWeapons = true;
+		break;
+
+	case GC::LS_MELEE_PROJECTILE:
+		purchasedMeleeBullets = true;
+		meleeBulletUpgrades += 1;
+		break;
+
+	default:
+		printf("Item ID not recognised, player damage was not updated\n");
+		break;
+	}
+}
+
 void GameData::Init(sf::RenderWindow& window)
 {
 	//Resolution
@@ -74,10 +201,10 @@ void GameData::Init(sf::RenderWindow& window)
 	}
 
 	//Camera
-	cameraRect.width = (int)(screenResolution.x / scaling);
-	cameraRect.height = (int)(screenResolution.y / scaling);
+	cameraDimensions.x = (float)screenResolution.x / scaling;
+	cameraDimensions.y = (float)screenResolution.y / scaling;
 
-	camera.setSize((float)cameraRect.width, (float)cameraRect.height);
+	camera.setSize((float)cameraDimensions.x, (float)cameraDimensions.y);
 	camera.setCenter(684.f, 684.f);
 	window.setView(camera);
 
@@ -88,7 +215,6 @@ void GameData::Init(sf::RenderWindow& window)
 	font.loadFromFile("tiny.regular.ttf");
 }
 
-//Renders the map
 void GameData::RenderMap(sf::RenderWindow& window, const Dim2Df position)
 {
 	camera.setCenter(position);
