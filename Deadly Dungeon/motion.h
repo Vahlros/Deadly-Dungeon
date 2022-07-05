@@ -50,7 +50,6 @@ struct Motion
 	bool active = false; //Whether this motion is currently active
 	bool facingRight = true; //Whether this motion is facing right or not
 
-
 	//Speed
 	float circleSpeed = 0.f; //The speed of the motion's rotation, in degrees per second
 	Dim2Df lineSpeed{}; //The speed of the motion's movement, in pixels per second

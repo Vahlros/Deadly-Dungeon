@@ -40,7 +40,7 @@ void CheckProjectileCollision(GameData& game, Projectile& proj, std::vector<Enem
 							//Interrupt enemy attacks
 							if (enemies[index].entity.weapon.attacking)
 							{
-								enemies[index].entity.StopAttackIfTrue(true);
+								enemies[index].AttackCancel();
 							}
 						}
 						else
@@ -80,6 +80,13 @@ void CheckProjectileCollision(GameData& game, Projectile& proj, std::vector<Enem
 				}
 			}
 		}
+	}
+
+	if (proj.active)
+	{
+		Weapon tempWeapon;
+		Dim2Df frameMovementVector = proj.GetFrameMovementVector(game);
+		CheckMapCollision(game, GC::C_PROJECTILE, proj.sprite, tempWeapon, frameMovementVector, proj);
 	}
 }
 
@@ -232,6 +239,7 @@ char CreateEnemyWave(std::vector<Enemy>& enemies, const short& difficulty)
 	enemies[1].ID = 0;
 
 	switch (difficulty)
+	//switch (11) //For testing purposes
 	{
 	case GC::D_TRIVIAL:
 		enemiesCreated = 2;

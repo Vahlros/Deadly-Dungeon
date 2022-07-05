@@ -21,7 +21,7 @@ void Projectile::Update(const GameData& game)
 			anim.UpdateAnimation(sprite, game.elapsed);
 		}
 
-		motion.UpdatePosition(&sprite, followingFacing, *facing, angle, data.radius);
+		motion.UpdatePosition(&sprite, followingFacing, DirectionalAngle{}, angle, data.radius);
 		UpdateRotation(motion, sprite, angle);
 
 		//Time
@@ -35,6 +35,29 @@ void Projectile::Update(const GameData& game)
 void Projectile::Render(sf::RenderWindow& window)
 {
 	window.draw(sprite);
+}
+
+Dim2Df Projectile::GetFrameMovementVector(const GameData& game)
+{
+	Dim2Df frameMovementVector = { 0.f, 0.f };
+
+	//Find angle in radians
+	DirectionalAngle dirAngle = GetDirectionalAngleFrom360Angle(angle, false);
+	ConvertToRadians(dirAngle.angle);
+
+	if (followingFacing)
+	{
+		//Magnitude is x, direction is y
+		frameMovementVector = CalculateVectorOfMagnitude(dirAngle, motion.lineSpeed.x);
+		frameMovementVector.x *= motion.lineData->translation.y * game.elapsed;
+		frameMovementVector.y *= motion.lineData->translation.y * game.elapsed;
+	}
+	else
+	{
+		frameMovementVector = { motion.lineSpeed.x * game.elapsed, motion.lineSpeed.y * game.elapsed };
+	}
+
+	return frameMovementVector;
 }
 
 void Attack::Init(const GameData& game, sf::Sprite& motionSprite, sf::Sprite* eSprite, DirectionalAngle& entityFacing, float& entityAttackSpeed, float& holdDistance, const bool& eIsWep, Animation* animation)
@@ -347,7 +370,7 @@ void Attack::SpawnProjectiles(const GameData& game, std::vector<Projectile>& pro
 				projList[index].anim.data = &GC::FIRE_SKULL_ANIM;
 				projList[index].anim.currentFrame = projList[index].anim.data->startFrame;
 			}
-			else //if (projectileData->type == GC::FIRE_BALL_PROJECTILE)
+			else if (projectileData->type == GC::FIRE_BALL_PROJECTILE)
 			{
 				projList[index].sprite.setTexture(game.textures[GC::FIRE_BALL_TEXTURE]);
 				projList[index].sprite.setTextureRect(GC::FIRE_BALL_BODY_RECT);
@@ -358,13 +381,20 @@ void Attack::SpawnProjectiles(const GameData& game, std::vector<Projectile>& pro
 				projList[index].anim.data = &GC::FIRE_BALL_ANIM;
 				projList[index].anim.currentFrame = projList[index].anim.data->startFrame;
 			}
+			else //if (projectileData->type == GC::FROST_BALL_PROJECTILE)
+			{
+				projList[index].sprite.setTexture(game.textures[GC::FROST_BALL_TEXTURE]);
+				projList[index].sprite.setTextureRect(GC::FROST_BALL_BODY_RECT);
+				projList[index].sprite.setOrigin(GC::FROST_BALL_BODY_CENTRE);
+				projList[index].sprite.setPosition(sprite->getPosition());
+				projList[index].origin = sprite->getPosition();
+
+				projList[index].anim.data = &GC::FIRE_BALL_ANIM;
+				projList[index].anim.currentFrame = projList[index].anim.data->startFrame;
+			}
 
 			projList[index].playerProjectile = projectileShotByPlayer;
-			if (projectileShotByPlayer)
-			{
-				projList[index].sprite.setColor(GC::PLAYER_PROJECTILE_COLOUR);
-			}
-			else
+			if (!projectileShotByPlayer)
 			{
 				projList[index].enemyID = enemyID;
 			}
@@ -381,12 +411,10 @@ void Attack::SpawnProjectiles(const GameData& game, std::vector<Projectile>& pro
 
 			projList[index].motion.Init(game, GetDirectionalAngleFrom360Angle(projList[index].angle, false), *attackSpeed, 1, true);
 			projList[index].sprite.setRotation(projList[index].angle);
-			projList[index].followingFacing = followingFacing;
 
-			if (followingFacing)
-			{
-				projList[index].facing = facing;
-			}
+			//For Motion calculations, projectiles do not actively follow entity's facing DirectionalAngle.
+			//Instead this ensures that the projectile follows the initialAngle of the attack
+			projList[index].followingFacing = followingFacing;
 
 			projectileCount -= 1;
 			index += 1;
@@ -503,6 +531,15 @@ bool Weapon::CheckIfMotionCanDamage()
 	}
 
 	return canDamage;
+}
+
+void Weapon::StopAttackIfTrue(const bool& stop)
+{
+	if (stop)
+	{
+		attack0.Stop();
+		attack1.Stop();
+	}
 }
 
 void UpdateRotation(const Motion& motion, sf::Sprite& sprite, const float& initialAngle)

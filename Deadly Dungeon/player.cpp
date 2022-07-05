@@ -10,23 +10,23 @@ void AssignProjectileData(Weapon& weapon, const unsigned char& bulletNum)
 	switch (bulletNum)
 	{
 	case 4:
-		weapon.attack0.projectileData = &GC::PLAYER_FIRE_BALL4;
-		weapon.attack1.projectileData = &GC::PLAYER_FIRE_BALL4;
+		weapon.attack0.projectileData = &GC::PLAYER_FROST_BALL4;
+		weapon.attack1.projectileData = &GC::PLAYER_FROST_BALL5;
 		break;
 
 	case 3:
-		weapon.attack0.projectileData = &GC::PLAYER_FIRE_BALL3;
-		weapon.attack1.projectileData = &GC::PLAYER_FIRE_BALL3;
+		weapon.attack0.projectileData = &GC::PLAYER_FROST_BALL3;
+		weapon.attack1.projectileData = &GC::PLAYER_FROST_BALL4;
 		break;
 
 	case 2:
-		weapon.attack0.projectileData = &GC::PLAYER_FIRE_BALL2;
-		weapon.attack1.projectileData = &GC::PLAYER_FIRE_BALL2;
+		weapon.attack0.projectileData = &GC::PLAYER_FROST_BALL2;
+		weapon.attack1.projectileData = &GC::PLAYER_FROST_BALL3;
 		break;
 
 	case 1:
-		weapon.attack0.projectileData = &GC::PLAYER_FIRE_BALL1;
-		weapon.attack1.projectileData = &GC::PLAYER_FIRE_BALL1;
+		weapon.attack0.projectileData = &GC::PLAYER_FROST_BALL1;
+		weapon.attack1.projectileData = &GC::PLAYER_FROST_BALL2;
 		break;
 
 	default:
@@ -39,6 +39,7 @@ void Player::Init(GameData& game, const Dim2Df& spawnPosition, std::vector<Room>
 	//Stats
 	maxHealth = GC::PLAYER_HEALTH;
 	speed = GC::MEDIUM_MOVEMENT_SPEED;
+	coins = 300;
 
 	//Entity stats
 	entity.isPlayer = true;
@@ -298,7 +299,7 @@ void Player::CheckAttackCollision(GameData& game, std::vector<Enemy>& enemies)
 							//Interrupt enemy attacks
 							if (enemies[index].entity.weapon.attacking)
 							{
-								enemies[index].entity.StopAttackIfTrue(true);
+								enemies[index].AttackCancel();
 							}
 						}
 						else
@@ -442,7 +443,7 @@ void Player::ApplyItemEffects(const GameData& game, const char& itemID)
 		break;
 
 	case GC::WS_POWER:
-		entity.power = GC::BOOSTED_POWER;
+		entity.power *= GC::BOOSTED_POWER;
 		break;
 
 	case GC::WS_ATTACK_SPEED:
@@ -473,6 +474,7 @@ void Player::ApplyItemEffects(const GameData& game, const char& itemID)
 		entity.weaponScale = GC::BIG_WEAPONS_SCALE;
 		scale = entity.weapon.sprite.getScale();
 		entity.weapon.sprite.setScale(scale.x * entity.weaponScale.x, scale.y * entity.weaponScale.y);
+		entity.power *= GC::BIG_WEAPONS_POWER_BOOST;
 		break;
 
 	case GC::LS_MELEE_PROJECTILE:

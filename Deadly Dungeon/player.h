@@ -69,9 +69,10 @@ namespace GC
 	//Player: General
 	const char BUY_ITEM_RANGE = TILE_SIZE * 2;
 	//Player: Upgrades
-	const float BOOSTED_SPEED = FAST_MOVEMENT_SPEED; //Upgraded speed
-	const float BOOSTED_POWER = 2.f; //Upgraded power
-	const float BOOSTED_ATTACK_SPEED = 1.5f; //Upgraded attack speed
-	const float BOOSTED_KNOCKBACK_POWER = 160.f; //Upgraded knockback power
-	const Dim2Df BIG_WEAPONS_SCALE = {1.1f, 1.3f}; //Upgraded weapon size
+	const float BOOSTED_SPEED = FAST_MOVEMENT_SPEED;
+	const float BOOSTED_POWER = 2.f;
+	const float BOOSTED_ATTACK_SPEED = 1.5f;
+	const float BOOSTED_KNOCKBACK_POWER = 160.f;
+	const Dim2Df BIG_WEAPONS_SCALE = {1.1f, 1.3f};
+	const float BIG_WEAPONS_POWER_BOOST = 1.2f;
 }

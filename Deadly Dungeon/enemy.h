@@ -13,6 +13,7 @@ struct Enemy
 	bool useAttackOne = true; //Determines which attack to use
 	bool madman = false; //If the enemy will wildly attack
 	bool attackCooldown = false; //If the enemy is in cooldown
+	bool attackCancelImmune = false; //If the enemy is immune to player's attack cancellation
 
 	//Operational stats
 	float distanceToPlayer = 0.f; //Distance to the player
@@ -21,6 +22,7 @@ struct Enemy
 	//Timers
 	float differentRoomTimer = 0.f; //How long the enemy has been in a different room
 	float checkRoomTimer = 3.f; //Time until next room check
+	float attackCancelledCooldown = 2.f; //Time until immunity wears off
 
 	//Structs
 	Entity entity;
@@ -42,6 +44,9 @@ struct Enemy
 
 	//Check if attack hits player
 	void CheckAttackCollision(GameData& game, Entity& playerEntity);
+
+	//Handles attack cancellation immunity
+	void AttackCancel();
 };
 
 //Game constants
@@ -51,4 +56,5 @@ namespace GC
 	const char RANGE_NERF = 5; //Reduce range before the enemy attacks
 	const float CHECK_ROOM_TIMER = 3.f; //How long between room checks
 	const float DIFFERENT_ROOM_DESPAWN_TIMER = 29.f; //How long an enemy is stuck in a different room before it despawns
+	const float ATTACK_CANCELLATION_COOLDOWN = 2.f; //How long cancellation immunity lasts for
 }

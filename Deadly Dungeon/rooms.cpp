@@ -11,7 +11,7 @@ void Shop::SetupShop(const GameData& game, const char& ID)
 	{
 	case GC::WS_HEALTH:
 		itemID = ID;
-		price = 10;
+		price = 30;
 		itemName = "Max Health: ";
 		sprite.setTextureRect(GC::POTION_RECT_R1);
 		sprite.setOrigin(GC::POTION_ORIGIN);
@@ -19,7 +19,7 @@ void Shop::SetupShop(const GameData& game, const char& ID)
 
 	case GC::WS_SPEED:
 		itemID = ID;
-		price = 15;
+		price = 30;
 		itemName = "Speed: ";
 		sprite.setTextureRect(GC::POTION_RECT_Y1);
 		sprite.setOrigin(GC::POTION_ORIGIN);
@@ -27,7 +27,7 @@ void Shop::SetupShop(const GameData& game, const char& ID)
 
 	case GC::WS_POWER:
 		itemID = ID;
-		price = 15;
+		price = 30;
 		itemName = "Attack Power: ";
 		sprite.setTextureRect(GC::POTION_RECT_G1);
 		sprite.setOrigin(GC::POTION_ORIGIN);
@@ -35,7 +35,7 @@ void Shop::SetupShop(const GameData& game, const char& ID)
 
 	case GC::WS_ATTACK_SPEED:
 		itemID = ID;
-		price = 10;
+		price = 30;
 		itemName = "Attack Speed: ";
 		sprite.setTextureRect(GC::POTION_RECT_G2);
 		sprite.setOrigin(GC::POTION_ORIGIN);
@@ -43,7 +43,7 @@ void Shop::SetupShop(const GameData& game, const char& ID)
 
 	case GC::WS_KNOCKBACK:
 		itemID = ID;
-		price = 15;
+		price = 30;
 		itemName = "Knockback Power: ";
 		sprite.setTextureRect(GC::POTION_RECT_B1);
 		sprite.setOrigin(GC::POTION_ORIGIN);
@@ -60,7 +60,7 @@ void Shop::SetupShop(const GameData& game, const char& ID)
 
 	case GC::LS_FANCY_SWORD:
 		itemID = ID;
-		price = 10;
+		price = 15;
 		itemName = "Fancy Sword: ";
 		unlimitedItems = true;
 		sprite.setTextureRect(GC::F_SWORD_RECT);
@@ -69,7 +69,7 @@ void Shop::SetupShop(const GameData& game, const char& ID)
 
 	case GC::LS_SPEAR:
 		itemID = ID;
-		price = 10;
+		price = 15;
 		itemName = "Spear: ";
 		unlimitedItems = true;
 		sprite.setTextureRect(GC::SPEAR_RECT);
@@ -78,7 +78,7 @@ void Shop::SetupShop(const GameData& game, const char& ID)
 
 	case GC::LS_BIG_WEAPONS:
 		itemID = ID;
-		price = 20;
+		price = 30;
 		itemName = "Enlarge Weapons: ";
 		sprite.setTextureRect(GC::POTION_RECT_B2);
 		sprite.setOrigin(GC::POTION_ORIGIN);
@@ -86,7 +86,7 @@ void Shop::SetupShop(const GameData& game, const char& ID)
 
 	case GC::LS_MELEE_PROJECTILE:
 		itemID = ID;
-		price = 20;
+		price = 30;
 		itemName = "Melee Bullets: ";
 		sprite.setTextureRect(GC::POTION_RECT_Y2);
 		sprite.setOrigin(GC::POTION_ORIGIN);

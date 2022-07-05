@@ -35,9 +35,6 @@ struct Projectile
 	Dim2Df origin = { 0.f, 0.f };
 	float angle = 0.f;
 
-	//Pointers
-	DirectionalAngle* facing = nullptr;
-
 	//Structs
 	ProjectileData data{};
 	Animation anim{};
@@ -50,6 +47,9 @@ struct Projectile
 
 	//Renders the projectile
 	void Render(sf::RenderWindow& window);
+
+	//Returns a vector of movement for this frame
+	Dim2Df GetFrameMovementVector(const GameData& game);
 };
 
 //Attack
@@ -64,7 +64,7 @@ struct Attack //Setup: {motion0, motion1}, ProjectileData*, AnimationData*, shor
 	//Setup bools
 	bool summonProjectile = false; //If this attack summons a projectile after the motion has finished
 	bool movingWithEntity = false; //If this motion is moving with the entity
-	bool followingFacing = false; //If the attack is actively following the entity facing
+	bool followingFacing = false; //If the weapon attack is actively following the entity's facing (not projectiles)
 	bool hasTwoMotions = false; //If this is the first of two motions
 	bool arcCentredOnInitialAngle = false; //If this attack is centred on the initial angle
 	bool alternatingSwingDirection = false; //If this attack's inital position and direction changes on each swing
@@ -158,6 +158,9 @@ struct Weapon //Setup: attack0, attack1, sf::IntRect* textureRect, Dim2Df* origi
 
 	//Checks if this motion can damage opponents
 	bool CheckIfMotionCanDamage();
+
+	//Stops all attack motions and sets attacking bools to false
+	void StopAttackIfTrue(const bool& boolean);
 };
 
 //Updates the rotation of the sprite
@@ -167,7 +170,7 @@ void UpdateRotation(const Motion& motion, sf::Sprite& sprite, const float& initi
 namespace GC
 {
 	//Enums
-	enum PROJECTILE_TYPES{ WEAPON_PROJECTILE, FIRE_SKULL_PROJECTILE, FIRE_BALL_PROJECTILE }; //Projectile type
+	enum PROJECTILE_TYPES{ WEAPON_PROJECTILE, FIRE_SKULL_PROJECTILE, FIRE_BALL_PROJECTILE, FROST_BALL_PROJECTILE }; //Projectile type
 
 	//Weapon: Sword
 	const sf::IntRect SWORD_RECT = { 323, 26, 10, 21 }; //Where the sword is on the spritesheet
@@ -182,10 +185,11 @@ namespace GC
 	const ProjectileData FIRE_BALL = { &STRAIGHT_THROW_SLOW, 0.f, 1, 2, 15.f, FIRE_BALL_PROJECTILE };
 	const ProjectileData FIRE_BALL_BARRAGE = { &STRAIGHT_THROW_SLOW, 0.f, 1, 15, 12.f, FIRE_BALL_PROJECTILE };
 	const ProjectileData FIRE_BALL_VORTEX = { &CIRCLE_OF_DOOM, 8.f, 1, 12, 30.f, FIRE_BALL_PROJECTILE };
-	const ProjectileData PLAYER_FIRE_BALL1 = { &STRAIGHT_THROW_SLOW, 0.f, 1, 1, 15.f, FIRE_BALL_PROJECTILE };
-	const ProjectileData PLAYER_FIRE_BALL2 = { &STRAIGHT_THROW_SLOW, 0.f, 1, 2, 15.f, FIRE_BALL_PROJECTILE };
-	const ProjectileData PLAYER_FIRE_BALL3 = { &STRAIGHT_THROW_SLOW, 0.f, 1, 3, 15.f, FIRE_BALL_PROJECTILE };
-	const ProjectileData PLAYER_FIRE_BALL4 = { &STRAIGHT_THROW_SLOW, 0.f, 1, 5, 15.f, FIRE_BALL_PROJECTILE };
+	const ProjectileData PLAYER_FROST_BALL1 = { &STRAIGHT_THROW_SLOW, 0.f, 1, 1, 15.f, FROST_BALL_PROJECTILE };
+	const ProjectileData PLAYER_FROST_BALL2 = { &STRAIGHT_THROW_SLOW, 0.f, 1, 2, 15.f, FROST_BALL_PROJECTILE };
+	const ProjectileData PLAYER_FROST_BALL3 = { &STRAIGHT_THROW_SLOW, 0.f, 1, 3, 15.f, FROST_BALL_PROJECTILE };
+	const ProjectileData PLAYER_FROST_BALL4 = { &STRAIGHT_THROW_SLOW, 0.f, 1, 4, 15.f, FROST_BALL_PROJECTILE };
+	const ProjectileData PLAYER_FROST_BALL5 = { &STRAIGHT_THROW_SLOW, 0.f, 1, 9, 10.f, FROST_BALL_PROJECTILE };
 
 	//Attacks										(bools: summonProjectile, movingWithEntity, followingFacing, hasTwoMotions, arcCentredOnInitialAngle, hasRandomSwingDirection, uniqueAnimation -> if true -> animOnMotion0, animOnMotion1)
 	//Swing

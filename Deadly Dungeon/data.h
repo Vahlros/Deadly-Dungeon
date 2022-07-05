@@ -109,7 +109,7 @@ struct GameData
 
 	//Vectors
 	std::vector<sf::Texture> textures; //Vector of all textures
-	std::vector<std::vector<char>> collisionMap; //Vector of map collision data
+	std::vector<std::vector<int>> collisionMap; //Vector of map collision data
 
 	//SFML
 	sf::Image spritesheetImg{}; //Spritesheet in Image format, for texture.loadFromImage()
@@ -134,14 +134,14 @@ namespace GC
 	enum DIRECTIONS { NORTH, EAST, SOUTH, WEST }; //NESW directions
 	enum TEXTURE_LIST { //Texture IDs
 		SPRITESHEET_TEXTURE, MAP_FLOOR_TEXTURE, TILE_TEXTURE, WALL_SIDE_TEXTURE, WALL_TOP_TEXTURE, WALL_SIDE_TOP_TEXTURE, WATER_FOUNTAIN_TEXTURE, LAVA_FOUNTAIN_TEXTURE,
-		KNIGHT_TEXTURE, IMP_TEXTURE, L_DEMON_TEXTURE, ABERRANT_TEXTURE, G_DEMON_TEXTURE, FIRE_SKULL_TEXTURE, FIRE_BALL_TEXTURE, COIN_TEXTURE
+		KNIGHT_TEXTURE, IMP_TEXTURE, L_DEMON_TEXTURE, ABERRANT_TEXTURE, G_DEMON_TEXTURE, FIRE_SKULL_TEXTURE, FIRE_BALL_TEXTURE, FROST_BALL_TEXTURE, COIN_TEXTURE
 	};
 	enum PLAYER_INPUT { KEYBOARD, GAMEPAD }; //Player input states
 	enum ROOM_TYPES { R32X32, R16X16, R32X16, R16X32 }; //Room types
 	enum ATTACK_INPUTS { FIRST_ATTACK, SECOND_ATTACK }; //Attack inputs
 	enum COLLISION_TYPES { //Collision IDs
 		C_FREE_MOVEMENT, C_WALL, C_WALL_TOP, C_WALL_SIDE_LEFT, C_WALL_SIDE_RIGHT, C_WALL_TOP_BOTTOM_LEFT, C_WALL_TOP_BOTTOM_RIGHT, C_FOUNTAIN_TOP, C_FOUNTAIN_BASIN,
-		C_COLUMN_TOP, C_COLUMN_BASE, C_CORNER_BOTTOM_LEFT, C_CORNER_BOTTOM_RIGHT
+		C_COLUMN_TOP, C_COLUMN_BASE, C_CORNER_BOTTOM_LEFT, C_CORNER_BOTTOM_RIGHT, C_ENTITY_MOVEMENT, C_ENTITY_BODY_ATTACK, C_PROJECTILE
 	};
 	enum ANIMATION { IDLE = 0, MOVE = 4, DODGE = 8 }; //Animation frames
 	enum ENEMY_ID { ID_IMP, ID_LESSER_DEMON, ID_ABERRANT, ID_GREATER_DEMON }; //Enemy IDs
@@ -160,7 +160,7 @@ namespace GC
 	const float APPROX_ELAPSED = 1.f / (float)GC::FRAMERATE; //Approximate elapsed time
 
 	//Textures: General
-	const char NUM_TEXTURES = 16; //Number of textures used in the game
+	const char NUM_TEXTURES = 17; //Number of textures used in the game
 
 	//Tile: General
 	const char TILE_SIZE = 16; //Tile size, in pixels
@@ -254,7 +254,7 @@ namespace GC
 	const short MAP_SIZE_PIXELS = MAP_SIZE_TILES * TILE_SIZE; //Maximum size of map, in pixels
 
 	//Player: General
-	const float PLAYER_HIT_INVULNERABILITY = 2.f; //How long the player is invulnerable after being hit
+	const float PLAYER_HIT_INVULNERABILITY = 1.5f; //How long the player is invulnerable after being hit
 	const float PLAYER_DODGE_INVULNERABILITY = 0.5f; //Invulnerability while dodging
 	//Player: Health
 	const char PLAYER_HEALTH = 10; //Player starting health
@@ -337,6 +337,13 @@ namespace GC
 	const sf::IntRect FIRE_BALL_ANIM_RECT = { 293, 349, 36, FIRE_BALL_DIMENSIONS.y }; //Where the animation is on the spritesheet
 	const sf::IntRect FIRE_BALL_BODY_RECT = { 0, 0, 6, 6 }; //Where the character's body is on the un-scaled sprite
 	const Dim2Df FIRE_BALL_BODY_CENTRE = { 2.f, 2.f }; //Where the centre of the character's body is on the un-scaled sprite
+	//Projectiles: Frost Ball
+	const unsigned char FROST_BALL_FRAMES = 6; //Number of frames
+	const AnimationData FROST_BALL_ANIM = { 0, FROST_BALL_FRAMES - 1, 0.09f }; //Idle animation data for the player
+	const Dim2Di FROST_BALL_DIMENSIONS = { 6, 6 }; //Dimensions of the player texture
+	const sf::IntRect FROST_BALL_ANIM_RECT = { 293, 356, 36, FROST_BALL_DIMENSIONS.y }; //Where the animation is on the spritesheet
+	const sf::IntRect FROST_BALL_BODY_RECT = { 0, 0, 6, 6 }; //Where the character's body is on the un-scaled sprite
+	const Dim2Df FROST_BALL_BODY_CENTRE = { 2.f, 2.f }; //Where the centre of the character's body is on the un-scaled sprite
 
 	//Collision
 	const char CHECK_ATTACK_COLLISION_RANGE = TILE_SIZE * 4; //The distance between two origins in which collisions will be checked

@@ -2,6 +2,7 @@
 #include "weapon.h"
 #include "graphics.h"
 #include "rooms.h"
+#include "collision.h"
 
 //Knockback
 struct Knockback
@@ -38,7 +39,7 @@ struct Entity
 	//Positioning
 	Dim2Df bodyCentre = { 0, 0 }; //Player sprite's body centre
 	Dim2Df movementVector = { 0.f, 0.f }; //Current movement values
-	Dim2Di frameMovementVector = { 0, 0 }; //Current movement this frame
+	Dim2Df frameMovementVector = { 0, 0 }; //Current movement this frame
 	sf::IntRect collisionRect = { 0, 0, 0, 0 }; //Collision rect of the sprite
 	char roomID = 0; //Which room the entity is in
 	char uniqueID = -1;
@@ -68,7 +69,7 @@ struct Entity
 	void Move(const GameData& game);
 
 	//Checks if movement is valid, using rectangle intersections
-	void CheckMapCollision(const GameData& game, const bool& entityBodyAttack);
+	//void CheckMapCollision(const GameData& game, const bool& entityBodyAttack);
 
 	//Renders the entity
 	void Render(sf::RenderWindow& window, const GameData& game);
@@ -82,9 +83,6 @@ struct Entity
 	//Entity takes damage, returns true if dead
 	bool TakeDamage(const unsigned char& damage, const DirectionalAngle& facing, const float& knockPower);
 
-	//Stop entity attack if map collision
-	void StopAttackIfTrue(const bool& boolean);
-
 	//Find current room
 	void FindCurrentRoom(std::vector<Room>& rooms);
 };
@@ -93,9 +91,6 @@ struct Entity
 namespace GC
 {
 	//Entity: General
-	const unsigned char FEET_COLLISION_HEIGHT = 2; //Feet collision box height
-	const unsigned char C_OFFSET = 1; //Offset for smooth collision
-	const unsigned char ENEMY_ATTACK_C_OFFSET = 3; //Offset for better collision
 	const float SLOW_MOVEMENT_SPEED = 100.f;
 	const float MEDIUM_MOVEMENT_SPEED = 130.f;
 	const float FAST_MOVEMENT_SPEED = 160.f;

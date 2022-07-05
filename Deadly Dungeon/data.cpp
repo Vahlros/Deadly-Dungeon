@@ -197,6 +197,8 @@ void GameData::Init(sf::RenderWindow& window)
 	textures[GC::FIRE_SKULL_TEXTURE].loadFromImage(spritesheetImg, GC::FIRE_SKULL_ANIM_RECT);
 	textures[GC::FIRE_BALL_TEXTURE].create(GC::FIRE_BALL_ANIM_RECT.width, GC::FIRE_BALL_ANIM_RECT.height);
 	textures[GC::FIRE_BALL_TEXTURE].loadFromImage(spritesheetImg, GC::FIRE_BALL_ANIM_RECT);
+	textures[GC::FROST_BALL_TEXTURE].create(GC::FROST_BALL_ANIM_RECT.width, GC::FROST_BALL_ANIM_RECT.height);
+	textures[GC::FROST_BALL_TEXTURE].loadFromImage(spritesheetImg, GC::FROST_BALL_ANIM_RECT);
 
 	//UI Textures
 	textures[GC::COIN_TEXTURE].create(GC::COINS_ANIM_RECT.width, GC::COINS_ANIM_RECT.height);

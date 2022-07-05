@@ -223,6 +223,17 @@ void Enemy::Update(GameData& game, std::vector<Projectile>& proj, std::vector<Ro
 			}
 		}
 
+		//Attack cancellation
+		if (attackCancelledCooldown < GC::ZERO)
+		{
+			attackCancelImmune = false;
+			attackCancelledCooldown = GC::ATTACK_CANCELLATION_COOLDOWN;
+		}
+		else if (attackCancelImmune)
+		{
+			attackCancelledCooldown -= game.elapsed;
+		}
+
 		//Check for stuck enemies, despawn if stuck for too long
 		checkRoomTimer -= game.elapsed;
 
@@ -300,5 +311,14 @@ void Enemy::CheckAttackCollision(GameData& game, Entity& playerEntity)
 				game.metrics.UpdatePlayerDamage(ID, actualDamage);
 			}
 		}
+	}
+}
+
+void Enemy::AttackCancel()
+{
+	if (!attackCancelImmune)
+	{
+		entity.weapon.StopAttackIfTrue(true);
+		attackCancelImmune = true;
 	}
 }
