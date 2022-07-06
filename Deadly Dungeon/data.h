@@ -357,7 +357,8 @@ namespace GC
 	const sf::Color PLAYER_PROJECTILE_COLOUR = sf::Color(153, 204, 0); //Softer green than default
 
 	//Shop: Text
-	const char TEXT_CHARACTER_SIZE = 12;
+	const char TEXT_CHARACTER_SIZE = 40;
+	const Dim2Df TEXT_SCALING = { 0.3f, 0.3f };
 
 	//UI: Coins
 	const Dim2Di COINS_DIMENSIONS = { 8, 8 };

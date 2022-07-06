@@ -8,7 +8,7 @@ struct Game
 	//Game setup
 	GameData data{};
 	Player player1{};
-	UI ui{};
+	GameUI ui{};
 	std::vector<Dim2Df> spawnPoints;
 	std::vector<Enemy> enemyList;
 	std::vector<Projectile> projectiles;

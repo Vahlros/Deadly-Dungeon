@@ -344,10 +344,10 @@ void Game::Init(sf::RenderWindow& window)
 
 	//Rooms
 	roomList.resize(GC::ROOM_NUM);
-	roomList[0].Init(data, 0, { 32, 32 });
-	roomList[1].Init(data, 1, { 64, 32 });
-	roomList[2].Init(data, 2, { 64, 64 });
-	roomList[3].Init(data, 3, { 32, 64 });
+	roomList[0].Init(data, 0, { 16, 16 });
+	roomList[1].Init(data, 1, { 48, 16 });
+	roomList[2].Init(data, 2, { 48, 48 });
+	roomList[3].Init(data, 3, { 16, 48 });
 
 	InitShops(data, roomList);
 

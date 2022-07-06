@@ -171,8 +171,10 @@ void RenderHearts(sf::RenderWindow& window, sf::Sprite& heartSprite, char hearts
 //Came from help from the SFML discord server, centres text origin
 void CentreTextYOrigin(sf::Text& text)
 {
+	text.setScale({ 1.f, 1.f }); //Reset scaling, any different scale messes with the code below
 	const auto localBounds = sf::Vector2f(0.f, text.getLocalBounds().top);
 	const auto globalOrigin = sf::Vector2f(0.f, text.getGlobalBounds().height / 2.0f);
+	text.setScale(GC::TEXT_SCALING);
 
 	text.setOrigin(localBounds + globalOrigin);
 }
@@ -184,7 +186,7 @@ Dim2Df GetGameUIPosition(const GameData& game, const bool& timeUI)
 
 	if (timeUI)
 	{
-		position = { game.playerPosition.x + (game.cameraDimensions.x / 2) - (GC::UI_BORDER * 3), game.playerPosition.y - (game.cameraDimensions.y / 2) + GC::UI_BORDER };
+		position = { game.playerPosition.x + (game.cameraDimensions.x / 2) - GC::UI_TIME_BORDER, game.playerPosition.y - (game.cameraDimensions.y / 2) + GC::UI_BORDER };
 	}
 	else
 	{
@@ -194,7 +196,7 @@ Dim2Df GetGameUIPosition(const GameData& game, const bool& timeUI)
 	return position;
 }
 
-void UI::Init(const GameData& game)
+void GameUI::Init(const GameData& game)
 {
 	//Sprites
 	heartSprite.setTexture(game.textures[GC::SPRITESHEET_TEXTURE]);
@@ -216,9 +218,10 @@ void UI::Init(const GameData& game)
 
 	timeText.setFont(game.font);
 	timeText.setCharacterSize(GC::TEXT_CHARACTER_SIZE);
+	timeText.setScale(GC::TEXT_SCALING);
 }
 
-void UI::Render(const GameData& game, sf::RenderWindow &window, const short& health, const short& coins)
+void GameUI::Render(const GameData& game, sf::RenderWindow &window, const short& health, const short& coins)
 {
 	coinAnim.UpdateAnimation(coinSprite, game.elapsed);
 	RenderHealthBar(game, window, health);
@@ -226,7 +229,7 @@ void UI::Render(const GameData& game, sf::RenderWindow &window, const short& hea
 	RenderTime(game, window);
 }
 
-void UI::RenderHealthBar(const GameData& game, sf::RenderWindow& window, const short& health)
+void GameUI::RenderHealthBar(const GameData& game, sf::RenderWindow& window, const short& health)
 {
 	//Get health bar position, relative to player position
 	heartSprite.setPosition(GetGameUIPosition(game, false));
@@ -247,7 +250,7 @@ void UI::RenderHealthBar(const GameData& game, sf::RenderWindow& window, const s
 	}
 }
 
-void UI::RenderCoins(const GameData& game, sf::RenderWindow& window, const short& coins)
+void GameUI::RenderCoins(const GameData& game, sf::RenderWindow& window, const short& coins)
 {
 	Dim2Df position = GetGameUIPosition(game, false);
 	position.y += GC::HEART_DIMENSIONS.y + GC::UI_BORDER;
@@ -264,7 +267,7 @@ void UI::RenderCoins(const GameData& game, sf::RenderWindow& window, const short
 	window.draw(coinText);
 }
 
-void UI::RenderTime(const GameData& game, sf::RenderWindow& window)
+void GameUI::RenderTime(const GameData& game, sf::RenderWindow& window)
 {
 	Dim2Df position = GetGameUIPosition(game, true);
 

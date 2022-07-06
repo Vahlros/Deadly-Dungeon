@@ -4,7 +4,7 @@
 
 //Structs
 
-struct UI
+struct GameUI
 {
 	//General
 
@@ -46,7 +46,8 @@ namespace GC
 	enum HEARTS { HEART_EMPTY, HEART_HALF, HEART_FULL }; //Health bar heart states
 
 	//UI: General
-	const char UI_BORDER = 8;
+	const int UI_BORDER = 8;
+	const int UI_TIME_BORDER = 32;
 	//UI: Health
 	const Dim2Di HEART_DIMENSIONS = { 16, 13 };
 	const sf::IntRect HEART_FULL_TEXTURE_RECT = { 288, 257, HEART_DIMENSIONS.x, HEART_DIMENSIONS.y };

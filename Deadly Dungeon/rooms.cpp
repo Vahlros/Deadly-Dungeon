@@ -100,6 +100,7 @@ void Shop::SetupShop(const GameData& game, const char& ID)
 	itemValue = std::to_string(price);
 	name.setString(itemName + itemValue);
 	CentreTextOrigin(name);
+	name.setScale(GC::TEXT_SCALING);
 	name.setPosition(position);
 	sprite.setPosition({ position.x, position.y - GC::TILE_SIZE });
 }
@@ -126,7 +127,6 @@ char Shop::Buy(GameData& game, short& coins)
 			sold = true;
 			name.setString("Sold out!");
 			CentreTextOrigin(name);
-			name.setPosition(position);
 		}
 		else
 		{

@@ -3,8 +3,10 @@
 //Came from help from the SFML discord server, centres text origin
 void CentreTextOrigin(sf::Text& text)
 {
+	text.setScale({ 1.f, 1.f }); //Reset scaling, any different scale messes with the code below
 	const auto localBounds = sf::Vector2f(text.getLocalBounds().left, text.getLocalBounds().top);
 	const auto globalOrigin = sf::Vector2f(text.getGlobalBounds().width / 2.0f, text.getGlobalBounds().height / 2.0f);
+	text.setScale(GC::TEXT_SCALING);
 
 	text.setOrigin(localBounds + globalOrigin);
 }
