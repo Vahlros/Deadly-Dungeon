@@ -207,9 +207,9 @@ namespace GC
 	//Enemy attacks
 	const Attack HORN_STAB = { {HORN_STAB_JUMP}, {}, {}, 64,															false, false, false, false, false, false, false }; //Horn stab jump attack
 	const Attack CHARGE = { {CHARGE_WINDUP, CHARGE_RELEASE}, {}, &ENEMY_ANIM_MOVE, 160,									false, false, false, true, false, false, true, false, true }; //Horn charge attack
-	const Attack BITE = { {BITE_WINDUP}, &FIRE_BALL, &ENEMY_ANIM_BITE, 32,												true, false, true, false, false, false, true, true, false }; //Bite attack
+	const Attack BITE = { {BITE_WINDUP}, &FIRE_BALL, &ENEMY_ANIM_BITE, 64,												true, false, true, false, false, false, true, true, false }; //Bite attack
 	const Attack BITE_BARRAGE = { {BITE_WINDUP}, &FIRE_BALL_BARRAGE, &ENEMY_ANIM_BITE, 64,								true, false, true, false, false, false, true, true, false }; //Bite barrage attack
-	const Attack BITE_WAVE = { {BITE_WINDUP}, &FIRE_BALL_VORTEX, &ENEMY_ANIM_BITE, 64,									true, false, true, false, false, false, true, true, false }; //Bite wave attack
+	const Attack BITE_WAVE = { {BITE_WINDUP}, &FIRE_BALL_VORTEX, &ENEMY_ANIM_BITE, 96,									true, false, true, false, false, false, true, true, false }; //Bite wave attack
 	const Attack FIRE_BALL_SPIT = { {FIRE_BALL_SPIT_WINDUP, FIRE_BALL_SPIT_RELEASE}, &FIRE_BALL, {}, 64,				true, false, true, true, false, false, false, false, false }; //Fire spit attack
 	//Weapons																									(bools: hasTwoAttacks, entityIsWeapon)
 	const Weapon SWORD = { NORMAL_SWING_ATTACK, HEAVY_SWING_ATTACK, ID_SWORD, &SWORD_RECT, &SWORD_ORIGIN,						true, false }; //Normal sword, starting weapon for the knight?

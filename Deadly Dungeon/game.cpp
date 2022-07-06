@@ -238,8 +238,8 @@ char CreateEnemyWave(std::vector<Enemy>& enemies, const short& difficulty)
 	enemies[0].ID = 0;
 	enemies[1].ID = 0;
 
-	switch (difficulty)
-	//switch (11) //For testing purposes
+	//switch (difficulty)
+	switch (11) //For testing purposes
 	{
 	case GC::D_TRIVIAL:
 		enemiesCreated = 2;

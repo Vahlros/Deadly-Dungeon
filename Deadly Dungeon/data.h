@@ -280,7 +280,7 @@ namespace GC
 	const unsigned char ENEMY_ANIM_FRAMES = 8; //Number of frames
 	const AnimationData ENEMY_ANIM_IDLE = { IDLE, MOVE - 1, 0.12f }; //Idle animation data for enemies
 	const AnimationData ENEMY_ANIM_MOVE = { MOVE, DODGE - 1, 0.12f }; //Idle animation data for enemies
-	const AnimationData ENEMY_ANIM_BITE = { IDLE, MOVE - 1, 0.3f }; //Bite animation for demons
+	const AnimationData ENEMY_ANIM_BITE = { IDLE, MOVE - 1, 0.2f }; //Bite animation for demons
 	//Enemy: Imp
 	const unsigned char IMP_HEALTH = 2; //Imp health
 	const Dim2Di IMP_DIMENSIONS = { 16, 14 }; //Dimensions of the imp texture

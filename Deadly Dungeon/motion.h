@@ -121,7 +121,7 @@ namespace GC
 	const CircularMotionData CHARGE_WINDUP_SPIN = { 45.f, 0.5f }; //Charge windup spin
 	const CircularMotionData FIRE_SPIT_WINDUP_SPIN = { -30.f, 0.3f }; //Fire spit windup spin
 	const CircularMotionData FIRE_SPIT_RELEASE_SPIN = { 40.f, 0.2f }; //Fire spit windup spin
-	const CircularMotionData NEGLIGIBLE_SPIN = { 0.1f, 1.f }; //No spin, to maintain a spin from previous motion
+	const CircularMotionData NEGLIGIBLE_SPIN = { 0.1f, 0.8f }; //No spin, to maintain a spin from previous motion
 
 	//Motions																							(bools: circular, line, spin, damage, loop)
 	//Normal melee motions

@@ -2,7 +2,7 @@
 #include "maths.h"
 
 //Finds the direction of movement
-void GetMovementBools(const int& type, const Weapon& weapon, const Dim2Df& frameMovementVector, const float& projectileAngle, bool movingLeft, bool& movingRight, bool& movingUp, bool& movingDown)
+void GetMovementBools(const int& type, const Weapon& weapon, const Dim2Df& frameMovementVector, const float& projectileAngle, bool& movingLeft, bool& movingRight, bool& movingUp, bool& movingDown)
 {
 	if (type == GC::C_ENTITY_BODY_ATTACK)
 	{
@@ -414,7 +414,29 @@ void StopMotion(const int& type, Weapon& weapon, Projectile& projectile, const b
 	{
 		if (type == GC::C_ENTITY_BODY_ATTACK)
 		{
-			weapon.StopAttackIfTrue(collided);
+			//Only stop line or circular motions
+			if (weapon.attack0.active)
+			{
+				if (weapon.attack0.motions[0].active && (weapon.attack0.motions[0].line || weapon.attack0.motions[0].circular))
+				{
+					weapon.StopAttackIfTrue(collided);
+				}
+				else if (weapon.attack0.motions[1].active && (weapon.attack0.motions[1].line || weapon.attack0.motions[1].circular))
+				{
+					weapon.StopAttackIfTrue(collided);
+				}
+			}
+			else if (weapon.attack1.active)
+			{
+				if (weapon.attack1.motions[0].active && (weapon.attack1.motions[0].line || weapon.attack1.motions[0].circular))
+				{
+					weapon.StopAttackIfTrue(collided);
+				}
+				else if (weapon.attack1.motions[1].active && (weapon.attack1.motions[1].line || weapon.attack1.motions[1].circular))
+				{
+					weapon.StopAttackIfTrue(collided);
+				}
+			}
 		}
 		else if (type == GC::C_PROJECTILE)
 		{
@@ -438,11 +460,13 @@ void CheckMapCollision(const GameData& game, const int& type, sf::Sprite& sprite
 	{
 		wallSideWidth *= GC::ENEMY_ATTACK_C_OFFSET;
 	}
-	else
-	{
-		collisionBox.top += collisionBox.height - GC::FEET_COLLISION_HEIGHT;
-		collisionBox.height = GC::FEET_COLLISION_HEIGHT;
-	}
+	//else
+	//{
+	//	collisionBox.top += collisionBox.height - GC::FEET_COLLISION_HEIGHT;
+	//	collisionBox.height = GC::FEET_COLLISION_HEIGHT;
+	//}
+	collisionBox.top += collisionBox.height - GC::FEET_COLLISION_HEIGHT;
+	collisionBox.height = GC::FEET_COLLISION_HEIGHT;
 
 	//Each of the functions below finds collision rectangles of specific tiles and offset them slightly for smooth wall sliding
 	//Increases map collision rect in the direction of movement and decrease in the perpendicular direction for better wall sliding
