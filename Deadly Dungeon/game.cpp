@@ -106,11 +106,11 @@ void UpdateProjectiles(GameData& game, std::vector<Projectile>& projList, std::v
 //Updates all active projectiles
 void RenderProjectiles(sf::RenderWindow& window, std::vector<Projectile>& projList)
 {
-	for (short index = 0; index < GC::MAX_PROJECTILES; ++index)
+	for (int i = 0; i < GC::MAX_PROJECTILES; i++)
 	{
-		if (projList[index].active)
+		if (projList[i].active)
 		{
-			projList[index].Render(window);
+			projList[i].Render(window);
 		}
 	}
 }
@@ -221,7 +221,7 @@ Dim2Df GetValidEnemySpawn(const std::vector<Room>& rooms, const Dim2Df& playerPo
 		{
 			found = true;
 		}
-		
+
 		attempts += 1;
 	}
 
@@ -345,7 +345,7 @@ char CreateEnemyWave(std::vector<Enemy>& enemies, const short& difficulty)
 void Game::Init(sf::RenderWindow& window, Input& input)
 {
 	//Random
-	srand((int)time(0)); //Sets random's seed to current time, for "true random"
+	srand(static_cast<int>(time(0))); //Sets random's seed to current time, for "true random"
 
 	//Game data
 	data.Init(window, input);
@@ -377,18 +377,22 @@ void Game::Init(sf::RenderWindow& window, Input& input)
 	InitProjectiles(data, projectiles);
 }
 
-void Game::GameLoop(sf::RenderWindow& window)
-{
-	
-}
-
-void Game::IsPlayerDead()
+void Game::IsPlayerDead(sf::RenderWindow& window, int& state)
 {
 	if (data.playerDead)
 	{
+		//SAVE METRICS TO DATABASE
+		
 		//END THE GAME SESSION
 		printf("I need to do things because the player is dead!\n");
+		ExitGame(window, state);
 	}
+}
+
+void Game::ExitGame(sf::RenderWindow& window, int& state)
+{
+	state = GC::S_MAIN_MENU;
+	window.setView(window.getDefaultView());
 }
 
 void Game::EnemyUpdate()
@@ -454,10 +458,15 @@ void Game::SpawnEnemies()
 }
 
 //
-void Game::Update()
+void Game::Update(sf::RenderWindow& window, const Input& input, int& state)
 {
 	//Check for end game
-	IsPlayerDead();
+	IsPlayerDead(window, state);
+
+	if (input.escapePressed)
+	{
+		ExitGame(window, state);
+	}
 
 	//Clock
 	data.elapsed = clock.getElapsedTime().asSeconds();

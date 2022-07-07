@@ -72,6 +72,12 @@ void Player::InputHandling(GameData& game, std::vector<Room>& rooms)
 
 void Player::KeyboardControls(GameData& game, std::vector<Room>& rooms)
 {
+	//Exit game
+	if (input->escapePressed)
+	{
+		game.exitGame = true;
+	}
+	
 	//Movement
 	KeyboardMovement();
 
@@ -299,8 +305,8 @@ void Player::UpdateInvulnerability(GameData& game)
 
 		entity.invulnerable = true;
 		entity.invulnerabilityTimer = GC::PLAYER_HIT_INVULNERABILITY;
-		entity.sprite.setColor(GC::PLAYER_HIT_COLOUR);
-		entity.weapon.sprite.setColor(GC::PLAYER_HIT_COLOUR);
+		entity.sprite.setColor(GC::PLAYER_COLOUR);
+		entity.weapon.sprite.setColor(GC::PLAYER_COLOUR);
 		hit = false;
 	}
 	else if (entity.invulnerable)

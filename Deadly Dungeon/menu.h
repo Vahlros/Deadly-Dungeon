@@ -4,15 +4,20 @@
 struct Menu
 {
 	//Main stats
-	int ID = -1;
+	int ID = -1; //Menu ID
+	int fromID = -1; //Menu ID of the previous menu
 	std::vector <Button> buttons;
 
 	//SFML
-	sf::Texture background;
 	sf::Sprite sprite;
 
+	//Changes colour and sets mouseHover bool to true if the mouse is hovering over the button
+	void UpdateButtonHover(const Dim2Df& mousePosition);
+
 	//
-	//void CheckButtonHover();
+	void CheckClick(const Input& input, int& state, bool& startGame);
+
+	void Render(sf::RenderWindow& window);
 };
 
 namespace GC //Game constants
@@ -22,11 +27,16 @@ namespace GC //Game constants
 	
 	//Menus: General
 	const int NUM_MENUS = 3;
-	const int NUM_MENU_TEXTURES = 4;
+	const int NUM_MENU_TEXTURES = 5;
+	//Menus: Main Menu
+	const int MAIN_MENU_NUM_BUTTONS = 3;
+	const Dim2Df MAIN_PLAY_POSITION = { 1460.f, 611.f };
+	const Dim2Df MAIN_SCORES_POSITION = { 1355.f, 769.f };
+	const Dim2Df MAIN_TUTORIAL_POSITION = { 1222.f, 930.f };
 }
 
-void InitializeMenus(std::vector <Menu>& menus);
+void InitializeMenus(std::vector <sf::Texture>& menuTextures, std::vector <Menu>& menus);
 
-void MenusInputHandling(sf::RenderWindow& window, Player& player, const int& state, GameData& game, std::vector<Room>& rooms);
+void MenusInputHandling(sf::RenderWindow& window, int& state, const Input& input, std::vector<Menu>& menus, Game& game, bool& startGame);
 
-void GameInputHandling();
+void RenderMenus(sf::RenderWindow& window, std::vector<Menu>& menus, int& state);

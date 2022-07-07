@@ -152,9 +152,6 @@ void GameData::Init(sf::RenderWindow& window, Input& inputRef)
 	screenResolution.x = sf::VideoMode::getDesktopMode().width;
 	screenResolution.y = sf::VideoMode::getDesktopMode().height;
 
-	//Window
-	window.create(sf::VideoMode(screenResolution.x, screenResolution.y), "DD Combat Testing", sf::Style::Fullscreen);
-
 	//Vectors
 	textures.resize(GC::NUM_TEXTURES);
 	collisionMap.resize(GC::MAP_SIZE_TILES);
@@ -209,7 +206,7 @@ void GameData::Init(sf::RenderWindow& window, Input& inputRef)
 	//UI Textures
 	textures[GC::COIN_TEXTURE].create(GC::COINS_ANIM_RECT.width, GC::COINS_ANIM_RECT.height);
 	textures[GC::COIN_TEXTURE].loadFromImage(spritesheetImg, GC::COINS_ANIM_RECT);
-	
+
 	//Scaling
 	if ((screenResolution.x == 3840) && (screenResolution.y == 2160))
 	{
@@ -225,10 +222,10 @@ void GameData::Init(sf::RenderWindow& window, Input& inputRef)
 	}
 
 	//Camera
-	cameraDimensions.x = (float)screenResolution.x / scaling;
-	cameraDimensions.y = (float)screenResolution.y / scaling;
+	cameraDimensions.x = static_cast<float>(screenResolution.x) / scaling;
+	cameraDimensions.y = static_cast<float>(screenResolution.y) / scaling;
 
-	camera.setSize((float)cameraDimensions.x, (float)cameraDimensions.y);
+	camera.setSize(static_cast<float>(cameraDimensions.x), static_cast<float>(cameraDimensions.y));
 	camera.setCenter(684.f, 684.f);
 	window.setView(camera);
 
@@ -236,7 +233,7 @@ void GameData::Init(sf::RenderWindow& window, Input& inputRef)
 	mapSprite.setTexture(textures[GC::MAP_FLOOR_TEXTURE], true);
 
 	//Font
-	font.loadFromFile("tiny.regular.ttf");
+	font.loadFromFile("SHOWG.ttf");
 }
 
 void GameData::RenderMap(sf::RenderWindow& window, const Dim2Df position)

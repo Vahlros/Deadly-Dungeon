@@ -25,11 +25,11 @@ struct Game
 	//Initializes the game session
 	void Init(sf::RenderWindow& window, Input& input);
 
-	//Main game loop
-	void GameLoop(sf::RenderWindow& window);
-
 	//Check player death
-	void IsPlayerDead();
+	void IsPlayerDead(sf::RenderWindow& window, int& state);
+
+	//
+	void ExitGame(sf::RenderWindow& window, int& state);
 
 	//Keeps track of difficulty and enemy spawning
 	void EnemyUpdate();
@@ -40,7 +40,7 @@ struct Game
 	void SpawnEnemies();
 
 	//
-	void Update();
+	void Update(sf::RenderWindow& window, const Input& input, int& state);
 
 	//
 	void Render(sf::RenderWindow& window);

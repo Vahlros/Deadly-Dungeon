@@ -15,7 +15,7 @@ void Input::ProcessEvents(sf::RenderWindow& window)
 		{
 			if (event.key.code == sf::Keyboard::Escape)
 			{
-				window.close();
+				escapePressed = true;
 			}
 			else if (event.key.code == sf::Keyboard::E)
 			{

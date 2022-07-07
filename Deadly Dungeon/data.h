@@ -94,11 +94,9 @@ struct GameData
 	Dim2Df cameraDimensions = { 0, 0 }; //Global position and area of the camera, in pixels
 	sf::View camera{}; //View for the window, zoomed in so that the map and sprites can be drawn in pixels
 
-	//States
-	char gameState = 0; //Current game state
-
 	//Operational bools
 	bool playerDead = false; //If the player has died
+	bool exitGame = false; //If escape has been pressed
 
 	//Timers
 	float elapsed = 0.f; //Time elapsed since last frame
@@ -132,7 +130,7 @@ struct GameData
 namespace GC
 {
 	//Enums
-	enum GAME_STATE { S_MAIN_MENU, S_PLAYING, S_WIN, S_LOSE }; //Current game state
+	enum GAME_STATE { S_MAIN_MENU, S_SCORES, S_TUTORIAL, S_PLAYING, S_WIN, S_LOSE }; //Current game state
 	enum DIRECTIONS { NORTH, EAST, SOUTH, WEST }; //NESW directions
 	enum TEXTURE_LIST { //Texture IDs
 		SPRITESHEET_TEXTURE, MAP_FLOOR_TEXTURE, TILE_TEXTURE, WALL_SIDE_TEXTURE, WALL_TOP_TEXTURE, WALL_SIDE_TOP_TEXTURE, WATER_FOUNTAIN_TEXTURE, LAVA_FOUNTAIN_TEXTURE,
@@ -356,8 +354,8 @@ namespace GC
 	const float KNOCKBACK_INVULNERABILITY = 0.15f; //How long an entity is invulnerable for in knockback
 
 	//Colours
-	const sf::Color PLAYER_HIT_COLOUR = sf::Color(51, 102, 255); //Softer blue than default
-	const sf::Color PLAYER_PROJECTILE_COLOUR = sf::Color(153, 204, 0); //Softer green than default
+	const sf::Color PLAYER_COLOUR = sf::Color(51, 102, 255); //Softer blue than default
+	const sf::Color FONT_COLOUR = sf::Color(211, 191, 169); //Should be cream-ish?
 
 	//Shop: Text
 	const char TEXT_CHARACTER_SIZE = 40;

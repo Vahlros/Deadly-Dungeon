@@ -5,9 +5,8 @@
 struct Button
 {
 	int ID = 0;
+	bool mouseHover = false;
 	sf::Sprite sprite{};
-
-	void CheckIfHovered();
 };
 
 struct GameUI

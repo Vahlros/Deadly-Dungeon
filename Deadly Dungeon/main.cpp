@@ -43,35 +43,60 @@ int main()
 {
 	//Window
 	sf::RenderWindow window;
+	window.create(sf::VideoMode(sf::VideoMode::getDesktopMode()), "DD Combat Testing", sf::Style::Fullscreen);
 	window.setFramerateLimit(GC::FRAMERATE);
 
 	//Menus
-	std::vector <sf::Texture> menuTextures(GC::NUM_MENU_TEXTURES);
-	menuTextures;
+	std::vector <sf::Texture> menuTextures;
+	std::vector <Menu> menus;
+	InitializeMenus(menuTextures, menus);
+
+	//State
+	int gameState = GC::S_MAIN_MENU;
+	bool gameStarted = false;
 
 	//Input
 	Input input;
 
 	//Game
 	Game game;
-	game.Init(window, input);
 
 	//Cursor
 	sf::Cursor cursor;
 	GetCursorImage(cursor, window);
 
-
-	//Start the game loop 
+	//Start the game loop
 	while (window.isOpen()) //Could change this to a state manager?
 	{
 		input.Clear();
 		input.ProcessEvents(window);
 
-		game.Update();
-		game.GameLoop(window);
+		if (gameState < GC::S_PLAYING) //In menus
+		{
+			MenusInputHandling(window, gameState, input, menus, game, gameStarted);
+		}
+		else
+		{
+			game.Update(window, input, gameState);
+		}
+
+		if (gameStarted)
+		{
+			game.Init(window, input);
+			gameStarted = false;
+		}
 
 		window.clear(sf::Color::Black);
-		game.Render(window); //OR menus.Render(window);
+
+		if (gameState < GC::S_PLAYING) //In menus
+		{
+			RenderMenus(window, menus, gameState);
+		}
+		else
+		{
+			game.Render(window);
+		}
+
 		window.display();
 	}
 }
