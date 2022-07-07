@@ -91,7 +91,7 @@ void CheckProjectileCollision(GameData& game, Projectile& proj, std::vector<Enem
 }
 
 //Updates all active projectiles
-void UpdateProjectiles(GameData& game, sf::RenderWindow& window, std::vector<Projectile>& projList, std::vector<Enemy>& enemies, Player& player)
+void UpdateProjectiles(GameData& game, std::vector<Projectile>& projList, std::vector<Enemy>& enemies, Player& player)
 {
 	for (short index = 0; index < GC::MAX_PROJECTILES; ++index)
 	{
@@ -99,6 +99,17 @@ void UpdateProjectiles(GameData& game, sf::RenderWindow& window, std::vector<Pro
 		{
 			projList[index].Update(game);
 			CheckProjectileCollision(game, projList[index], enemies, player);
+		}
+	}
+}
+
+//Updates all active projectiles
+void RenderProjectiles(sf::RenderWindow& window, std::vector<Projectile>& projList)
+{
+	for (short index = 0; index < GC::MAX_PROJECTILES; ++index)
+	{
+		if (projList[index].active)
+		{
 			projList[index].Render(window);
 		}
 	}
@@ -331,13 +342,13 @@ char CreateEnemyWave(std::vector<Enemy>& enemies, const short& difficulty)
 	return enemiesCreated;
 }
 
-void Game::Init(sf::RenderWindow& window)
+void Game::Init(sf::RenderWindow& window, Input& input)
 {
 	//Random
 	srand((int)time(0)); //Sets random's seed to current time, for "true random"
 
 	//Game data
-	data.Init(window);
+	data.Init(window, input);
 
 	//UI
 	ui.Init(data);
@@ -353,7 +364,7 @@ void Game::Init(sf::RenderWindow& window)
 
 	//Player
 	data.playerPosition = GetRandomSpawn(roomList, false, 1);
-	player1.Init(data, data.playerPosition, roomList);
+	player1.Init(data, data.playerPosition, roomList, input);
 	data.playerHit = &player1.hit;
 
 	//Enemy
@@ -368,38 +379,7 @@ void Game::Init(sf::RenderWindow& window)
 
 void Game::GameLoop(sf::RenderWindow& window)
 {
-	//Check for end game
-	IsPlayerDead();
-
-	//Clock
-	data.elapsed = clock.getElapsedTime().asSeconds();
-	data.metrics.totalTime += data.elapsed;
-	if (data.elapsed > GC::APPROX_ELAPSED)
-	{
-		data.elapsed = GC::APPROX_ELAPSED; //Clamp elapsed time, for testing purposes
-	}
-	clock.restart();
-
-	//Player input
-	player1.Update(window, data, projectiles, enemyList, roomList);
-
-	//Update the window
-	data.RenderMap(window, player1.entity.sprite.getPosition());
-
-	//Render rooms
-	RenderRooms(data, window, roomList);
-
-	//Enemy
-	EnemyManager(window);
-
-	//Render Projectiles
-	UpdateProjectiles(data, window, projectiles, enemyList, player1);
-
-	//Render player
-	player1.entity.Render(window, data);
-
-	//Render UI last
-	ui.Render(data, window, player1.entity.health, player1.coins);
+	
 }
 
 void Game::IsPlayerDead()
@@ -411,15 +391,13 @@ void Game::IsPlayerDead()
 	}
 }
 
-void Game::EnemyManager(sf::RenderWindow& window)
+void Game::EnemyUpdate()
 {
-	//Update all active enemies
 	for (unsigned char index = 0; index < enemyList.size(); index++)
 	{
 		if (enemyList[index].active)
 		{
 			enemyList[index].Update(data, projectiles, roomList, player1.entity);
-			enemyList[index].entity.Render(window, data);
 		}
 	}
 
@@ -430,6 +408,17 @@ void Game::EnemyManager(sf::RenderWindow& window)
 	{
 		enemySpawnTimer = GC::ENEMY_SPAWN_TIME;
 		SpawnEnemies();
+	}
+}
+
+void Game::EnemyRender(sf::RenderWindow& window)
+{
+	for (unsigned char index = 0; index < enemyList.size(); index++)
+	{
+		if (enemyList[index].active)
+		{
+			enemyList[index].entity.Render(window, data);
+		}
 	}
 }
 
@@ -462,4 +451,51 @@ void Game::SpawnEnemies()
 
 		found = false;
 	}
+}
+
+//
+void Game::Update()
+{
+	//Check for end game
+	IsPlayerDead();
+
+	//Clock
+	data.elapsed = clock.getElapsedTime().asSeconds();
+	data.metrics.totalTime += data.elapsed;
+	if (data.elapsed > GC::APPROX_ELAPSED)
+	{
+		data.elapsed = GC::APPROX_ELAPSED; //Clamp elapsed time, for testing purposes
+	}
+	clock.restart();
+
+	//Player
+	player1.Update(data, projectiles, enemyList, roomList);
+
+	//Enemy
+	EnemyUpdate();
+
+	//Projectiles
+	UpdateProjectiles(data, projectiles, enemyList, player1);
+}
+
+//
+void Game::Render(sf::RenderWindow& window)
+{
+	//Map
+	data.RenderMap(window, player1.entity.sprite.getPosition());
+
+	//Rooms
+	RenderRooms(data, window, roomList);
+
+	//Enemy
+	EnemyRender(window);
+
+	//Projectiles
+	RenderProjectiles(window, projectiles);
+
+	//Player
+	player1.entity.Render(window, data);
+
+	//UI
+	ui.Render(data, window, player1.entity.health, player1.coins);
 }

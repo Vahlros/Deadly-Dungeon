@@ -24,29 +24,32 @@ struct Player
 	//Structs
 	Entity entity{};
 
+	//Input
+	Input* input;
+
 	//Initializes player
-	void Init(GameData& game, const Dim2Df& spawnPosition, std::vector<Room>& rooms);
+	void Init(GameData& game, const Dim2Df& spawnPosition, std::vector<Room>& rooms, Input& inputRef);
 
 	//Get inputs and react
-	void InputHandling(sf::RenderWindow& window, GameData& game, std::vector<Room>& rooms);
+	void InputHandling(GameData& game, std::vector<Room>& rooms);
 
 	//Controls for keyboard
-	void KeyboardControls(const sf::Event& event, GameData& game, std::vector<Room>& rooms);
+	void KeyboardControls(GameData& game, std::vector<Room>& rooms);
 
 	//Find movement vector based on booleans
-	void KeyboardMovement(const sf::Event& event);
+	void KeyboardMovement();
 
 	//Find the entity's facing angle based on mouse position
 	void GetMouseAngle(const GameData& game);
 
 	//Controls for gamepad
-	void GamepadControls(const sf::Event& event);
+	void GamepadControls();
 
 	//Checks attack collision against enemies
 	void CheckAttackCollision(GameData& game, std::vector<Enemy>& enemies);
 
 	//Updates player state
-	void Update(sf::RenderWindow& window, GameData& game, std::vector<Projectile>& projectiles, std::vector<Enemy>& enemies, std::vector<Room>& rooms);
+	void Update(GameData& game, std::vector<Projectile>& projectiles, std::vector<Enemy>& enemies, std::vector<Room>& rooms);
 
 	//Initiates after hit invulnerability
 	void UpdateInvulnerability(GameData& game);

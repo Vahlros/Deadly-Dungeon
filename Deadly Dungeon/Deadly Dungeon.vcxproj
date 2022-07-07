@@ -149,8 +149,10 @@
     <ClCompile Include="entity.cpp" />
     <ClCompile Include="game.cpp" />
     <ClCompile Include="graphics.cpp" />
+    <ClCompile Include="input.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="maths.cpp" />
+    <ClCompile Include="menu.cpp" />
     <ClCompile Include="motion.cpp" />
     <ClCompile Include="player.cpp" />
     <ClCompile Include="rooms.cpp" />
@@ -164,7 +166,9 @@
     <ClInclude Include="entity.h" />
     <ClInclude Include="game.h" />
     <ClInclude Include="graphics.h" />
+    <ClInclude Include="input.h" />
     <ClInclude Include="maths.h" />
+    <ClInclude Include="menu.h" />
     <ClInclude Include="motion.h" />
     <ClInclude Include="player.h" />
     <ClInclude Include="rooms.h" />

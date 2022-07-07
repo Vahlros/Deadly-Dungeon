@@ -23,7 +23,7 @@ struct Game
 	//Other stuff currently unknown to those who seek to wield it
 
 	//Initializes the game session
-	void Init(sf::RenderWindow& window);
+	void Init(sf::RenderWindow& window, Input& input);
 
 	//Main game loop
 	void GameLoop(sf::RenderWindow& window);
@@ -32,13 +32,18 @@ struct Game
 	void IsPlayerDead();
 
 	//Keeps track of difficulty and enemy spawning
-	void EnemyManager(sf::RenderWindow& window);
+	void EnemyUpdate();
+
+	void EnemyRender(sf::RenderWindow& window);
 
 	//Spawn enemies
 	void SpawnEnemies();
 
-	//Handles all SFML events
-	void EventHandling();
+	//
+	void Update();
+
+	//
+	void Render(sf::RenderWindow& window);
 };
 
 namespace GC //Game constants

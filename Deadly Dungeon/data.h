@@ -3,10 +3,10 @@
 #include <string>
 #include <assert.h>
 #include <vector>
-#include "SFML/Graphics.hpp"
+#include "input.h"
 
-using Dim2Df = sf::Vector2f;
-using Dim2Di = sf::Vector2i;
+//Came from help from the SFML discord server, centres text origin
+void CentreTextOrigin(sf::Text& text);
 
 //Angle from clockwise NESW axis, calculated in radians
 //Notes: Can be converted to degrees for SFML, be wary of conversion usage
@@ -96,7 +96,6 @@ struct GameData
 
 	//States
 	char gameState = 0; //Current game state
-	char input = 0; //Keyboard or controller
 
 	//Operational bools
 	bool playerDead = false; //If the player has died
@@ -106,6 +105,9 @@ struct GameData
 
 	//Positioning
 	Dim2Df playerPosition{};
+
+	//Input
+	Input* input;
 
 	//Vectors
 	std::vector<sf::Texture> textures; //Vector of all textures
@@ -120,7 +122,7 @@ struct GameData
 	bool* playerHit = nullptr; //If the player has just been hit
 
 	//Initializes game session
-	void Init(sf::RenderWindow& window);
+	void Init(sf::RenderWindow& window, Input& inputRef);
 
 	//Renders the map onto the camera, based on player position
 	void RenderMap(sf::RenderWindow& window, const Dim2Df position);
@@ -130,7 +132,7 @@ struct GameData
 namespace GC
 {
 	//Enums
-	enum GAME_STATE { MAIN_MENU, PLAYING, WIN, LOSE }; //Current game state
+	enum GAME_STATE { S_MAIN_MENU, S_PLAYING, S_WIN, S_LOSE }; //Current game state
 	enum DIRECTIONS { NORTH, EAST, SOUTH, WEST }; //NESW directions
 	enum TEXTURE_LIST { //Texture IDs
 		SPRITESHEET_TEXTURE, MAP_FLOOR_TEXTURE, TILE_TEXTURE, WALL_SIDE_TEXTURE, WALL_TOP_TEXTURE, WALL_SIDE_TOP_TEXTURE, WATER_FOUNTAIN_TEXTURE, LAVA_FOUNTAIN_TEXTURE,
@@ -153,6 +155,7 @@ namespace GC
 	const float ZERO = 0.f; //Zero
 
 	//Screen: General
+	const Dim2Di CURSOR_DIMENSIONS = { 16, 16 };
 	const float SCALE_1080 = 5.f; //View zoom at 1080p
 	const float SCALE_1440 = 6.4f; //View zoom at 1440p
 	const float SCALE_2160 = 10.f; //View zoom at 2160p
@@ -367,6 +370,3 @@ namespace GC
 	const AnimationData COINS_ANIM_DATA = { 0, COINS_FRAMES - 1, 0.09f }; //Idle animation data for enemies
 	const Dim2Df COINS_ORIGIN = { 4.f, 5.f };
 }
-
-//Came from help from the SFML discord server, centres text origin
-void CentreTextOrigin(sf::Text& text);

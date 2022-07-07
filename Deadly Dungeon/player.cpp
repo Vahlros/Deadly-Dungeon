@@ -34,8 +34,11 @@ void AssignProjectileData(Weapon& weapon, const unsigned char& bulletNum)
 	}
 }
 
-void Player::Init(GameData& game, const Dim2Df& spawnPosition, std::vector<Room>& rooms)
+void Player::Init(GameData& game, const Dim2Df& spawnPosition, std::vector<Room>& rooms, Input& inputRef)
 {
+	//Input
+	input = &inputRef;
+
 	//Stats
 	maxHealth = GC::PLAYER_HEALTH;
 	speed = GC::MEDIUM_MOVEMENT_SPEED;
@@ -61,115 +64,65 @@ void Player::Init(GameData& game, const Dim2Df& spawnPosition, std::vector<Room>
 	entity.weapon.Init(game, entity.isPlayer, entity.anim);
 }
 
-void Player::InputHandling(sf::RenderWindow& window, GameData& game, std::vector<Room>& rooms)
+void Player::InputHandling(GameData& game, std::vector<Room>& rooms)
 {
-	sf::Event event;
-
-	while (window.pollEvent(event))
-	{
-		//Exit application
-		if ((event.type == sf::Event::Closed) || sf::Keyboard::isKeyPressed(sf::Keyboard::Escape))
-		{
-			window.close();
-		}
-
-		//Play inputs
-		if (game.input == GC::GAMEPAD)
-		{
-			GamepadControls(event);
-		}
-		else
-		{
-			KeyboardControls(event, game, rooms);
-		}
-	}
+	//GamepadControls(event);
+	KeyboardControls(game, rooms);
 }
 
-void Player::KeyboardControls(const sf::Event& event, GameData& game, std::vector<Room>& rooms)
+void Player::KeyboardControls(GameData& game, std::vector<Room>& rooms)
 {
 	//Movement
-	KeyboardMovement(event);
+	KeyboardMovement();
 
 	//Entity facing
 	GetMouseAngle(game);
 
 	//Attacks
-	if (event.type == sf::Event::MouseButtonPressed)
+	if (input->leftClickPressed)
 	{
 		if (entity.canAttack && !entity.weapon.attacking)
 		{
-			if (event.mouseButton.button == sf::Mouse::Left)
-			{
-				entity.InitAttack(game, GC::FIRST_ATTACK);
-				entity.weapon.attack0.attackRelease = false;
-			}
-			else if (event.mouseButton.button == sf::Mouse::Right)
-			{
-				entity.InitAttack(game, GC::SECOND_ATTACK);
-				entity.weapon.attack1.attackRelease = false;
-			}
+			entity.InitAttack(game, GC::FIRST_ATTACK);
+			entity.weapon.attack0.attackRelease = false;
 		}
 	}
-	else if (event.type == sf::Event::MouseButtonReleased)
+
+	if (input->rightClickPressed)
 	{
-		if (event.mouseButton.button == sf::Mouse::Left)
+		if (entity.canAttack && !entity.weapon.attacking)
+		{
+			entity.InitAttack(game, GC::SECOND_ATTACK);
+			entity.weapon.attack1.attackRelease = false;
+		}
+	}
+
+	if (entity.weapon.attacking)
+	{
+		if (!input->leftClickHeld)
 		{
 			entity.weapon.attack0.attackRelease = true;
 		}
-		if (event.mouseButton.button == sf::Mouse::Right)
+		if (!input->rightClickHeld)
 		{
 			entity.weapon.attack1.attackRelease = true;
 		}
 	}
-	else if (event.type == sf::Event::KeyReleased)
+
+	//Interactions
+	if (input->ePressed)
 	{
-		if (event.key.code == sf::Keyboard::E)
-		{
-			BuyItemFromShop(game, rooms[entity.roomID].shops);
-		}
+		BuyItemFromShop(game, rooms[entity.roomID].shops);
 	}
 }
 
-void Player::KeyboardMovement(const sf::Event& event)
+void Player::KeyboardMovement()
 {
 	//Movement booleans
-	bool movingLeft = false; //Player is moving left
-	bool movingRight = false; //Player is moving right
-	bool movingUp = false; //Player is moving up
-	bool movingDown = false; //Player is moving down
-
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left) || sf::Keyboard::isKeyPressed(sf::Keyboard::A))
-	{
-		movingLeft = true;
-	}
-	else
-	{
-		movingLeft = false;
-	}
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right) || sf::Keyboard::isKeyPressed(sf::Keyboard::D))
-	{
-		movingRight = true;
-	}
-	else
-	{
-		movingRight = false;
-	}
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up) || sf::Keyboard::isKeyPressed(sf::Keyboard::W))
-	{
-		movingUp = true;
-	}
-	else
-	{
-		movingUp = false;
-	}
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down) || sf::Keyboard::isKeyPressed(sf::Keyboard::S))
-	{
-		movingDown = true;
-	}
-	else
-	{
-		movingDown = false;
-	}
+	bool movingLeft = input->aHeld; //Player is moving left
+	bool movingRight = input->dHeld; //Player is moving right
+	bool movingUp = input->wHeld; //Player is moving up
+	bool movingDown = input->sHeld; //Player is moving down
 
 	//Opposite directions cancel each other out
 	if (movingLeft && movingRight)
@@ -254,13 +207,12 @@ void Player::GetMouseAngle(const GameData& game)
 {
 	//Find origin and target points
 	Dim2Df centre = { (float)(game.screenResolution.x / 2), (float)(game.screenResolution.y / 2) };
-	Dim2Df mousePosition = { (float)mouse.getPosition().x, (float)mouse.getPosition().y };
 
 	//Get vector between points, then calculate directional angle using vector
-	entity.facing = CalculateDirectionalAngleFromVector(CalculateVectorBetweenPoints(centre, mousePosition));
+	entity.facing = CalculateDirectionalAngleFromVector(CalculateVectorBetweenPoints(centre, input->mousePosition));
 }
 
-void Player::GamepadControls(const sf::Event& event)
+void Player::GamepadControls()
 {
 
 }
@@ -315,13 +267,13 @@ void Player::CheckAttackCollision(GameData& game, std::vector<Enemy>& enemies)
 	}
 }
 
-void Player::Update(sf::RenderWindow& window, GameData& game, std::vector<Projectile>& projectiles, std::vector<Enemy>& enemies, std::vector<Room>& rooms)
+void Player::Update(GameData& game, std::vector<Projectile>& projectiles, std::vector<Enemy>& enemies, std::vector<Room>& rooms)
 {
 	//Invulnerability
 	UpdateInvulnerability(game);
 
 	//Input
-	InputHandling(window, game, rooms);
+	InputHandling(game, rooms);
 
 	//Movement
 	if (entity.moving && !dodging)
@@ -434,7 +386,7 @@ void Player::ApplyItemEffects(const GameData& game, const char& itemID)
 	switch (itemID)
 	{
 	case GC::WS_HEALTH:
-		entity.health = GC::BOOSTED_HEALTH;
+		entity.health += GC::BOOSTED_HEALTH - GC::PLAYER_HEALTH;
 		maxHealth = GC::BOOSTED_HEALTH;
 		break;
 

@@ -1,4 +1,5 @@
 #include "data.h"
+#include "input.h"
 
 //Came from help from the SFML discord server, centres text origin
 void CentreTextOrigin(sf::Text& text)
@@ -142,8 +143,11 @@ void Metrics::UpdatePurchases(const char& itemID, const char& price)
 	}
 }
 
-void GameData::Init(sf::RenderWindow& window)
+void GameData::Init(sf::RenderWindow& window, Input& inputRef)
 {
+	//Input
+	input = &inputRef;
+
 	//Resolution
 	screenResolution.x = sf::VideoMode::getDesktopMode().width;
 	screenResolution.y = sf::VideoMode::getDesktopMode().height;

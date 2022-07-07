@@ -2,17 +2,16 @@
 #include "data.h"
 #include "graphics.h"
 
-//Structs
+struct Button
+{
+	int ID = 0;
+	sf::Sprite sprite{};
+
+	void CheckIfHovered();
+};
 
 struct GameUI
 {
-	//General
-
-
-	//Main Menu
-
-
-	//Gameplay
 	//Health
 	sf::Sprite heartSprite{};
 
@@ -43,7 +42,9 @@ struct GameUI
 //Game constants
 namespace GC
 {
+	//Enums
 	enum HEARTS { HEART_EMPTY, HEART_HALF, HEART_FULL }; //Health bar heart states
+	enum BUTTONS { B_BACK, B_PLAY, B_SCORES, B_TUTORIAL };
 
 	//UI: General
 	const int UI_BORDER = 8;

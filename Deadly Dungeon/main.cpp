@@ -1,4 +1,5 @@
-#include "game.h"
+#include "menu.h"
+#include "input.h"
 
 //This is to force laptops to use the dedicated gpu instead of defaulting to the integrated gpu
 extern "C" __declspec(dllexport) unsigned long NvOptimusEnablement = 1;
@@ -29,10 +30,10 @@ extern "C" __declspec(dllexport) unsigned long AmdPowerXpressRequestHighPerforma
 void GetCursorImage(sf::Cursor& cursor, sf::RenderWindow& window)
 {
 	sf::Image tempCursor;
-	tempCursor.create(16, 16);
+	tempCursor.create(GC::CURSOR_DIMENSIONS.x, GC::CURSOR_DIMENSIONS.y);
 	tempCursor.loadFromFile("cursor.png");
 
-	if (cursor.loadFromPixels(tempCursor.getPixelsPtr(), { 16, 16 }, { 0, 0 }))
+	if (cursor.loadFromPixels(tempCursor.getPixelsPtr(), sf::Vector2u(GC::CURSOR_DIMENSIONS), { 0, 0 }))
 	{
 		window.setMouseCursor(cursor);
 	}
@@ -44,24 +45,33 @@ int main()
 	sf::RenderWindow window;
 	window.setFramerateLimit(GC::FRAMERATE);
 
+	//Menus
+	std::vector <sf::Texture> menuTextures(GC::NUM_MENU_TEXTURES);
+	menuTextures;
+
+	//Input
+	Input input;
+
+	//Game
+	Game game;
+	game.Init(window, input);
+
 	//Cursor
 	sf::Cursor cursor;
 	GetCursorImage(cursor, window);
 
-	//Game
-	Game game;
-	game.Init(window);
 
 	//Start the game loop 
 	while (window.isOpen()) //Could change this to a state manager?
 	{
-		// Clear screen
-		window.clear(sf::Color::Black);
-		
+		input.Clear();
+		input.ProcessEvents(window);
+
+		game.Update();
 		game.GameLoop(window);
 
+		window.clear(sf::Color::Black);
+		game.Render(window); //OR menus.Render(window);
 		window.display();
 	}
-
-	return EXIT_SUCCESS;
 }
