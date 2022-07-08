@@ -23,16 +23,17 @@ struct Menu
 namespace GC //Game constants
 {
 	//Enums
-	enum MENUS { MENU_MAIN, MENU_SCORES, MENU_TUTORIAL };
+	enum MENUS { MENU_MAIN, MENU_SCORES, MENU_CONTROLS };
 	
 	//Menus: General
 	const int NUM_MENUS = 3;
-	const int NUM_MENU_TEXTURES = 5;
+	const int NUM_MENU_TEXTURES = 7;
 	//Menus: Main Menu
 	const int MAIN_MENU_NUM_BUTTONS = 3;
 	const Dim2Df MAIN_PLAY_POSITION = { 1460.f, 611.f };
 	const Dim2Df MAIN_SCORES_POSITION = { 1355.f, 769.f };
-	const Dim2Df MAIN_TUTORIAL_POSITION = { 1222.f, 930.f };
+	const Dim2Df MAIN_CONTROLS_POSITION = { 1222.f, 930.f };
+	const Dim2Df BACK_POSITION = { 1587.f, 36.f };
 }
 
 void InitializeMenus(std::vector <sf::Texture>& menuTextures, std::vector <Menu>& menus);

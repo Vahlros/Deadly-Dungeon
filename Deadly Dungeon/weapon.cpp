@@ -16,7 +16,7 @@ void Projectile::Update(const GameData& game)
 		sprite.setPosition(origin);
 
 		//Animation
-		if (data.type == GC::FIRE_SKULL_PROJECTILE || data.type == GC::FIRE_BALL_PROJECTILE)
+		if (data.type == GC::FIRE_SKULL_PROJECTILE || data.type == GC::FIRE_BALL_PROJECTILE || data.type == GC::FROST_BALL_PROJECTILE)
 		{
 			anim.UpdateAnimation(sprite, game.elapsed);
 		}

@@ -6,15 +6,19 @@ void InitializeMenus(std::vector <sf::Texture>& menuTextures, std::vector <Menu>
 
 	//Textures
 	menuTextures[0].create(1920, 1080);
-	menuTextures[0].loadFromFile("main menu background.png");
+	menuTextures[0].loadFromFile("main menu.png");
 	menuTextures[1].create(252, 80);
 	menuTextures[1].loadFromFile("play button.png");
 	menuTextures[2].create(352, 86);
 	menuTextures[2].loadFromFile("scores button.png");
 	menuTextures[3].create(486, 84);
-	menuTextures[3].loadFromFile("tutorial button.png");
+	menuTextures[3].loadFromFile("controls button.png");
 	menuTextures[4].create(252, 83);
 	menuTextures[4].loadFromFile("back button.png");
+	menuTextures[5].create(1920, 1080);
+	menuTextures[5].loadFromFile("scores menu.png");
+	menuTextures[6].create(1920, 1080);
+	menuTextures[6].loadFromFile("controls menu.png");
 
 	menus.resize(GC::NUM_MENUS);
 
@@ -32,14 +36,29 @@ void InitializeMenus(std::vector <sf::Texture>& menuTextures, std::vector <Menu>
 	menus[0].buttons[1].sprite.setPosition(GC::MAIN_SCORES_POSITION);
 	menus[0].buttons[2].ID = GC::B_TUTORIAL;
 	menus[0].buttons[2].sprite.setTexture(menuTextures[3]);
-	menus[0].buttons[2].sprite.setPosition(GC::MAIN_TUTORIAL_POSITION);
+	menus[0].buttons[2].sprite.setPosition(GC::MAIN_CONTROLS_POSITION);
 
 	//Scores
+	menus[1].ID = GC::MENU_SCORES;
+	menus[1].fromID = GC::MENU_MAIN;
+	menus[1].sprite.setTexture(menuTextures[5]);
+	menus[1].sprite.setPosition(0.f, 0.f);
 
+	menus[1].buttons.resize(1);
+	menus[1].buttons[0].ID = GC::B_BACK;
+	menus[1].buttons[0].sprite.setTexture(menuTextures[4]);
+	menus[1].buttons[0].sprite.setPosition(GC::BACK_POSITION);
 
-	//Tutorial
+	//Controls
+	menus[2].ID = GC::MENU_CONTROLS;
+	menus[2].fromID = GC::MENU_MAIN;
+	menus[2].sprite.setTexture(menuTextures[6]);
+	menus[2].sprite.setPosition(0.f, 0.f);
 
-
+	menus[2].buttons.resize(1);
+	menus[2].buttons[0].ID = GC::B_BACK;
+	menus[2].buttons[0].sprite.setTexture(menuTextures[4]);
+	menus[2].buttons[0].sprite.setPosition(GC::BACK_POSITION);
 }
 
 void ButtonPress(int& state, const Button& button, const int& fromID, bool& startGame)
