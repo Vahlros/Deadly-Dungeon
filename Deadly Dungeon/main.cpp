@@ -51,19 +51,20 @@ int main()
 	std::vector <Menu> menus;
 	InitializeMenus(menuTextures, menus);
 
-	//State
-	int gameState = GC::S_MAIN_MENU;
-	bool gameStarted = false;
-
 	//Input
 	Input input;
 
 	//Game
 	Game game;
+	game.Init(window, input);
 
 	//Cursor
 	sf::Cursor cursor;
 	GetCursorImage(cursor, window);
+
+	//State
+	int gameState = GC::S_MAIN_MENU;
+	bool gameStarted = false;
 
 	//Start the game loop
 	while (window.isOpen()) //Could change this to a state manager?
@@ -82,7 +83,7 @@ int main()
 
 		if (gameStarted)
 		{
-			game.Init(window, input);
+			game.NewGame(window);
 			gameStarted = false;
 		}
 

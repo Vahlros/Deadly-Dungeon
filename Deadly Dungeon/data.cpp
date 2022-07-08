@@ -226,8 +226,6 @@ void GameData::Init(sf::RenderWindow& window, Input& inputRef)
 	cameraDimensions.y = static_cast<float>(screenResolution.y) / scaling;
 
 	camera.setSize(static_cast<float>(cameraDimensions.x), static_cast<float>(cameraDimensions.y));
-	camera.setCenter(684.f, 684.f);
-	window.setView(camera);
 
 	//Sprites
 	mapSprite.setTexture(textures[GC::MAP_FLOOR_TEXTURE], true);

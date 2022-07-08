@@ -28,7 +28,7 @@ struct Player
 	Input* input;
 
 	//Initializes player
-	void Init(GameData& game, const Dim2Df& spawnPosition, std::vector<Room>& rooms, Input& inputRef);
+	void Init(GameData& game, Input& inputRef);
 
 	//Get inputs and react
 	void InputHandling(GameData& game, std::vector<Room>& rooms);

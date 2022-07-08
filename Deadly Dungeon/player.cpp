@@ -34,19 +34,13 @@ void AssignProjectileData(Weapon& weapon, const unsigned char& bulletNum)
 	}
 }
 
-void Player::Init(GameData& game, const Dim2Df& spawnPosition, std::vector<Room>& rooms, Input& inputRef)
+void Player::Init(GameData& game, Input& inputRef)
 {
 	//Input
 	input = &inputRef;
 
-	//Stats
-	maxHealth = GC::PLAYER_HEALTH;
-	speed = GC::MEDIUM_MOVEMENT_SPEED;
-	coins = 300;
-
 	//Entity stats
 	entity.isPlayer = true;
-	entity.health = GC::PLAYER_HEALTH;
 	entity.collisionRect = GC::KNIGHT_BODY_RECT;
 	entity.anim.Init(&GC::PLAYER_ANIM_IDLE);
 
@@ -54,14 +48,6 @@ void Player::Init(GameData& game, const Dim2Df& spawnPosition, std::vector<Room>
 	entity.sprite.setTexture(game.textures[GC::KNIGHT_TEXTURE]);
 	entity.sprite.setTextureRect({ 0, 0, GC::KNIGHT_DIMENSIONS.x, GC::KNIGHT_DIMENSIONS.y });
 	entity.sprite.setOrigin(GC::KNIGHT_BODY_CENTRE);
-
-	//Position
-	entity.sprite.setPosition(spawnPosition);
-	entity.FindCurrentRoom(rooms);
-
-	//Weapon
-	entity.weapon = GC::SWORD;
-	entity.weapon.Init(game, entity.isPlayer, entity.anim);
 }
 
 void Player::InputHandling(GameData& game, std::vector<Room>& rooms)
@@ -103,15 +89,22 @@ void Player::KeyboardControls(GameData& game, std::vector<Room>& rooms)
 		}
 	}
 
+	//The new input system forced me to add many bool checks, the same way it works in UpdateAttack()
 	if (entity.weapon.attacking)
 	{
-		if (!input->leftClickHeld)
+		if (entity.weapon.attack0.active && entity.weapon.attack0.hasTwoMotions)
 		{
-			entity.weapon.attack0.attackRelease = true;
+			if (!input->leftClickHeld && !entity.weapon.attack0.motions[0].active && !entity.weapon.attack0.motions[1].active && !entity.weapon.attack0.motionFinished)
+			{
+				entity.weapon.attack0.attackRelease = true;
+			}
 		}
-		if (!input->rightClickHeld)
+		else if (entity.weapon.attack1.active && entity.weapon.attack1.hasTwoMotions)
 		{
-			entity.weapon.attack1.attackRelease = true;
+			if (!input->rightClickHeld && !entity.weapon.attack1.motions[0].active && !entity.weapon.attack1.motions[1].active && !entity.weapon.attack1.motionFinished)
+			{
+				entity.weapon.attack1.attackRelease = true;
+			}
 		}
 	}
 

@@ -3,6 +3,8 @@
 void Shop::SetupShop(const GameData& game, const char& ID)
 {
 	//Assign shop values
+	sold = false;
+	unlimitedItems = false;
 	name.setFont(game.font);
 	name.setFillColor(GC::FONT_COLOUR);
 	name.setCharacterSize(GC::TEXT_CHARACTER_SIZE);

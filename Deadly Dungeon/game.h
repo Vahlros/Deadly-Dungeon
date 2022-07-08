@@ -44,6 +44,8 @@ struct Game
 
 	//
 	void Render(sf::RenderWindow& window);
+
+	void NewGame(sf::RenderWindow& window);
 };
 
 namespace GC //Game constants

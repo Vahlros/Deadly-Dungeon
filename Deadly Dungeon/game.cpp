@@ -360,17 +360,12 @@ void Game::Init(sf::RenderWindow& window, Input& input)
 	roomList[2].Init(data, 2, { 48, 48 });
 	roomList[3].Init(data, 3, { 16, 48 });
 
-	InitShops(data, roomList);
-
 	//Player
-	data.playerPosition = GetRandomSpawn(roomList, false, 1);
-	player1.Init(data, data.playerPosition, roomList, input);
+	player1.Init(data, input);
 	data.playerHit = &player1.hit;
 
 	//Enemy
-	enemySpawnTimer = GC::ENEMY_SPAWN_TIME;
 	enemyList.resize(GC::MAX_ENEMIES);
-	SpawnEnemies();
 
 	//Projectiles
 	projectiles.resize(GC::MAX_PROJECTILES);
@@ -457,7 +452,6 @@ void Game::SpawnEnemies()
 	}
 }
 
-//
 void Game::Update(sf::RenderWindow& window, const Input& input, int& state)
 {
 	//Check for end game
@@ -487,7 +481,6 @@ void Game::Update(sf::RenderWindow& window, const Input& input, int& state)
 	UpdateProjectiles(data, projectiles, enemyList, player1);
 }
 
-//
 void Game::Render(sf::RenderWindow& window)
 {
 	//Map
@@ -507,4 +500,46 @@ void Game::Render(sf::RenderWindow& window)
 
 	//UI
 	ui.Render(data, window, player1.entity.health, player1.coins);
+}
+
+void Game::NewGame(sf::RenderWindow& window)
+{
+	//View
+	window.setView(data.camera);
+
+	//Shops
+	roomList[0].shopCounter = 0;
+	roomList[1].shopCounter = 0;
+	roomList[2].shopCounter = 0;
+	roomList[3].shopCounter = 0;
+	InitShops(data, roomList);
+
+	//Player: Stats
+	player1.coins = 1000;
+	player1.maxHealth = GC::PLAYER_HEALTH;
+	player1.entity.health = GC::PLAYER_HEALTH;
+	player1.speed = GC::MEDIUM_MOVEMENT_SPEED;
+	player1.entity.power = 1.f;
+	player1.knockbackPower = 100.f;
+	player1.entity.attackSpeed = 1.f;
+	//Player: Position
+	player1.entity.sprite.setPosition(GetRandomSpawn(roomList, true, 0));
+	player1.entity.FindCurrentRoom(roomList);
+	//Player: Weapon
+	player1.entity.weapon = GC::SWORD;
+	player1.entity.weapon.Init(data, player1.entity.isPlayer, player1.entity.anim);
+
+	//Enemy
+	for (unsigned int i = 0; i < enemyList.size(); i++)
+	{
+		enemyList[i].active = false;
+	}
+	enemySpawnTimer = GC::ENEMY_SPAWN_TIME;
+	SpawnEnemies();
+
+	//Game data
+	data.metrics = Metrics{};
+	data.playerDead = false;
+	data.exitGame = false;
+	data.elapsed = 0.f;
 }
