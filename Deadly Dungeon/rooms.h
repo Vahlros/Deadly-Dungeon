@@ -104,7 +104,7 @@ struct Room
 	void GetTypeDimensions(int& width, int& height);
 
 	//Draws the tile onto the game map
-	void TileDrawing(GameData& game, const int& x, const int& y, const char& tileID, const char& tileAboveID);
+	void TileDrawing(GameData& game, const int& x, const int& y, char& tileID, const char& tileAboveID);
 
 	//Gets booleans for current tile
 	void TileDrawingBools(const Tile& tile, bool& requiresFloor, bool& wallside, bool& walltop, bool& corner, bool& right, bool& smallWallTop);

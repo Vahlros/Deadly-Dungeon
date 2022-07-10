@@ -183,17 +183,18 @@ namespace GC
 	const ProjectileData PROJECTILE_DATA_STRAIGHT_THROW = { &STRAIGHT_THROW_SLOW, 0.f, 1, 1, 0.f };
 	const ProjectileData PROJECTILE_DATA_SPINNING_THROW = { &SPINNING_THROW_SLOW, 0.f, 1, 1, 0.f };
 	const ProjectileData FIRE_BALL = { &STRAIGHT_THROW_SLOW, 0.f, 1, 2, 15.f, FIRE_BALL_PROJECTILE };
-	const ProjectileData FIRE_BALL_BARRAGE = { &STRAIGHT_THROW_SLOW, 0.f, 1, 15, 12.f, FIRE_BALL_PROJECTILE };
+	const ProjectileData FIRE_SPIT = { &STRAIGHT_THROW_SLOW_LONG, 0.f, 1, 2, 15.f, FIRE_BALL_PROJECTILE };
+	const ProjectileData FIRE_BALL_BARRAGE = { &STRAIGHT_THROW_SLOW_LONG, 0.f, 1, 15, 12.f, FIRE_BALL_PROJECTILE };
 	const ProjectileData FIRE_BALL_VORTEX = { &CIRCLE_OF_DOOM, 8.f, 1, 12, 30.f, FIRE_BALL_PROJECTILE };
-	const ProjectileData PLAYER_FROST_BALL1 = { &STRAIGHT_THROW_SLOW, 0.f, 1, 1, 15.f, FROST_BALL_PROJECTILE };
-	const ProjectileData PLAYER_FROST_BALL2 = { &STRAIGHT_THROW_SLOW, 0.f, 1, 2, 15.f, FROST_BALL_PROJECTILE };
-	const ProjectileData PLAYER_FROST_BALL3 = { &STRAIGHT_THROW_SLOW, 0.f, 1, 3, 15.f, FROST_BALL_PROJECTILE };
-	const ProjectileData PLAYER_FROST_BALL4 = { &STRAIGHT_THROW_SLOW, 0.f, 1, 4, 15.f, FROST_BALL_PROJECTILE };
-	const ProjectileData PLAYER_FROST_BALL5 = { &STRAIGHT_THROW_SLOW, 0.f, 1, 9, 10.f, FROST_BALL_PROJECTILE };
+	const ProjectileData PLAYER_FROST_BALL1 = { &STRAIGHT_THROW_SLOW_SHORT, 0.f, 1, 1, 15.f, FROST_BALL_PROJECTILE };
+	const ProjectileData PLAYER_FROST_BALL2 = { &STRAIGHT_THROW_SLOW_SHORT, 0.f, 1, 2, 15.f, FROST_BALL_PROJECTILE };
+	const ProjectileData PLAYER_FROST_BALL3 = { &STRAIGHT_THROW_SLOW_SHORT, 0.f, 1, 3, 15.f, FROST_BALL_PROJECTILE };
+	const ProjectileData PLAYER_FROST_BALL4 = { &STRAIGHT_THROW_SLOW_SHORT, 0.f, 1, 4, 15.f, FROST_BALL_PROJECTILE };
+	const ProjectileData PLAYER_FROST_BALL5 = { &STRAIGHT_THROW_SLOW_SHORT, 0.f, 1, 9, 10.f, FROST_BALL_PROJECTILE };
 
 	//Attacks										(bools: summonProjectile, movingWithEntity, followingFacing, hasTwoMotions, arcCentredOnInitialAngle, hasRandomSwingDirection, uniqueAnimation -> if true -> animOnMotion0, animOnMotion1)
 	//Swing
-	const Attack NORMAL_SWING_ATTACK = { {NORMAL_SWING_RELEASE}, {}, {}, 0,												false, true, true, false, true, true, false }; //Normal swing attack
+	const Attack NORMAL_SWING_ATTACK = { {NORMAL_SWING_RELEASE}, {}, {}, 0,												false, true, false, false, true, true, false }; //Normal swing attack
 	const Attack HEAVY_SWING_ATTACK = { {HEAVY_SWING_WINDUP, GC::HEAVY_SWING_RELEASE}, {}, {}, 12,						false, true, true, true, false, false, false }; //Heavy swing attack
 	const Attack HEAVY_F_SWING_ATTACK = { {HEAVY_SWING_WINDUP, GC::HEAVY_F_SWING_RELEASE}, {}, {}, 16,					false, true, true, true, false, false, false }; //Heavy fancy swing attack, to give the player a slight edge
 	//Thrust
@@ -207,10 +208,10 @@ namespace GC
 	//Enemy attacks
 	const Attack HORN_STAB = { {HORN_STAB_JUMP}, {}, {}, 64,															false, false, false, false, false, false, false }; //Horn stab jump attack
 	const Attack CHARGE = { {CHARGE_WINDUP, CHARGE_RELEASE}, {}, &ENEMY_ANIM_MOVE, 160,									false, false, false, true, false, false, true, false, true }; //Horn charge attack
-	const Attack BITE = { {BITE_WINDUP}, &FIRE_BALL, &ENEMY_ANIM_BITE, 64,												true, false, true, false, false, false, true, true, false }; //Bite attack
-	const Attack BITE_BARRAGE = { {BITE_WINDUP}, &FIRE_BALL_BARRAGE, &ENEMY_ANIM_BITE, 64,								true, false, true, false, false, false, true, true, false }; //Bite barrage attack
-	const Attack BITE_WAVE = { {BITE_WINDUP}, &FIRE_BALL_VORTEX, &ENEMY_ANIM_BITE, 96,									true, false, true, false, false, false, true, true, false }; //Bite wave attack
-	const Attack FIRE_BALL_SPIT = { {FIRE_BALL_SPIT_WINDUP, FIRE_BALL_SPIT_RELEASE}, &FIRE_BALL, {}, 64,				true, false, true, true, false, false, false, false, false }; //Fire spit attack
+	const Attack BITE = { {BITE_WINDUP}, &FIRE_BALL, &ENEMY_ANIM_BITE, 96,												true, false, true, false, false, false, true, true, false }; //Bite attack
+	const Attack BITE_BARRAGE = { {BITE_WINDUP}, &FIRE_BALL_BARRAGE, &ENEMY_ANIM_BITE, 160,								true, false, true, false, false, false, true, true, false }; //Bite barrage attack
+	const Attack BITE_WAVE = { {BITE_WINDUP}, &FIRE_BALL_VORTEX, &ENEMY_ANIM_BITE, 160,									true, false, true, false, false, false, true, true, false }; //Bite wave attack
+	const Attack FIRE_BALL_SPIT = { {FIRE_BALL_SPIT_WINDUP, FIRE_BALL_SPIT_RELEASE}, &FIRE_BALL, {}, 160,				true, false, true, true, false, false, false, false, false }; //Fire spit attack
 	//Weapons																									(bools: hasTwoAttacks, entityIsWeapon)
 	const Weapon SWORD = { NORMAL_SWING_ATTACK, HEAVY_SWING_ATTACK, ID_SWORD, &SWORD_RECT, &SWORD_ORIGIN,						true, false }; //Normal sword, starting weapon for the knight?
 	const Weapon FANCY_SWORD = { NORMAL_SWING_ATTACK, HEAVY_F_SWING_ATTACK, ID_FANCY_SWORD, &F_SWORD_RECT, &F_SWORD_ORIGIN,		true, false }; //Big fancy sword, used by the knight?

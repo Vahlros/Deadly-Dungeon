@@ -84,7 +84,7 @@ bool CheckCollisionLeft(const GameData& game, const sf::FloatRect& collisionBox,
 		}
 		else if (tile == GC::C_WALL_TOP)
 		{
-			tileRect = { collisionPoint.x * GC::TILE_SIZE, (collisionPoint.y * GC::TILE_SIZE) + GC::TILE_SIZE - (GC::WALL_TOP_HEIGHT - GC::C_OFFSET), GC::TILE_SIZE, GC::WALL_TOP_HEIGHT - GC::C_OFFSET };
+			tileRect = { collisionPoint.x * GC::TILE_SIZE, (collisionPoint.y * GC::TILE_SIZE) + GC::TILE_SIZE - (GC::WALL_TOP_HEIGHT - GC::C_OFFSET), GC::TILE_SIZE + GC::C_OFFSET, GC::WALL_TOP_HEIGHT };
 		}
 		else if ((tile == GC::C_WALL_SIDE_LEFT) || (tile == GC::C_CORNER_BOTTOM_LEFT))
 		{
@@ -111,7 +111,7 @@ bool CheckCollisionLeft(const GameData& game, const sf::FloatRect& collisionBox,
 		if (collisionBox.intersects(tileRect, intersection))
 		{
 			collided = true;
-			frameMovementVector.x = 0;
+			frameMovementVector.x = 0.f;
 		}
 	}
 
@@ -125,7 +125,7 @@ bool CheckCollisionLeft(const GameData& game, const sf::FloatRect& collisionBox,
 		{
 			if (tile == GC::C_WALL)
 			{
-				tileRect = { collisionPoint.x * GC::TILE_SIZE, collisionPoint.y * GC::TILE_SIZE, GC::TILE_SIZE + GC::C_OFFSET, GC::TILE_SIZE - GC::C_OFFSET };
+				tileRect = { collisionPoint.x * GC::TILE_SIZE, collisionPoint.y * GC::TILE_SIZE, GC::TILE_SIZE + GC::C_OFFSET, GC::TILE_SIZE };
 			}
 			else if (tile == GC::C_WALL_SIDE_LEFT)
 			{
@@ -137,17 +137,17 @@ bool CheckCollisionLeft(const GameData& game, const sf::FloatRect& collisionBox,
 			}
 			else if (tile == GC::C_FOUNTAIN_BASIN)
 			{
-				tileRect = { collisionPoint.x * GC::TILE_SIZE, collisionPoint.y * GC::TILE_SIZE, GC::TILE_SIZE + GC::C_OFFSET, GC::FOUNTAIN_BASIN_HEIGHT - GC::C_OFFSET };
+				tileRect = { collisionPoint.x * GC::TILE_SIZE, collisionPoint.y * GC::TILE_SIZE, GC::TILE_SIZE + GC::C_OFFSET, GC::FOUNTAIN_BASIN_HEIGHT };
 			}
 			else if (tile == GC::C_COLUMN_BASE)
 			{
-				tileRect = { collisionPoint.x * GC::TILE_SIZE, collisionPoint.y * GC::TILE_SIZE, GC::TILE_SIZE + GC::C_OFFSET, GC::COLUMN_BASE_HEIGHT - GC::C_OFFSET };
+				tileRect = { collisionPoint.x * GC::TILE_SIZE, collisionPoint.y * GC::TILE_SIZE, GC::TILE_SIZE + GC::C_OFFSET, GC::COLUMN_BASE_HEIGHT };
 			}
 
 			if (collisionBox.intersects(tileRect, intersection))
 			{
 				collided = true;
-				frameMovementVector.x = 0;
+				frameMovementVector.x = 0.f;
 			}
 		}
 	}
@@ -194,7 +194,7 @@ bool CheckCollisionRight(const GameData& game, const sf::FloatRect& collisionBox
 		if (collisionBox.intersects(tileRect, intersection))
 		{
 			collided = true;
-			frameMovementVector.x = 0;
+			frameMovementVector.x = 0.f;
 		}
 	}
 
@@ -239,7 +239,7 @@ bool CheckCollisionRight(const GameData& game, const sf::FloatRect& collisionBox
 			if (collisionBox.intersects(tileRect, intersection))
 			{
 				collided = true;
-				frameMovementVector.x = 0;
+				frameMovementVector.x = 0.f;
 			}
 		}
 	}
@@ -282,7 +282,7 @@ bool CheckCollisionUp(const GameData& game, const sf::FloatRect& collisionBox, D
 		if (collisionBox.intersects(tileRect, intersection))
 		{
 			collided = true;
-			frameMovementVector.y = 0;
+			frameMovementVector.y = 0.f;
 		}
 	}
 
@@ -314,7 +314,7 @@ bool CheckCollisionUp(const GameData& game, const sf::FloatRect& collisionBox, D
 			if (collisionBox.intersects(tileRect, intersection))
 			{
 				collided = true;
-				frameMovementVector.y = 0;
+				frameMovementVector.y = 0.f;
 			}
 		}
 	}
@@ -362,7 +362,7 @@ bool CheckCollisionDown(const GameData& game, const sf::FloatRect& collisionBox,
 		if (collisionBox.intersects(tileRect, intersection))
 		{
 			collided = true;
-			frameMovementVector.y = 0;
+			frameMovementVector.y = 0.f;
 		}
 	}
 
@@ -399,7 +399,7 @@ bool CheckCollisionDown(const GameData& game, const sf::FloatRect& collisionBox,
 			if (collisionBox.intersects(tileRect, intersection))
 			{
 				collided = true;
-				frameMovementVector.y = 0;
+				frameMovementVector.y = 0.f;
 			}
 		}
 	}
@@ -456,17 +456,15 @@ void CheckMapCollision(const GameData& game, const int& type, sf::Sprite& sprite
 	float wallSideWidth = (float)GC::WALL_SIDE_WIDTH; //Modified wall side width
 
 	//Enlarge collision boxes for attacks 
-	if (type == GC::C_ENTITY_BODY_ATTACK)
+	if (type == GC::C_ENTITY_BODY_ATTACK || type == GC::C_PROJECTILE)
 	{
-		wallSideWidth *= GC::ENEMY_ATTACK_C_OFFSET;
+		wallSideWidth += GC::ENEMY_ATTACK_C_OFFSET;
 	}
-	//else
-	//{
-	//	collisionBox.top += collisionBox.height - GC::FEET_COLLISION_HEIGHT;
-	//	collisionBox.height = GC::FEET_COLLISION_HEIGHT;
-	//}
-	collisionBox.top += collisionBox.height - GC::FEET_COLLISION_HEIGHT;
-	collisionBox.height = GC::FEET_COLLISION_HEIGHT;
+	else
+	{
+		collisionBox.top += collisionBox.height - GC::FEET_COLLISION_HEIGHT;
+		collisionBox.height = GC::FEET_COLLISION_HEIGHT;
+	}
 
 	//Each of the functions below finds collision rectangles of specific tiles and offset them slightly for smooth wall sliding
 	//Increases map collision rect in the direction of movement and decrease in the perpendicular direction for better wall sliding

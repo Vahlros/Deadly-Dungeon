@@ -74,8 +74,8 @@ namespace GC
 	//Player: Upgrades
 	const float BOOSTED_SPEED = FAST_MOVEMENT_SPEED;
 	const float BOOSTED_POWER = 2.f;
-	const float BOOSTED_ATTACK_SPEED = 1.5f;
-	const float BOOSTED_KNOCKBACK_POWER = 160.f;
+	const float BOOSTED_ATTACK_SPEED = 1.3f;
+	const float BOOSTED_KNOCKBACK_POWER = GC::FAST_MOVEMENT_SPEED;
 	const Dim2Df BIG_WEAPONS_SCALE = {1.1f, 1.3f};
 	const float BIG_WEAPONS_POWER_BOOST = 1.2f;
 }

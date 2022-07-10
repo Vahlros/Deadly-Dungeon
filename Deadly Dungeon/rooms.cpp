@@ -89,7 +89,7 @@ void Shop::SetupShop(const GameData& game, const char& ID)
 
 	case GC::LS_MELEE_PROJECTILE:
 		itemID = ID;
-		price = 30;
+		price = 60;
 		itemName = "Melee Bullets: ";
 		sprite.setTextureRect(GC::POTION_RECT_Y2);
 		sprite.setOrigin(GC::POTION_ORIGIN);
@@ -167,7 +167,7 @@ void Room::Init(GameData& game, const int& roomNumber, const Dim2Di& position)
 
 
 	//Draw tiles
-	unsigned char tileID = 0, tileAboveID = 1;
+	char tileID = 0, tileAboveID = 1;
 	for (char y = 0; y < rect.height; ++y)
 	{
 		for (char x = 0; x < rect.width; ++x)
@@ -218,7 +218,7 @@ void Room::GetTypeDimensions(int& width, int& height)
 	}
 }
 
-void Room::TileDrawing(GameData& game, const int& x, const int& y, const char& tileID, const char& tileAboveID)
+void Room::TileDrawing(GameData& game, const int& x, const int& y, char& tileID, const char& tileAboveID)
 {
 	//Complicated alterations based on tile ID
 	bool requiresFloor = false, wallside = false, walltop = false, corner = false, right = false, smallWalltop = false;
@@ -233,6 +233,10 @@ void Room::TileDrawing(GameData& game, const int& x, const int& y, const char& t
 		if (!(walltop && (tileAboveID == GC::T_DARKNESS)))
 		{
 			DrawRandomFloor(game, x, y);
+		}
+		else
+		{
+			tileID = 0;
 		}
 
 		//Draw tile

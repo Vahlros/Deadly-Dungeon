@@ -216,6 +216,11 @@ void Attack::UpdateAttack(const GameData& game, std::vector<Projectile>& projLis
 	{
 		if (summonProjectile)
 		{
+			if (!followingFacing)
+			{
+				initialAngle = GetFullAngleInDegrees(*facing);
+			}
+
 			SpawnProjectiles(game, projList);
 		}
 
@@ -267,8 +272,6 @@ void Attack::UpdateAttackMotion(const GameData& game, Motion& motion)
 
 		if (followingFacing && arcCentredOnInitialAngle)
 		{
-			//initialAngle = GetFullAngleInDegrees(*facing);
-
 			initialAngle -= arcCentredAngleOffset;
 		}
 
@@ -276,7 +279,7 @@ void Attack::UpdateAttackMotion(const GameData& game, Motion& motion)
 		if (!motion.loop)
 		{
 			//motion.timer -= game.elapsed;
-			motion.timer -= (1.f / (float)GC::FRAMERATE);
+			motion.timer -= GC::APPROX_ELAPSED;
 		}
 	}
 }
@@ -414,7 +417,7 @@ void Attack::SpawnProjectiles(const GameData& game, std::vector<Projectile>& pro
 
 			//For Motion calculations, projectiles do not actively follow entity's facing DirectionalAngle.
 			//Instead this ensures that the projectile follows the initialAngle of the attack
-			projList[index].followingFacing = followingFacing;
+			projList[index].followingFacing = true;
 
 			projectileCount -= 1;
 			index += 1;

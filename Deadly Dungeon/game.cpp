@@ -30,7 +30,7 @@ void CheckProjectileCollision(GameData& game, Projectile& proj, std::vector<Enem
 					if (proj.sprite.getGlobalBounds().intersects(enemies[index].entity.sprite.getGlobalBounds()))
 					{
 						//Hit enemy
-						enemies[index].entity.TakeDamage(GC::DEFAULT_DAMAGE, player.entity.facing, player.knockbackPower);
+						enemies[index].entity.TakeDamage(GC::DEFAULT_DAMAGE, player.entity.facing, 0.f);
 
 						//Deactivate projectile
 						proj.active = false;
@@ -242,12 +242,112 @@ short GetDifficultyRating(const float& totalTime)
 	return (short)floor(difficulty);
 }
 
+////Creates an enemy wave based on difficulty, returns number of enemies
+//char CreateEnemyWave(std::vector<Enemy>& enemies, const short& difficulty)
+//{
+//	char enemiesCreated = 0;
+//	enemies[0].ID = 0;
+//	enemies[1].ID = 0;
+//
+//	switch (difficulty)
+//	//switch (11) //For testing purposes
+//	{
+//	case GC::D_TRIVIAL:
+//		enemiesCreated = 2;
+//		break;
+//
+//	case GC::D_WALK_IN_THE_PARK:
+//		enemies[2].ID = rand() % 2;
+//		enemiesCreated = 3;
+//		break;
+//
+//	case GC::D_VERY_EASY:
+//		enemies[2].ID = rand() % 2;
+//		enemies[3].ID = 0;
+//		enemiesCreated = 4;
+//		break;
+//
+//	case GC::D_EASY:
+//		enemies[2].ID = rand() % 2;
+//		enemies[3].ID = rand() % 2;
+//		enemiesCreated = 4;
+//		break;
+//
+//	case GC::D_KINDA_EASY:
+//		enemies[2].ID = rand() % 2;
+//		enemies[3].ID = rand() % 2;
+//		enemies[4].ID = 0;
+//		enemiesCreated = 5;
+//		break;
+//
+//	case GC::D_NORMAL:
+//		enemies[2].ID = rand() % 2;
+//		enemies[3].ID = (rand() % 2) + 1;
+//		enemies[4].ID = 0;
+//		enemiesCreated = 5;
+//		break;
+//
+//	case GC::D_KINDA_HARD:
+//		enemies[2].ID = rand() % 2;
+//		enemies[3].ID = rand() % 2;
+//		enemies[4].ID = (rand() % 2) + 1;
+//		enemiesCreated = 5;
+//		break;
+//
+//	case GC::D_HARD:
+//		enemies[2].ID = (rand() % 2) + 1;
+//		enemies[3].ID = (rand() % 2) + 1;
+//		enemies[4].ID = (rand() % 2) + 1;
+//		enemiesCreated = 5;
+//		break;
+//
+//	case GC::D_VERY_HARD:
+//		enemies[2].ID = (rand() % 2) + 1;
+//		enemies[3].ID = (rand() % 2) + 1;
+//		enemies[4].ID = (rand() % 2) + 1;
+//		enemies[5].ID = rand() % 2;
+//		enemiesCreated = 6;
+//		break;
+//
+//	case GC::D_BRUTAL:
+//		enemies[2].ID = rand() % 2;
+//		enemies[3].ID = (rand() % 2) + 1;
+//		enemies[4].ID = (rand() % 2) + 1;
+//		enemies[5].ID = 3;
+//		enemiesCreated = 6;
+//		break;
+//
+//	case GC::D_NIGHTMARE:
+//		enemies[0].ID = rand() % 2;
+//		enemies[1].ID = rand() % 2;
+//		enemies[2].ID = rand() % 2;
+//		enemies[3].ID = (rand() % 2) + 1;
+//		enemies[4].ID = (rand() % 2) + 1;
+//		enemies[5].ID = 3;
+//		enemies[6].ID = 3;
+//		enemiesCreated = 7;
+//		break;
+//
+//	default:
+//		enemies[0].ID = rand() % 2;
+//		enemies[1].ID = rand() % 2;
+//		enemies[2].ID = rand() % 2;
+//		enemies[3].ID = (rand() % 2) + 1;
+//		enemies[4].ID = (rand() % 2) + 1;
+//		enemies[5].ID = 3;
+//		enemies[6].ID = 3;
+//		enemiesCreated = 7;
+//	}
+//
+//	return enemiesCreated;
+//}
+
 //Creates an enemy wave based on difficulty, returns number of enemies
 char CreateEnemyWave(std::vector<Enemy>& enemies, const short& difficulty)
 {
 	char enemiesCreated = 0;
 	enemies[0].ID = 0;
-	enemies[1].ID = 0;
+	//enemies[1].ID = 0;
 
 	//switch (difficulty)
 	switch (11) //For testing purposes
@@ -257,64 +357,57 @@ char CreateEnemyWave(std::vector<Enemy>& enemies, const short& difficulty)
 		break;
 
 	case GC::D_WALK_IN_THE_PARK:
-		enemies[2].ID = rand() % 2;
+		enemies[2].ID = 1;
 		enemiesCreated = 3;
 		break;
 
 	case GC::D_VERY_EASY:
 		enemies[2].ID = rand() % 2;
-		enemies[3].ID = 0;
-		enemiesCreated = 4;
+		enemiesCreated = 3;
 		break;
 
 	case GC::D_EASY:
+		enemies[1].ID = 1;
 		enemies[2].ID = rand() % 2;
-		enemies[3].ID = rand() % 2;
-		enemiesCreated = 4;
+		enemiesCreated = 3;
 		break;
 
 	case GC::D_KINDA_EASY:
 		enemies[2].ID = rand() % 2;
 		enemies[3].ID = rand() % 2;
-		enemies[4].ID = 0;
-		enemiesCreated = 5;
+		enemiesCreated = 4;
 		break;
 
 	case GC::D_NORMAL:
 		enemies[2].ID = rand() % 2;
-		enemies[3].ID = (rand() % 2) + 1;
-		enemies[4].ID = 0;
-		enemiesCreated = 5;
+		enemies[3].ID = rand() % 2;
+		enemiesCreated = 4;
 		break;
 
 	case GC::D_KINDA_HARD:
 		enemies[2].ID = rand() % 2;
-		enemies[3].ID = rand() % 2;
-		enemies[4].ID = (rand() % 2) + 1;
-		enemiesCreated = 5;
+		enemies[3].ID = (rand() % 2) + 1;
+		enemiesCreated = 4;
 		break;
 
 	case GC::D_HARD:
 		enemies[2].ID = (rand() % 2) + 1;
 		enemies[3].ID = (rand() % 2) + 1;
-		enemies[4].ID = (rand() % 2) + 1;
-		enemiesCreated = 5;
+		enemiesCreated = 4;
 		break;
 
 	case GC::D_VERY_HARD:
 		enemies[2].ID = (rand() % 2) + 1;
 		enemies[3].ID = (rand() % 2) + 1;
 		enemies[4].ID = (rand() % 2) + 1;
-		enemies[5].ID = rand() % 2;
-		enemiesCreated = 6;
+		enemiesCreated = 5;
 		break;
 
 	case GC::D_BRUTAL:
 		enemies[2].ID = rand() % 2;
 		enemies[3].ID = (rand() % 2) + 1;
-		enemies[4].ID = (rand() % 2) + 1;
-		enemies[5].ID = 3;
-		enemiesCreated = 6;
+		enemies[4].ID = 3;
+		enemiesCreated = 5;
 		break;
 
 	case GC::D_NIGHTMARE:
@@ -322,21 +415,17 @@ char CreateEnemyWave(std::vector<Enemy>& enemies, const short& difficulty)
 		enemies[1].ID = rand() % 2;
 		enemies[2].ID = rand() % 2;
 		enemies[3].ID = (rand() % 2) + 1;
-		enemies[4].ID = (rand() % 2) + 1;
-		enemies[5].ID = 3;
-		enemies[6].ID = 3;
-		enemiesCreated = 7;
+		enemies[4].ID = 3;
+		enemiesCreated = 5;
 		break;
 
 	default:
-		enemies[0].ID = rand() % 2;
+		/*enemies[0].ID = rand() % 2;
 		enemies[1].ID = rand() % 2;
 		enemies[2].ID = rand() % 2;
 		enemies[3].ID = (rand() % 2) + 1;
-		enemies[4].ID = (rand() % 2) + 1;
-		enemies[5].ID = 3;
-		enemies[6].ID = 3;
-		enemiesCreated = 7;
+		enemies[4].ID = 3;*/
+		enemiesCreated = 1;
 	}
 
 	return enemiesCreated;
@@ -515,7 +604,7 @@ void Game::NewGame(sf::RenderWindow& window)
 	InitShops(data, roomList);
 
 	//Player: Stats
-	player1.coins = 1000;
+	player1.coins = 0;
 	player1.maxHealth = GC::PLAYER_HEALTH;
 	player1.entity.health = GC::PLAYER_HEALTH;
 	player1.speed = GC::MEDIUM_MOVEMENT_SPEED;
@@ -535,11 +624,13 @@ void Game::NewGame(sf::RenderWindow& window)
 		enemyList[i].active = false;
 	}
 	enemySpawnTimer = GC::ENEMY_SPAWN_TIME;
-	SpawnEnemies();
 
 	//Game data
 	data.metrics = Metrics{};
 	data.playerDead = false;
 	data.exitGame = false;
+
+	//Time
 	data.elapsed = 0.f;
+	clock.restart();
 }

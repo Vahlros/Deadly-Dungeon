@@ -59,9 +59,9 @@ namespace GC //Game constants
 	const char TOTAL_LAVA_SHOPS = 7; //How many lava shops are in the game
 
 	//Enemy Spawner: General
-	const char MAX_ENEMIES = 30; //Maximum number of enemies
-	const float ENEMY_SPAWN_TIME = 15.f; //Time until the next wave
-	const char MAX_ENEMIES_SPAWNED = 7; //Maximum number of enemies spawned per wave
+	const char MAX_ENEMIES = 50; //Maximum number of enemies
+	const float ENEMY_SPAWN_TIME = 7.f; //Time until the next wave
+	const char MAX_ENEMIES_SPAWNED = 5; //Maximum number of enemies spawned per wave
 	const char MAX_SPECIALS_SPAWNED = 3; //Maximum number of powerful enemies spawned per wave
 	const float VALID_SPAWN_DISTANCE = GC::TILE_SIZE * 2;
 	const short MAX_SPAWN_ATTEMPTS = 10;

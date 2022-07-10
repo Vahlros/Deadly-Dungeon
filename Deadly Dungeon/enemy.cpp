@@ -111,7 +111,7 @@ void Enemy::MoveTowardsPlayer(const GameData& game)
 		break;
 
 	case GC::ID_ABERRANT:
-		speed = GC::SLOW_MOVEMENT_SPEED;
+		speed = GC::FAST_MOVEMENT_SPEED;
 		break;
 
 	case GC::ID_GREATER_DEMON:
@@ -301,7 +301,7 @@ void Enemy::CheckAttackCollision(GameData& game, Entity& playerEntity)
 			{
 				//Calculate damage
 				unsigned char actualDamage = (unsigned char)round(entity.power * GC::DEFAULT_DAMAGE);
-				playerEntity.TakeDamage(actualDamage, entity.facing, GC::ZERO);
+				//playerEntity.TakeDamage(actualDamage, entity.facing, GC::ZERO);
 
 				//Immediately activate player invulnerability
 				playerEntity.invulnerable = true;

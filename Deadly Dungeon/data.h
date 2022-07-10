@@ -251,17 +251,17 @@ namespace GC
 	};
 	
 	//Map: General
-	const unsigned char MAP_SIZE_TILES = 128; //Maximum size of the map, in tiles
+	const unsigned int MAP_SIZE_TILES = 128; //Maximum size of the map, in tiles
 	const short MAP_SIZE_PIXELS = MAP_SIZE_TILES * TILE_SIZE; //Maximum size of map, in pixels
 
 	//Player: General
 	const float PLAYER_HIT_INVULNERABILITY = 1.5f; //How long the player is invulnerable after being hit
 	const float PLAYER_DODGE_INVULNERABILITY = 0.5f; //Invulnerability while dodging
 	//Player: Health
-	const char PLAYER_HEALTH = 10; //Player starting health
-	const char BOOSTED_HEALTH = 16; //Upgraded player health
+	const int PLAYER_HEALTH = 10; //Player starting health
+	const int BOOSTED_HEALTH = 16; //Upgraded player health
 	//Player: Animation
-	const unsigned char PLAYER_ANIM_FRAMES = 9; //Number of frames
+	const unsigned int PLAYER_ANIM_FRAMES = 9; //Number of frames
 	const AnimationData PLAYER_ANIM_IDLE = { IDLE, MOVE - 1, 0.12f }; //Idle animation data for the player
 	const AnimationData PLAYER_ANIM_MOVE = { MOVE, DODGE - 1, 0.12f }; //Idle animation data for the player
 	//Player: Knight
@@ -273,46 +273,46 @@ namespace GC
 	//Enemy: General
 	const float ATTACK_COOLDOWN = 1.f; //Cooldown timer between attacks
 	//Enemy: Coins
-	const char IMP_COINS = 2;
-	const char LESSER_DEMON_COINS = 4;
-	const char ABERRANT_COINS = 6;
-	const char GREATER_DEMON_COINS = 10;
+	const int IMP_COINS = 3;
+	const int LESSER_DEMON_COINS = 4;
+	const int ABERRANT_COINS = 6;
+	const int GREATER_DEMON_COINS = 10;
 	//Enemy: Animation
-	const unsigned char ENEMY_ANIM_FRAMES = 8; //Number of frames
+	const unsigned int ENEMY_ANIM_FRAMES = 8; //Number of frames
 	const AnimationData ENEMY_ANIM_IDLE = { IDLE, MOVE - 1, 0.12f }; //Idle animation data for enemies
 	const AnimationData ENEMY_ANIM_MOVE = { MOVE, DODGE - 1, 0.12f }; //Idle animation data for enemies
 	const AnimationData ENEMY_ANIM_BITE = { IDLE, MOVE - 1, 0.2f }; //Bite animation for demons
 	//Enemy: Imp
-	const unsigned char IMP_HEALTH = 2; //Imp health
+	const unsigned int IMP_HEALTH = 3; //Imp health
 	const Dim2Di IMP_DIMENSIONS = { 16, 14 }; //Dimensions of the imp texture
 	const sf::IntRect IMP_ANIM_RECT = { 369, 50, 128, IMP_DIMENSIONS.y }; //Where the animation is on the spritesheet
 	const sf::IntRect IMP_BODY_RECT = { 4, 0, 10, IMP_DIMENSIONS.y }; //Where the character's body is on the un-scaled sprite
 	const Dim2Df IMP_BODY_CENTRE = { 8.f, 9.f }; //Where the centre of the character's body is on the un-scaled sprite
 	//Enemy: Lesser Demon
-	const unsigned char L_DEMON_HEALTH = 3; //Lesser Demon health
+	const unsigned int L_DEMON_HEALTH = 4; //Lesser Demon health
 	const Dim2Di L_DEMON_DIMENSIONS = { 16, 23 }; //Dimensions of the lesser demon texture
 	const sf::IntRect L_DEMON_ANIM_RECT = { 369, 329, 128, L_DEMON_DIMENSIONS.y }; //Where the animation is on the spritesheet
 	const sf::IntRect L_DEMON_BODY_RECT = { 2, 0, 11, L_DEMON_DIMENSIONS.y }; //Where the character's body is on the un-scaled sprite
 	const Dim2Df L_DEMON_BODY_CENTRE = { 8.f, 14.f }; //Where the centre of the character's body is on the un-scaled sprite
 	//Enemy: Aberrant
-	const unsigned char ABERRANT_HEALTH = 4; //Lesser Demon health
+	const unsigned int ABERRANT_HEALTH = 6; //Lesser Demon health
 	const Dim2Di ABERRANT_DIMENSIONS = { 16, 18 }; //Dimensions of the lesser demon texture
 	const sf::IntRect ABERRANT_ANIM_RECT = { 368, 302, 128, ABERRANT_DIMENSIONS.y }; //Where the animation is on the spritesheet
 	const sf::IntRect ABERRANT_BODY_RECT = { 3, 0, 10, ABERRANT_DIMENSIONS.y }; //Where the character's body is on the un-scaled sprite
 	const Dim2Df ABERRANT_BODY_CENTRE = { 8.f, 12.f }; //Where the centre of the character's body is on the un-scaled sprite
 	//Enemy: Greater Demon
-	const unsigned char G_DEMON_HEALTH = 8; //Lesser Demon health
+	const unsigned int G_DEMON_HEALTH = 10; //Lesser Demon health
 	const Dim2Di G_DEMON_DIMENSIONS = { 32, 34 }; //Dimensions of the lesser demon texture
 	const sf::IntRect G_DEMON_ANIM_RECT = { 16, 366, 256, G_DEMON_DIMENSIONS.y }; //Where the animation is on the spritesheet
 	const sf::IntRect G_DEMON_BODY_RECT = { 5, 2, 10, G_DEMON_DIMENSIONS.y }; //Where the character's body is on the un-scaled sprite
 	const Dim2Df G_DEMON_BODY_CENTRE = { 17.f, 20.f }; //Where the centre of the character's body is on the un-scaled sprite
 
 	//Attack: General
-	const unsigned char MAX_MOTIONS = 2; //Maximum number of motions per attack
-	const char DEFAULT_DAMAGE = 1; //Default damage value
+	const unsigned int MAX_MOTIONS = 2; //Maximum number of motions per attack
+	const int DEFAULT_DAMAGE = 1; //Default damage value
 
 	//Weapon: General
-	const unsigned char MAX_ATTACKS = 2; //Maximum number of attacks per weapon
+	const unsigned int MAX_ATTACKS = 2; //Maximum number of attacks per weapon
 	const float WEAPON_HOVER = 0.5f; //Hover distance from centre, in tiles
 	const float WEAPON_HOVER_ROTATION = 30.f; //Hover rotation, in degrees
 	//Weapon: Fancy Sword
@@ -325,21 +325,21 @@ namespace GC
 	//Projectiles: General
 	const short MAX_PROJECTILES = 256;
 	//Projectiles: Fire Skull
-	const unsigned char FIRE_SKULL_FRAMES = 6; //Number of frames
+	const unsigned int FIRE_SKULL_FRAMES = 6; //Number of frames
 	const AnimationData FIRE_SKULL_ANIM = { 0, FIRE_SKULL_FRAMES - 1, 0.09f }; //Idle animation data for the player
 	const Dim2Di FIRE_SKULL_DIMENSIONS = { 6, 6 }; //Dimensions of the player texture
 	const sf::IntRect FIRE_SKULL_ANIM_RECT = { 293, 341, 36, FIRE_SKULL_DIMENSIONS.y }; //Where the animation is on the spritesheet
 	const sf::IntRect FIRE_SKULL_BODY_RECT = { 0, 0, 6, 6 }; //Where the character's body is on the un-scaled sprite
 	const Dim2Df FIRE_SKULL_BODY_CENTRE = { 2.f, 2.f }; //Where the centre of the character's body is on the un-scaled sprite
 	//Projectiles: Fire Ball
-	const unsigned char FIRE_BALL_FRAMES = 6; //Number of frames
+	const unsigned int FIRE_BALL_FRAMES = 6; //Number of frames
 	const AnimationData FIRE_BALL_ANIM = { 0, FIRE_BALL_FRAMES - 1, 0.09f }; //Idle animation data for the player
 	const Dim2Di FIRE_BALL_DIMENSIONS = { 6, 6 }; //Dimensions of the player texture
 	const sf::IntRect FIRE_BALL_ANIM_RECT = { 293, 349, 36, FIRE_BALL_DIMENSIONS.y }; //Where the animation is on the spritesheet
 	const sf::IntRect FIRE_BALL_BODY_RECT = { 0, 0, 6, 6 }; //Where the character's body is on the un-scaled sprite
 	const Dim2Df FIRE_BALL_BODY_CENTRE = { 2.f, 2.f }; //Where the centre of the character's body is on the un-scaled sprite
 	//Projectiles: Frost Ball
-	const unsigned char FROST_BALL_FRAMES = 6; //Number of frames
+	const unsigned int FROST_BALL_FRAMES = 6; //Number of frames
 	const AnimationData FROST_BALL_ANIM = { 0, FROST_BALL_FRAMES - 1, 0.09f }; //Idle animation data for the player
 	const Dim2Di FROST_BALL_DIMENSIONS = { 6, 6 }; //Dimensions of the player texture
 	const sf::IntRect FROST_BALL_ANIM_RECT = { 293, 356, 36, FROST_BALL_DIMENSIONS.y }; //Where the animation is on the spritesheet
@@ -347,7 +347,7 @@ namespace GC
 	const Dim2Df FROST_BALL_BODY_CENTRE = { 2.f, 2.f }; //Where the centre of the character's body is on the un-scaled sprite
 
 	//Collision
-	const char CHECK_ATTACK_COLLISION_RANGE = TILE_SIZE * 4; //The distance between two origins in which collisions will be checked
+	const int CHECK_ATTACK_COLLISION_RANGE = TILE_SIZE * 4; //The distance between two origins in which collisions will be checked
 
 	//Knockback
 	const float KNOCKBACK_TIMER = 0.25f; //How long an enemy is knocked back for
@@ -358,13 +358,13 @@ namespace GC
 	const sf::Color FONT_COLOUR = sf::Color(211, 191, 169); //Should be cream-ish?
 
 	//Shop: Text
-	const char TEXT_CHARACTER_SIZE = 40;
+	const int TEXT_CHARACTER_SIZE = 40;
 	const Dim2Df TEXT_SCALING = { 0.3f, 0.3f };
 
 	//UI: Coins
 	const Dim2Di COINS_DIMENSIONS = { 8, 8 };
 	const sf::IntRect COINS_ANIM_RECT = { 288, 272, 32, 8 };
-	const unsigned char COINS_FRAMES = 4;
+	const unsigned int COINS_FRAMES = 4;
 	const AnimationData COINS_ANIM_DATA = { 0, COINS_FRAMES - 1, 0.09f }; //Idle animation data for enemies
 	const Dim2Df COINS_ORIGIN = { 4.f, 5.f };
 }
