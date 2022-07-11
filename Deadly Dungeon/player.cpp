@@ -71,6 +71,11 @@ void Player::KeyboardControls(GameData& game, std::vector<Room>& rooms)
 	GetMouseAngle(game);
 
 	//Attacks
+	if (!entity.canAttack && !entity.weapon.attacking)
+	{
+		entity.canAttack = true;
+	}
+
 	if (input->leftClickPressed)
 	{
 		if (entity.canAttack && !entity.weapon.attacking)

@@ -630,7 +630,7 @@ bool Entity::TakeDamage(const unsigned char& damage, const DirectionalAngle& fac
 	{
 		isAlive = false;
 	}
-	else if (!isPlayer && !knock.immovable && knockPower != GC::ZERO)
+	else if (!isPlayer && !knock.immovable && (knockPower > GC::ZERO))
 	{
 		InitKnockback(facing, knockPower);
 	}

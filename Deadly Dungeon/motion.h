@@ -79,7 +79,7 @@ namespace GC
 {
 	//Circular motion data
 	//Normal attacks
-	const CircularMotionData SWING_ARC = { 140.f, 0.3f }; //Weapon swing arc, movement and rotation of normal swing
+	const CircularMotionData SWING_ARC = { 160.f, 0.4f }; //Weapon swing arc, movement and rotation of normal swing
 	//Windup attacks
 	const CircularMotionData WINDUP_ARC_SLOW = { -90.f, 1.f }; //Slow arc attack windup, movement and rotation
 	const CircularMotionData WINDUP_ARC_FAST = { -90.f, 0.5f }; //Fast arc attack windup, movement and rotation
@@ -88,7 +88,7 @@ namespace GC
 
 	//Line motion data
 	//Normal attacks
-	const LineMotionData THRUST_LINE = { { 16.f, 1.f }, 0.2f }; //Weapon thrust, movement of normal thrust
+	const LineMotionData THRUST_LINE = { { 16.f, 1.f }, 0.3f }; //Weapon thrust, movement of normal thrust
 	const LineMotionData JUMP_LINE = { { 64.f, 1.f }, 0.5f }; //Jump attack, movement
 	const LineMotionData CHARGE_RELEASE_LINE = { { 160.f, 1.f }, 1.f }; //Charge attack, movement
 	//Windup attacks

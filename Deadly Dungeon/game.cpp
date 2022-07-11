@@ -30,7 +30,7 @@ void CheckProjectileCollision(GameData& game, Projectile& proj, std::vector<Enem
 					if (proj.sprite.getGlobalBounds().intersects(enemies[index].entity.sprite.getGlobalBounds()))
 					{
 						//Hit enemy
-						enemies[index].entity.TakeDamage(GC::DEFAULT_DAMAGE, player.entity.facing, 0.f);
+						enemies[index].entity.TakeDamage(GC::DEFAULT_DAMAGE, player.entity.facing, -1.f);
 
 						//Deactivate projectile
 						proj.active = false;
@@ -679,6 +679,7 @@ void Game::NewGame(sf::RenderWindow& window)
 	//Player: Weapon
 	player1.entity.weapon = GC::SWORD;
 	player1.entity.weapon.Init(data, player1.entity.isPlayer, player1.entity.anim, player1.entity.weaponNoise);
+	player1.entity.canAttack = true;
 
 	//Enemy
 	for (unsigned int i = 0; i < enemyList.size(); i++)

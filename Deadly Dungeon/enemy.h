@@ -12,19 +12,19 @@ struct Enemy
 	bool active = false; //If the enemy has been spawned in and not died yet
 	bool useAttackOne = true; //Determines which attack to use
 	bool madman = false; //If the enemy will wildly attack
-	bool attackCooldown = false; //If the enemy is in cooldown
+	bool attackCooldown = true; //If the enemy is in cooldown, spawns in short cooldown
 	bool attackCancelImmune = false; //If the enemy is immune to player's attack cancellation
 	bool boosted = false; //If the enemy has boosted stats and immunities
 
 	//Operational stats
 	float distanceToPlayer = 0.f; //Distance to the player
-	float cooldownTimer = GC::ATTACK_COOLDOWN; //Cooldown between attacks
+	float cooldownTimer = GC::SPAWN_ATTACK_COOLDOWN; //Cooldown between attacks
 
 	//Timers
 	float differentRoomTimer = 0.f; //How long the enemy has been in a different room
 	float checkRoomTimer = 3.f; //Time until next room check
 	float attackCancelledCooldown = 2.f; //Time until immunity wears off
-	float noiseTimer = 0.f;
+	float noiseTimer = 0.f; //Time until next noise chance
 
 	//Structs
 	Entity entity;

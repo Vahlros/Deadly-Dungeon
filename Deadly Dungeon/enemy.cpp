@@ -121,7 +121,6 @@ void Enemy::Init(GameData& game, const Dim2Df& spawnPosition, const char& uID)
 	entity.weapon.attack1.enemyID = ID;
 	entity.anim.Init(&GC::ENEMY_ANIM_IDLE);
 
-	boosted = true;
 	if (boosted)
 	{
 		Boost();

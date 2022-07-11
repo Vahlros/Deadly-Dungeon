@@ -273,6 +273,7 @@ namespace GC
 	
 	//Enemy: General
 	const float ATTACK_COOLDOWN = 1.f; //Cooldown timer between attacks
+	const float SPAWN_ATTACK_COOLDOWN = 0.5f; //Cooldown timer before an enemy can attack, after spawning
 	//Enemy: Coins
 	const int IMP_COINS = 3;
 	const int LESSER_DEMON_COINS = 4;
