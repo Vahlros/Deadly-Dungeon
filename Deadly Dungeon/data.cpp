@@ -162,9 +162,9 @@ void GameData::Init(sf::RenderWindow& window, Input& inputRef)
 
 	//Spritesheets
 	textures[GC::SPRITESHEET_TEXTURE].create(512, 512);
-	textures[GC::SPRITESHEET_TEXTURE].loadFromFile("spritesheet.png");
+	textures[GC::SPRITESHEET_TEXTURE].loadFromFile("graphics/spritesheet.png");
 	spritesheetImg.create(512, 512);
-	spritesheetImg.loadFromFile("spritesheet.png");
+	spritesheetImg.loadFromFile("graphics/spritesheet.png");
 
 	//Map & Camera Textures
 	textures[GC::MAP_FLOOR_TEXTURE].create(GC::MAP_SIZE_PIXELS, GC::MAP_SIZE_PIXELS);
@@ -231,7 +231,10 @@ void GameData::Init(sf::RenderWindow& window, Input& inputRef)
 	mapSprite.setTexture(textures[GC::MAP_FLOOR_TEXTURE], true);
 
 	//Font
-	font.loadFromFile("SHOWG.ttf");
+	font.loadFromFile("graphics/SHOWG.ttf");
+
+	//Audio
+	InitAudio(sounds);
 }
 
 void GameData::RenderMap(sf::RenderWindow& window, const Dim2Df position)

@@ -1,9 +1,8 @@
 #pragma once
-#include <iostream>
 #include <string>
-#include <assert.h>
 #include <vector>
 #include "input.h"
+#include "audio.h"
 
 //Came from help from the SFML discord server, centres text origin
 void CentreTextOrigin(sf::Text& text);
@@ -96,22 +95,23 @@ struct GameData
 
 	//Operational bools
 	bool playerDead = false; //If the player has died
-	bool exitGame = false; //If escape has been pressed
 
 	//Timers
 	float elapsed = 0.f; //Time elapsed since last frame
 
 	//Positioning
+	std::vector<std::vector<int>> collisionMap; //Vector of map collision data
 	Dim2Df playerPosition{};
 
 	//Input
 	Input* input;
 
-	//Vectors
-	std::vector<sf::Texture> textures; //Vector of all textures
-	std::vector<std::vector<int>> collisionMap; //Vector of map collision data
+	//Audio
+	sf::Music music; //Background music of current state
+	std::vector<sf::SoundBuffer> sounds; //Vector of all game sounds
 
 	//SFML
+	std::vector<sf::Texture> textures; //Vector of all textures
 	sf::Image spritesheetImg{}; //Spritesheet in Image format, for texture.loadFromImage()
 	sf::Sprite mapSprite{}; //Sprite for the environment
 	sf::Font font{}; //Game font
@@ -130,7 +130,7 @@ struct GameData
 namespace GC
 {
 	//Enums
-	enum GAME_STATE { S_MAIN_MENU, S_SCORES, S_TUTORIAL, S_PLAYING, S_WIN, S_LOSE }; //Current game state
+	enum GAME_STATE { STATE_MAIN_MENU, STATE_SCORES, STATE_TUTORIAL, STATE_PLAYING, STATE_WIN, STATE_LOSE }; //Current game state
 	enum DIRECTIONS { NORTH, EAST, SOUTH, WEST }; //NESW directions
 	enum TEXTURE_LIST { //Texture IDs
 		SPRITESHEET_TEXTURE, MAP_FLOOR_TEXTURE, TILE_TEXTURE, WALL_SIDE_TEXTURE, WALL_TOP_TEXTURE, WALL_SIDE_TOP_TEXTURE, WATER_FOUNTAIN_TEXTURE, LAVA_FOUNTAIN_TEXTURE,
@@ -150,7 +150,8 @@ namespace GC
 		LS_FANCY_SWORD, LS_SPEAR, LS_BIG_WEAPONS, LS_MELEE_PROJECTILE };
 
 	//Maths: General
-	const float ZERO = 0.f; //Zero
+	const float ZERO = 0.f;
+	const float ONE = 1.f;
 
 	//Screen: General
 	const Dim2Di CURSOR_DIMENSIONS = { 16, 16 };

@@ -48,6 +48,12 @@ void Player::Init(GameData& game, Input& inputRef)
 	entity.sprite.setTexture(game.textures[GC::KNIGHT_TEXTURE]);
 	entity.sprite.setTextureRect({ 0, 0, GC::KNIGHT_DIMENSIONS.x, GC::KNIGHT_DIMENSIONS.y });
 	entity.sprite.setOrigin(GC::KNIGHT_BODY_CENTRE);
+
+	//Audio
+	//entity.footsteps.setBuffer(game.sounds[GC::SOUND_PLAYER_FOOTSTEPS]);
+	//entity.footsteps.setLoop(true);
+	//entity.footsteps.setVolume(GC::VOLUME_FOOTSTEPS);
+	//entity.noise.setBuffer(game.sounds[GC::SOUND_PLAYER_HIT]);
 }
 
 void Player::InputHandling(GameData& game, std::vector<Room>& rooms)
@@ -58,12 +64,6 @@ void Player::InputHandling(GameData& game, std::vector<Room>& rooms)
 
 void Player::KeyboardControls(GameData& game, std::vector<Room>& rooms)
 {
-	//Exit game
-	if (input->escapePressed)
-	{
-		game.exitGame = true;
-	}
-	
 	//Movement
 	KeyboardMovement();
 
@@ -142,6 +142,8 @@ void Player::KeyboardMovement()
 		{
 			entity.moving = true;
 			entity.anim.Init(&GC::PLAYER_ANIM_MOVE);
+			//entity.footsteps.setLoop(true);
+			//entity.footsteps.play();
 		}
 	}
 	else
@@ -150,6 +152,7 @@ void Player::KeyboardMovement()
 		{
 			entity.moving = false;
 			entity.anim.Init(&GC::PLAYER_ANIM_IDLE);
+			//entity.footsteps.stop();
 		}
 	}
 
@@ -220,18 +223,18 @@ void Player::CheckAttackCollision(GameData& game, std::vector<Enemy>& enemies)
 {
 	if (entity.weapon.attacking && entity.weapon.CheckIfMotionCanDamage())
 	{
-		for (unsigned int index = 0; index < enemies.size(); index++)
+		for (unsigned int i = 0; i < enemies.size(); i++)
 		{
-			if (enemies[index].active && !enemies[index].entity.invulnerable)
+			if (enemies[i].active && !enemies[i].entity.invulnerable)
 			{
 				//Calculate distance to enemy
-				Dim2Df position = enemies[index].entity.sprite.getPosition();
+				Dim2Df position = enemies[i].entity.sprite.getPosition();
 				float distanceToEnemy = CalculateMagnitudeOfVector(entity.weapon.sprite.getPosition() - position);
 
 				//If in range, check collision
 				if (distanceToEnemy <= GC::CHECK_ATTACK_COLLISION_RANGE)
 				{
-					if (entity.weapon.sprite.getGlobalBounds().intersects(enemies[index].entity.sprite.getGlobalBounds()))
+					if (entity.weapon.sprite.getGlobalBounds().intersects(enemies[i].entity.sprite.getGlobalBounds()))
 					{
 						//Calculate damage
 						float damage = entity.power * GC::DEFAULT_DAMAGE;
@@ -243,21 +246,22 @@ void Player::CheckAttackCollision(GameData& game, std::vector<Enemy>& enemies)
 
 						//Hit enemy
 						unsigned char actualDamage = (unsigned char)round(damage);
-						enemies[index].entity.TakeDamage(actualDamage, entity.facing, knockbackPower);
+						enemies[i].entity.TakeDamage(actualDamage, entity.facing, knockbackPower);
+						//enemies[i].entity.HitNoise(game, enemies[i].ID);
 
-						if (enemies[index].entity.isAlive)
+						if (enemies[i].entity.isAlive)
 						{
 							//Interrupt enemy attacks
-							if (enemies[index].entity.weapon.attacking)
+							if (enemies[i].entity.weapon.attacking)
 							{
-								enemies[index].AttackCancel();
+								enemies[i].AttackCancel();
 							}
 						}
 						else
 						{
 							//Update metrics
-							game.metrics.UpdateKills(entity.weapon.ID, enemies[index].ID);
-							EarnCoins(enemies[index].ID);
+							game.metrics.UpdateKills(entity.weapon.ID, enemies[i].ID);
+							EarnCoins(enemies[i].ID);
 						}
 					}
 				}
@@ -319,8 +323,10 @@ void Player::UpdateInvulnerability(GameData& game)
 
 void Player::Dead(GameData& game)
 {
-	printf("Player Died\n");
 	game.playerDead = true;
+	//entity.noise.stop();
+	//entity.noise.setBuffer(game.sounds[GC::SOUND_PLAYER_DEATH]);
+	//entity.noise.play();
 }
 
 void Player::EarnCoins(const char& enemyID)
@@ -412,13 +418,13 @@ void Player::ApplyItemEffects(const GameData& game, const char& itemID)
 	case GC::LS_FANCY_SWORD:
 		newWeapon = true;
 		entity.weapon = GC::FANCY_SWORD;
-		entity.weapon.Init(game, true, entity.anim);
+		entity.weapon.Init(game, true, entity.anim, entity.weaponNoise);
 		break;
 
 	case GC::LS_SPEAR:
 		newWeapon = true;
 		entity.weapon = GC::SPEAR;
-		entity.weapon.Init(game, true, entity.anim);
+		entity.weapon.Init(game, true, entity.anim, entity.weaponNoise);
 		break;
 
 	case GC::LS_BIG_WEAPONS:

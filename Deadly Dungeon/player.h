@@ -27,6 +27,9 @@ struct Player
 	//Input
 	Input* input;
 
+	//Audio
+	sf::Sound shopSound;
+
 	//Initializes player
 	void Init(GameData& game, Input& inputRef);
 

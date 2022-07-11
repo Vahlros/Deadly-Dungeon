@@ -347,10 +347,10 @@ char CreateEnemyWave(std::vector<Enemy>& enemies, const short& difficulty)
 {
 	char enemiesCreated = 0;
 	enemies[0].ID = 0;
-	//enemies[1].ID = 0;
-
-	//switch (difficulty)
-	switch (11) //For testing purposes
+	enemies[1].ID = 0;
+	
+	switch (difficulty)
+	//switch (11) //For testing purposes
 	{
 	case GC::D_TRIVIAL:
 		enemiesCreated = 2;
@@ -420,15 +420,29 @@ char CreateEnemyWave(std::vector<Enemy>& enemies, const short& difficulty)
 		break;
 
 	default:
-		/*enemies[0].ID = rand() % 2;
+		enemies[0].ID = rand() % 2;
 		enemies[1].ID = rand() % 2;
 		enemies[2].ID = rand() % 2;
 		enemies[3].ID = (rand() % 2) + 1;
-		enemies[4].ID = 3;*/
+		enemies[4].ID = 3;
 		enemiesCreated = 1;
 	}
 
 	return enemiesCreated;
+}
+
+//Deactivates all enemies and stops their sound
+void StopSounds(std::vector<Enemy>& enemies, Player& player)
+{
+	for (unsigned int i = 0; i < enemies.size(); i++)
+	{
+		enemies[i].active = false;
+		//enemies[i].entity.footsteps.stop();
+		//enemies[i].entity.noise.stop();
+	}
+
+	//player.entity.footsteps.stop();
+	//player.entity.noise.stop();
 }
 
 void Game::Init(sf::RenderWindow& window, Input& input)
@@ -459,6 +473,10 @@ void Game::Init(sf::RenderWindow& window, Input& input)
 	//Projectiles
 	projectiles.resize(GC::MAX_PROJECTILES);
 	InitProjectiles(data, projectiles);
+
+	//Audio
+	menuHover.setBuffer(data.sounds[GC::SOUND_MENU_HOVER]);
+	menuSelect.setBuffer(data.sounds[GC::SOUND_MENU_SELECT]);
 }
 
 void Game::IsPlayerDead(sf::RenderWindow& window, int& state)
@@ -468,15 +486,24 @@ void Game::IsPlayerDead(sf::RenderWindow& window, int& state)
 		//SAVE METRICS TO DATABASE
 		
 		//END THE GAME SESSION
+		PlayMusic(data.music, GC::MUSIC_LOSE, false);
 		printf("I need to do things because the player is dead!\n");
-		ExitGame(window, state);
+		ExitGame(window, state, true);
 	}
 }
 
-void Game::ExitGame(sf::RenderWindow& window, int& state)
+void Game::ExitGame(sf::RenderWindow& window, int& state, const bool& playerDead)
 {
-	state = GC::S_MAIN_MENU;
+	state = GC::STATE_MAIN_MENU;
 	window.setView(window.getDefaultView());
+
+	//Audio
+	if (!playerDead)
+	{
+		//data.music.stop();
+	}
+
+	//StopSounds(enemyList, player1);
 }
 
 void Game::EnemyUpdate()
@@ -548,7 +575,7 @@ void Game::Update(sf::RenderWindow& window, const Input& input, int& state)
 
 	if (input.escapePressed)
 	{
-		ExitGame(window, state);
+		ExitGame(window, state, false);
 	}
 
 	//Clock
@@ -616,7 +643,7 @@ void Game::NewGame(sf::RenderWindow& window)
 	player1.entity.FindCurrentRoom(roomList);
 	//Player: Weapon
 	player1.entity.weapon = GC::SWORD;
-	player1.entity.weapon.Init(data, player1.entity.isPlayer, player1.entity.anim);
+	player1.entity.weapon.Init(data, player1.entity.isPlayer, player1.entity.anim, player1.entity.weaponNoise);
 
 	//Enemy
 	for (unsigned int i = 0; i < enemyList.size(); i++)
@@ -628,7 +655,6 @@ void Game::NewGame(sf::RenderWindow& window)
 	//Game data
 	data.metrics = Metrics{};
 	data.playerDead = false;
-	data.exitGame = false;
 
 	//Time
 	data.elapsed = 0.f;

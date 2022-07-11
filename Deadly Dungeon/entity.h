@@ -56,6 +56,11 @@ struct Entity
 	//SFML
 	sf::Sprite sprite;
 
+	//Audio
+	sf::Sound footsteps;
+	sf::Sound noise;
+	sf::Sound weaponNoise;
+
 	//Initiates an attack
 	void InitAttack(const GameData& game, const char& attack);
 
@@ -67,9 +72,6 @@ struct Entity
 
 	//Moves the entity, also updates knockback
 	void Move(const GameData& game);
-
-	//Checks if movement is valid, using rectangle intersections
-	//void CheckMapCollision(const GameData& game, const bool& entityBodyAttack);
 
 	//Renders the entity
 	void Render(sf::RenderWindow& window, const GameData& game);
@@ -85,6 +87,9 @@ struct Entity
 
 	//Find current room
 	void FindCurrentRoom(std::vector<Room>& rooms);
+
+	//Plays a hit noise, replaces current noise
+	void HitNoise(const GameData& game, const int& ID);
 };
 
 //Game constants

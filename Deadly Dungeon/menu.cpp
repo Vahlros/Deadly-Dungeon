@@ -6,19 +6,19 @@ void InitializeMenus(std::vector <sf::Texture>& menuTextures, std::vector <Menu>
 
 	//Textures
 	menuTextures[0].create(1920, 1080);
-	menuTextures[0].loadFromFile("main menu.png");
+	menuTextures[0].loadFromFile("graphics/main menu.png");
 	menuTextures[1].create(252, 80);
-	menuTextures[1].loadFromFile("play button.png");
+	menuTextures[1].loadFromFile("graphics/play button.png");
 	menuTextures[2].create(352, 86);
-	menuTextures[2].loadFromFile("scores button.png");
+	menuTextures[2].loadFromFile("graphics/scores button.png");
 	menuTextures[3].create(486, 84);
-	menuTextures[3].loadFromFile("controls button.png");
+	menuTextures[3].loadFromFile("graphics/controls button.png");
 	menuTextures[4].create(252, 83);
-	menuTextures[4].loadFromFile("back button.png");
+	menuTextures[4].loadFromFile("graphics/back button.png");
 	menuTextures[5].create(1920, 1080);
-	menuTextures[5].loadFromFile("scores menu.png");
+	menuTextures[5].loadFromFile("graphics/scores menu.png");
 	menuTextures[6].create(1920, 1080);
-	menuTextures[6].loadFromFile("controls menu.png");
+	menuTextures[6].loadFromFile("graphics/controls menu.png");
 
 	menus.resize(GC::NUM_MENUS);
 
@@ -70,16 +70,16 @@ void ButtonPress(int& state, const Button& button, const int& fromID, bool& star
 		break;
 
 	case GC::B_PLAY:
-		state = GC::S_PLAYING;
+		state = GC::STATE_PLAYING;
 		startGame = true;
 		break;
 
 	case GC::B_SCORES:
-		state = GC::S_SCORES;
+		state = GC::STATE_SCORES;
 		break;
 
 	case GC::B_TUTORIAL:
-		state = GC::S_TUTORIAL;
+		state = GC::STATE_TUTORIAL;
 		break;
 	}
 }
@@ -91,21 +91,32 @@ void MenusInputHandling(sf::RenderWindow& window, int& state, const Input& input
 		window.close();
 	}
 
-	menus[state].UpdateButtonHover(input.mousePosition);
+	menus[state].UpdateButtonHover(input.mousePosition, game.menuHover);
 
 	switch (state)
 	{
-	case GC::S_MAIN_MENU:
-		menus[0].CheckClick(input, state, startGame);
+	case GC::STATE_MAIN_MENU:
+		menus[0].CheckClick(input, state, startGame, game.menuSelect);
 		break;
 
-	case GC::S_SCORES:
-		menus[1].CheckClick(input, state, startGame);
+	case GC::STATE_SCORES:
+		menus[1].CheckClick(input, state, startGame, game.menuSelect);
 		break;
 
-	case GC::S_TUTORIAL:
-		menus[2].CheckClick(input, state, startGame);
+	case GC::STATE_TUTORIAL:
+		menus[2].CheckClick(input, state, startGame, game.menuSelect);
 		break;
+	}
+
+	//Audio
+	if (game.data.music.getStatus() != sf::Music::Playing)
+	{
+		PlayMusic(game.data.music, GC::MUSIC_MENUS, true);
+	}
+
+	if (startGame)
+	{
+		PlayMusic(game.data.music, GC::MUSIC_GAME, true);
 	}
 }
 
@@ -113,26 +124,31 @@ void RenderMenus(sf::RenderWindow& window, std::vector<Menu>& menus, int& state)
 {
 	switch (state)
 	{
-	case GC::S_MAIN_MENU:
+	case GC::STATE_MAIN_MENU:
 		menus[0].Render(window);
 		break;
 
-	case GC::S_SCORES:
+	case GC::STATE_SCORES:
 		menus[1].Render(window);
 		break;
 
-	case GC::S_TUTORIAL:
+	case GC::STATE_TUTORIAL:
 		menus[2].Render(window);
 		break;
 	}
 }
 
-void Menu::UpdateButtonHover(const Dim2Df& mousePosition)
+void Menu::UpdateButtonHover(const Dim2Df& mousePosition, sf::Sound& hoverSound)
 {
 	for (unsigned int i = 0; i < buttons.size(); i++)
 	{
 		if (buttons[i].sprite.getGlobalBounds().contains(mousePosition))
 		{
+			if (!buttons[i].mouseHover)
+			{
+				hoverSound.play();
+			}
+
 			buttons[i].mouseHover = true;
 			buttons[i].sprite.setColor(GC::PLAYER_COLOUR);
 		}
@@ -144,13 +160,14 @@ void Menu::UpdateButtonHover(const Dim2Df& mousePosition)
 	}
 }
 
-void Menu::CheckClick(const Input& input, int& state, bool& startGame)
+void Menu::CheckClick(const Input& input, int& state, bool& startGame, sf::Sound& selectSound)
 {
 	for (unsigned int i = 0; i < buttons.size(); i++)
 	{
 		if (buttons[i].mouseHover && input.leftClickPressed)
 		{
 			ButtonPress(state, buttons[i], fromID, startGame);
+			selectSound.play();
 		}
 	}
 }

@@ -1,5 +1,4 @@
 #pragma once
-//#include "audio.h"
 #include "player.h"
 #include "ui.h"
 
@@ -13,6 +12,10 @@ struct Game
 	std::vector<Enemy> enemyList;
 	std::vector<Projectile> projectiles;
 	std::vector<Room> roomList;
+
+	//Audio
+	sf::Sound menuHover;
+	sf::Sound menuSelect;
 
 	//SFML
 	sf::Clock clock{};
@@ -28,8 +31,7 @@ struct Game
 	//Check player death
 	void IsPlayerDead(sf::RenderWindow& window, int& state);
 
-	//
-	void ExitGame(sf::RenderWindow& window, int& state);
+	void ExitGame(sf::RenderWindow& window, int& state, const bool& playerDead);
 
 	//Keeps track of difficulty and enemy spawning
 	void EnemyUpdate();
@@ -39,12 +41,11 @@ struct Game
 	//Spawn enemies
 	void SpawnEnemies();
 
-	//
 	void Update(sf::RenderWindow& window, const Input& input, int& state);
-
-	//
+	
 	void Render(sf::RenderWindow& window);
 
+	//Resets values to prepare for a new game
 	void NewGame(sf::RenderWindow& window);
 };
 

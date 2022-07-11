@@ -31,7 +31,7 @@ void GetCursorImage(sf::Cursor& cursor, sf::RenderWindow& window)
 {
 	sf::Image tempCursor;
 	tempCursor.create(GC::CURSOR_DIMENSIONS.x, GC::CURSOR_DIMENSIONS.y);
-	tempCursor.loadFromFile("cursor.png");
+	tempCursor.loadFromFile("graphics/cursor.png");
 
 	if (cursor.loadFromPixels(tempCursor.getPixelsPtr(), sf::Vector2u(GC::CURSOR_DIMENSIONS), { 0, 0 }))
 	{
@@ -63,7 +63,7 @@ int main()
 	GetCursorImage(cursor, window);
 
 	//State
-	int gameState = GC::S_MAIN_MENU;
+	int gameState = GC::STATE_MAIN_MENU;
 	bool gameStarted = false;
 
 	//Start the game loop
@@ -72,7 +72,7 @@ int main()
 		input.Clear();
 		input.ProcessEvents(window);
 
-		if (gameState < GC::S_PLAYING) //In menus
+		if (gameState < GC::STATE_PLAYING) //In menus
 		{
 			MenusInputHandling(window, gameState, input, menus, game, gameStarted);
 		}
@@ -89,7 +89,7 @@ int main()
 
 		window.clear(sf::Color::Black);
 
-		if (gameState < GC::S_PLAYING) //In menus
+		if (gameState < GC::STATE_PLAYING) //In menus
 		{
 			RenderMenus(window, menus, gameState);
 		}

@@ -1,6 +1,13 @@
 #pragma once
 #include "game.h"
 
+struct Button
+{
+	int ID = 0;
+	bool mouseHover = false;
+	sf::Sprite sprite{};
+};
+
 struct Menu
 {
 	//Main stats
@@ -12,10 +19,9 @@ struct Menu
 	sf::Sprite sprite;
 
 	//Changes colour and sets mouseHover bool to true if the mouse is hovering over the button
-	void UpdateButtonHover(const Dim2Df& mousePosition);
+	void UpdateButtonHover(const Dim2Df& mousePosition, sf::Sound& hoverSound);
 
-	//
-	void CheckClick(const Input& input, int& state, bool& startGame);
+	void CheckClick(const Input& input, int& state, bool& startGame, sf::Sound& selectSound);
 
 	void Render(sf::RenderWindow& window);
 };

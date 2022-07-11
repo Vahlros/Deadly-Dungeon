@@ -23,6 +23,7 @@ struct Enemy
 	float differentRoomTimer = 0.f; //How long the enemy has been in a different room
 	float checkRoomTimer = 3.f; //Time until next room check
 	float attackCancelledCooldown = 2.f; //Time until immunity wears off
+	float noiseTimer = 0.f;
 
 	//Structs
 	Entity entity;
@@ -47,6 +48,21 @@ struct Enemy
 
 	//Handles attack cancellation immunity
 	void AttackCancel();
+
+	//Calculates sound volume based on distance from the player
+	void SetSoundVolume();
+
+	//Plays a random noise of the enemy type
+	void PlayRandomNoise(const GameData& game);
+
+	//Plays an enemy hit noise
+	void HitNoise(const GameData& game);
+
+	//Updates differentRoomTimer and despawns after a certain amount of time in a different room
+	void DespawnIfStuck(const GameData& game, const int& playerRoom, std::vector<Room>& rooms);
+
+	//Updates the status of the attack cancellation immunity buff
+	void AttackCancellationHandling(const GameData& game);
 };
 
 //Game constants

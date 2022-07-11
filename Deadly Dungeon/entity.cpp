@@ -653,3 +653,28 @@ void Entity::FindCurrentRoom(std::vector<Room>& rooms)
 		index++;
 	}
 }
+
+void Entity::HitNoise(const GameData& game, const int& ID)
+{
+	switch (ID)
+	{
+	case GC::ID_IMP:
+		//PlaySound(game.sounds, noise, GC::SOUND_IMP_HIT, false);
+		break;
+
+	case GC::ID_LESSER_DEMON:
+		//PlaySound(game.sounds, noise, GC::SOUND_L_DEMON_HIT, false);
+		break;
+
+	case GC::ID_ABERRANT:
+		//PlaySound(game.sounds, noise, GC::SOUND_ABERRANT_HIT, false);
+		break;
+
+	case GC::ID_GREATER_DEMON:
+		//PlaySound(game.sounds, noise, GC::SOUND_G_DEMON_HIT, false);
+		break;
+
+	//default:
+		//PlaySound(game.sounds, noise, GC::SOUND_PLAYER_HIT, false);
+	}
+}

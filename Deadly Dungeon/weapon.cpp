@@ -134,6 +134,12 @@ void Attack::Init(const GameData& game, sf::Sprite& motionSprite, sf::Sprite* eS
 			}
 		}
 	}
+
+	//Audio
+	if (hasSound && motions[0].damage)
+	{
+		PlaySound(game.sounds, *noise, soundID, false);
+	}
 }
 
 void Attack::UpdateAttack(const GameData& game, std::vector<Projectile>& projList)
@@ -142,9 +148,42 @@ void Attack::UpdateAttack(const GameData& game, std::vector<Projectile>& projLis
 	{
 		UpdateAttackMotion(game, motions[0]);
 	}
+	else if (!motions[0].active && hasTwoMotions && !motions[1].active && !attackRelease && !motionFinished) //Holding attack after first motion
+	{
+		if (movingWithEntity)
+		{
+			sprite->setPosition(entitySprite->getPosition());
+		}
+		else
+		{
+			sprite->setPosition(origin);
+		}
+
+		if (followingFacing)
+		{
+			initialAngle = GetFullAngleInDegrees(*facing);
+		}
+
+		motions[0].UpdatePosition(sprite, followingFacing, *facing, initialAngle, *radius);
+
+		if (entityIsWeapon)
+		{
+			UpdateRotation(motions[0], *sprite, GC::ZERO);
+		}
+		else
+		{
+			UpdateRotation(motions[0], *sprite, initialAngle);
+		}
+	}
 	else if (!motions[0].active && hasTwoMotions && attackRelease) //Initiate second motion
 	{
 		motions[1].Init(game, *facing, *attackSpeed, swingDirection, followingFacing);
+
+		//Audio
+		if (hasSound && motions[1].damage)
+		{
+			PlaySound(game.sounds, *noise, soundID, false);
+		}
 
 		//Animation check for second motion
 		if (uniqueAnimation && animOnMotion1)
@@ -175,33 +214,6 @@ void Attack::UpdateAttack(const GameData& game, std::vector<Projectile>& projLis
 
 		attackRelease = false;
 		UpdateAttackMotion(game, motions[1]);
-	}
-	else if (!motions[0].active && hasTwoMotions && !motions[1].active && !attackRelease && !motionFinished) //Holding attack after first motion
-	{
-		if (movingWithEntity)
-		{
-			sprite->setPosition(entitySprite->getPosition());
-		}
-		else
-		{
-			sprite->setPosition(origin);
-		}
-
-		if (followingFacing)
-		{
-			initialAngle = GetFullAngleInDegrees(*facing);
-		}
-
-		motions[0].UpdatePosition(sprite, followingFacing, *facing, initialAngle, *radius);
-
-		if (entityIsWeapon)
-		{
-			UpdateRotation(motions[0], *sprite, GC::ZERO);
-		}
-		else
-		{
-			UpdateRotation(motions[0], *sprite, initialAngle);
-		}
 	}
 	else if (motions[1].active && hasTwoMotions) //Second motion
 	{
@@ -441,13 +453,15 @@ void Attack::Stop()
 	}
 }
 
-void Weapon::Init(const GameData& game, const bool& isPlayer, Animation& entityAnim)
+void Weapon::Init(const GameData& game, const bool& isPlayer, Animation& entityAnim, sf::Sound& weaponNoise)
 {
 	active = true;
 	attack0.projectileShotByPlayer = isPlayer;
 	attack0.anim = &entityAnim;
+	attack0.noise = &weaponNoise;
 	attack1.projectileShotByPlayer = isPlayer;
 	attack1.anim = &entityAnim;
+	attack1.noise = &weaponNoise;
 
 	if (entityIsWeapon)
 	{

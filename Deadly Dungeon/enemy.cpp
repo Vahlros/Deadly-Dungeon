@@ -1,12 +1,45 @@
 #include "enemy.h"
 #include "maths.h"
 
-//Initialize enemy
+void SetRandomNoise(std::vector<sf::SoundBuffer> soundList, const int& ID, sf::Sound& sound)
+{
+	int soundID = rand() % 4;
+
+	if (soundID < 2)
+	{
+		soundID = 0;
+	}
+	else
+	{
+		soundID = 1;
+	}
+
+	switch (ID)
+	{
+	case GC::ID_IMP:
+		//sound.setBuffer(soundList[GC::SOUND_IMP_NOISE0]);
+		break;
+
+	case GC::ID_LESSER_DEMON:
+		//sound.setBuffer(soundList[GC::SOUND_L_DEMON_NOISE0 + soundID]);
+		break;
+
+	case GC::ID_ABERRANT:
+		//sound.setBuffer(soundList[GC::SOUND_L_DEMON_NOISE0 + soundID]);
+		break;
+
+	case GC::ID_GREATER_DEMON:
+		//sound.setBuffer(soundList[GC::SOUND_L_DEMON_NOISE0 + soundID]);
+		break;
+	}
+}
+
 void Enemy::Init(GameData& game, const Dim2Df& spawnPosition, const char& uID)
 {
 	entity.uniqueID = uID;
 	active = true;
 	checkRoomTimer = GC::CHECK_ROOM_TIMER;
+	noiseTimer = GC::RANDOM_NOISE_TIMER;
 
 	switch (ID)
 	{
@@ -14,6 +47,7 @@ void Enemy::Init(GameData& game, const Dim2Df& spawnPosition, const char& uID)
 		//Entity
 		entity.health = GC::IMP_HEALTH;
 		entity.collisionRect = GC::IMP_BODY_RECT;
+		//entity.footsteps.setBuffer(game.sounds[GC::SOUND_IMP_FOOTSTEPS]);
 
 		//SFML
 		entity.sprite.setTexture(game.textures[GC::IMP_TEXTURE]);
@@ -28,6 +62,7 @@ void Enemy::Init(GameData& game, const Dim2Df& spawnPosition, const char& uID)
 		//Entity
 		entity.health = GC::L_DEMON_HEALTH;
 		entity.collisionRect = GC::L_DEMON_BODY_RECT;
+		//entity.footsteps.setBuffer(game.sounds[GC::SOUND_L_DEMON_FOOTSTEPS]);
 
 		//SFML
 		entity.sprite.setTexture(game.textures[GC::L_DEMON_TEXTURE]);
@@ -42,6 +77,7 @@ void Enemy::Init(GameData& game, const Dim2Df& spawnPosition, const char& uID)
 		//Entity
 		entity.health = GC::ABERRANT_HEALTH;
 		entity.collisionRect = GC::ABERRANT_BODY_RECT;
+		//entity.footsteps.setBuffer(game.sounds[GC::SOUND_ABERRANT_FOOTSTEPS]);
 
 		//SFML
 		entity.sprite.setTexture(game.textures[GC::ABERRANT_TEXTURE]);
@@ -56,6 +92,7 @@ void Enemy::Init(GameData& game, const Dim2Df& spawnPosition, const char& uID)
 		//Entity
 		entity.health = GC::G_DEMON_HEALTH;
 		entity.collisionRect = GC::G_DEMON_BODY_RECT;
+		//entity.footsteps.setBuffer(game.sounds[GC::SOUND_G_DEMON_FOOTSTEPS]);
 
 		//SFML
 		entity.sprite.setTexture(game.textures[GC::G_DEMON_TEXTURE]);
@@ -71,13 +108,12 @@ void Enemy::Init(GameData& game, const Dim2Df& spawnPosition, const char& uID)
 	}
 
 	entity.sprite.setPosition(spawnPosition);
-	entity.weapon.Init(game, entity.isPlayer, entity.anim);
+	entity.weapon.Init(game, entity.isPlayer, entity.anim, entity.weaponNoise);
 	entity.weapon.attack0.enemyID = ID;
 	entity.weapon.attack1.enemyID = ID;
 	entity.anim.Init(&GC::ENEMY_ANIM_IDLE);
 }
 
-//Face enemy towards player
 void Enemy::TargetPlayer(const Entity& playerEntity)
 {
 	//Find origin and target points
@@ -95,7 +131,6 @@ void Enemy::TargetPlayer(const Entity& playerEntity)
 	}
 }
 
-//Move enemy towards player
 void Enemy::MoveTowardsPlayer(const GameData& game)
 {
 	float speed = 0.f;
@@ -133,6 +168,7 @@ void Enemy::MoveTowardsPlayer(const GameData& game)
 		{
 			entity.moving = true;
 			entity.anim.Init(&GC::ENEMY_ANIM_MOVE);
+			//entity.footsteps.play();
 		}
 	}
 	else
@@ -141,11 +177,11 @@ void Enemy::MoveTowardsPlayer(const GameData& game)
 		{
 			entity.moving = false;
 			entity.anim.Init(&GC::ENEMY_ANIM_IDLE);
+			//entity.footsteps.stop();
 		}
 	}
 }
 
-//If in range: Attack!
 void Enemy::CheckAttackRange(const GameData& game)
 {
 	//Checks range and initiates attack
@@ -176,7 +212,6 @@ void Enemy::CheckAttackRange(const GameData& game)
 	}
 }
 
-//Enemy behaviour
 void Enemy::Update(GameData& game, std::vector<Projectile>& proj, std::vector<Room>& rooms, Entity& playerEntity)
 {
 	if (entity.isAlive)
@@ -184,6 +219,10 @@ void Enemy::Update(GameData& game, std::vector<Projectile>& proj, std::vector<Ro
 		//Target and movement
 		TargetPlayer(playerEntity);
 		distanceToPlayer = CalculateMagnitudeOfVector(playerEntity.sprite.getPosition() - entity.sprite.getPosition());
+		
+		//Audio
+		SetSoundVolume();
+		PlayRandomNoise(game);
 
 		//Attack handling
 		if (entity.canAttack && !attackCooldown)
@@ -223,49 +262,16 @@ void Enemy::Update(GameData& game, std::vector<Projectile>& proj, std::vector<Ro
 			}
 		}
 
-		//Attack cancellation
-		if (attackCancelledCooldown < GC::ZERO)
-		{
-			attackCancelImmune = false;
-			attackCancelledCooldown = GC::ATTACK_CANCELLATION_COOLDOWN;
-		}
-		else if (attackCancelImmune)
-		{
-			attackCancelledCooldown -= game.elapsed;
-		}
-
-		//Check for stuck enemies, despawn if stuck for too long
-		checkRoomTimer -= game.elapsed;
-
-		if (checkRoomTimer < GC::ZERO)
-		{
-			checkRoomTimer = GC::CHECK_ROOM_TIMER;
-			entity.FindCurrentRoom(rooms);
-
-			if (entity.roomID != playerEntity.roomID)
-			{
-				differentRoomTimer += GC::CHECK_ROOM_TIMER;
-			}
-			else
-			{
-				differentRoomTimer = GC::ZERO;
-			}
-			
-			if (differentRoomTimer >= GC::DIFFERENT_ROOM_DESPAWN_TIMER)
-			{
-				differentRoomTimer = GC::ZERO;
-				entity.isAlive = false;
-				active = false;
-			}
-		}
+		AttackCancellationHandling(game);
+		DespawnIfStuck(game, playerEntity.roomID, rooms);
 	}
 	else
 	{
 		active = false;
+		//entity.footsteps.stop();
 	}
 }
 
-//Check if attack hits player
 void Enemy::CheckAttackCollision(GameData& game, Entity& playerEntity)
 {
 	if (entity.weapon.CheckIfMotionCanDamage() && !playerEntity.invulnerable)
@@ -301,7 +307,8 @@ void Enemy::CheckAttackCollision(GameData& game, Entity& playerEntity)
 			{
 				//Calculate damage
 				unsigned char actualDamage = (unsigned char)round(entity.power * GC::DEFAULT_DAMAGE);
-				//playerEntity.TakeDamage(actualDamage, entity.facing, GC::ZERO);
+				playerEntity.TakeDamage(actualDamage, entity.facing, GC::ZERO);
+				//playerEntity.HitNoise(game, -1);
 
 				//Immediately activate player invulnerability
 				playerEntity.invulnerable = true;
@@ -320,5 +327,107 @@ void Enemy::AttackCancel()
 	{
 		entity.weapon.StopAttackIfTrue(true);
 		attackCancelImmune = true;
+	}
+}
+
+void Enemy::SetSoundVolume()
+{
+	//Find volume
+	float volume = 100.f;
+
+	if (distanceToPlayer >= GC::MAX_AUDIO_RANGE)
+	{
+		volume = 0.f;
+	}
+	else if (distanceToPlayer >= GC::MIN_AUDIO_RANGE)
+	{
+		volume = 100.f - ((distanceToPlayer - GC::MIN_AUDIO_RANGE) / (GC::MAX_AUDIO_RANGE - GC::MIN_AUDIO_RANGE));
+	}
+
+	//Set volume
+	//entity.footsteps.setVolume(volume * GC::VOLUME_FOOTSTEPS);
+	//entity.noise.setVolume(volume);
+}
+
+void Enemy::PlayRandomNoise(const GameData& game)
+{
+	noiseTimer -= game.elapsed;
+
+	if (noiseTimer <= GC::ZERO) //One second
+	{
+		noiseTimer = GC::RANDOM_NOISE_TIMER;
+		int chance = rand() % 100;
+
+		if (chance < GC::RANDOM_NOISE_CHANCE)
+		{
+			//SetRandomNoise(game.sounds, ID, entity.noise);
+			//entity.noise.play();
+		}
+	}
+}
+
+void Enemy::HitNoise(const GameData& game)
+{
+	//entity.noise.stop();
+
+	//switch (ID)
+	//{
+	//case GC::ID_IMP:
+	//	entity.noise.setBuffer(game.sounds[GC::SOUND_IMP_HIT]);
+	//	break;
+
+	//case GC::ID_LESSER_DEMON:
+	//	entity.noise.setBuffer(game.sounds[GC::SOUND_L_DEMON_HIT]);
+	//	break;
+
+	//case GC::ID_ABERRANT:
+	//	entity.noise.setBuffer(game.sounds[GC::SOUND_ABERRANT_HIT]);
+	//	break;
+
+	//case GC::ID_GREATER_DEMON:
+	//	entity.noise.setBuffer(game.sounds[GC::SOUND_G_DEMON_HIT]);
+	//	break;
+	//}
+
+	//entity.noise.play();
+}
+
+void Enemy::DespawnIfStuck(const GameData& game, const int& playerRoom, std::vector<Room>& rooms)
+{
+	checkRoomTimer -= game.elapsed;
+
+	if (checkRoomTimer < GC::ZERO)
+	{
+		checkRoomTimer = GC::CHECK_ROOM_TIMER;
+		entity.FindCurrentRoom(rooms);
+
+		if (entity.roomID != playerRoom)
+		{
+			differentRoomTimer += GC::CHECK_ROOM_TIMER;
+		}
+		else
+		{
+			differentRoomTimer = GC::ZERO;
+		}
+
+		if (differentRoomTimer >= GC::DIFFERENT_ROOM_DESPAWN_TIMER)
+		{
+			differentRoomTimer = GC::ZERO;
+			entity.isAlive = false;
+			active = false;
+		}
+	}
+}
+
+void Enemy::AttackCancellationHandling(const GameData& game)
+{
+	if (attackCancelledCooldown < GC::ZERO)
+	{
+		attackCancelImmune = false;
+		attackCancelledCooldown = GC::ATTACK_CANCELLATION_COOLDOWN;
+	}
+	else if (attackCancelImmune)
+	{
+		attackCancelledCooldown -= game.elapsed;
 	}
 }

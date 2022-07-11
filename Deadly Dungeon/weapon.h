@@ -53,13 +53,14 @@ struct Projectile
 };
 
 //Attack
-struct Attack //Setup: {motion0, motion1}, ProjectileData*, AnimationData*, short range, various bools
+struct Attack //Setup: {motion0, motion1}, ProjectileData*, AnimationData*, int soundID, int range, various bools
 {
 	//Setup stats
 	Motion motions[GC::MAX_MOTIONS]; //Attack motions
 	const ProjectileData* projectileData = nullptr; //Data of this attack's projectile
 	const AnimationData* animData{}; //Data of this attack's animation
-	short range = 0; //Attack range, in pixels (0 means default weapon range, -1 means unlimited)
+	int soundID = -1; //ID of the sound to be played on a damaging motion
+	int range = 0; //Attack range, in pixels (0 means default weapon range, -1 means unlimited)
 
 	//Setup bools
 	bool summonProjectile = false; //If this attack summons a projectile after the motion has finished
@@ -68,6 +69,7 @@ struct Attack //Setup: {motion0, motion1}, ProjectileData*, AnimationData*, shor
 	bool hasTwoMotions = false; //If this is the first of two motions
 	bool arcCentredOnInitialAngle = false; //If this attack is centred on the initial angle
 	bool alternatingSwingDirection = false; //If this attack's inital position and direction changes on each swing
+	bool hasSound = false; //If this attack plays a sound on the damaging motion
 	bool uniqueAnimation = false; //If the attack has a unique animation to play
 	bool animOnMotion0 = false; //If the animation occurs on first motion
 	bool animOnMotion1 = false; //If the animation occurs on second motion
@@ -97,6 +99,7 @@ struct Attack //Setup: {motion0, motion1}, ProjectileData*, AnimationData*, shor
 	float* radius = nullptr;
 	float* attackSpeed = nullptr;
 	Animation* anim = nullptr;
+	sf::Sound* noise = nullptr;
 
 	//Initiates attack
 	void Init(const GameData& game, sf::Sprite& motionSprite, sf::Sprite* eSprite, DirectionalAngle& entityFacing, float& entityAttackSpeed, float& holdDistance, const bool& eIsWep, Animation* animation);
@@ -148,7 +151,7 @@ struct Weapon //Setup: attack0, attack1, sf::IntRect* textureRect, Dim2Df* origi
 	float holdDistance = GC::WEAPON_HOVER * GC::TILE_SIZE; //How far away the weapon is held
 
 	//Initializes the weapon from a template
-	void Init(const GameData& game, const bool& isPlayer, Animation& entityAnim);
+	void Init(const GameData& game, const bool& isPlayer, Animation& entityAnim, sf::Sound& weaponNoise);
 
 	//Updates the position of the weapon
 	void UpdateHoldPosition(const DirectionalAngle& facing, const Dim2Df holdOrigin);
@@ -192,26 +195,26 @@ namespace GC
 	const ProjectileData PLAYER_FROST_BALL4 = { &STRAIGHT_THROW_SLOW_SHORT, 0.f, 1, 4, 15.f, FROST_BALL_PROJECTILE };
 	const ProjectileData PLAYER_FROST_BALL5 = { &STRAIGHT_THROW_SLOW_SHORT, 0.f, 1, 9, 10.f, FROST_BALL_PROJECTILE };
 
-	//Attacks										(bools: summonProjectile, movingWithEntity, followingFacing, hasTwoMotions, arcCentredOnInitialAngle, hasRandomSwingDirection, uniqueAnimation -> if true -> animOnMotion0, animOnMotion1)
+	//Attacks										 (bools: summonProjectile, movingWithEntity, followingFacing, hasTwoMotions, arcCentredOnInitialAngle, hasRandomSwingDirection, hasSound, uniqueAnimation -> if true -> animOnMotion0, animOnMotion1)
 	//Swing
-	const Attack NORMAL_SWING_ATTACK = { {NORMAL_SWING_RELEASE}, {}, {}, 0,												false, true, false, false, true, true, false }; //Normal swing attack
-	const Attack HEAVY_SWING_ATTACK = { {HEAVY_SWING_WINDUP, GC::HEAVY_SWING_RELEASE}, {}, {}, 12,						false, true, true, true, false, false, false }; //Heavy swing attack
-	const Attack HEAVY_F_SWING_ATTACK = { {HEAVY_SWING_WINDUP, GC::HEAVY_F_SWING_RELEASE}, {}, {}, 16,					false, true, true, true, false, false, false }; //Heavy fancy swing attack, to give the player a slight edge
+	const Attack NORMAL_SWING_ATTACK = { {NORMAL_SWING_RELEASE}, {}, {}, SOUND_ATTACK0, 0,									false, true, false, false, true, true, true, false }; //Normal swing attack
+	const Attack HEAVY_SWING_ATTACK = { {HEAVY_SWING_WINDUP, HEAVY_SWING_RELEASE}, {}, {}, SOUND_ATTACK0, 12,				false, true, true, true, false, false, true, false }; //Heavy swing attack
+	const Attack HEAVY_F_SWING_ATTACK = { {HEAVY_SWING_WINDUP, HEAVY_F_SWING_RELEASE}, {}, {}, SOUND_ATTACK0, 16,			false, true, true, true, false, false, true, false }; //Heavy fancy swing attack, to give the player a slight edge
 	//Thrust
-	const Attack NORMAL_THRUST_ATTACK = { {NORMAL_THRUST_RELEASE}, {}, {}, 16,											false, true, true, false, false, false, false }; //Normal thrust attack
-	const Attack HEAVY_THRUST_ATTACK = { {HEAVY_THRUST_WINDUP, HEAVY_THRUST_RELEASE}, {}, {}, 24,						false, true, true, true, false, false, false }; //Heavy thrust attack
+	const Attack NORMAL_THRUST_ATTACK = { {NORMAL_THRUST_RELEASE}, {}, {}, SOUND_ATTACK1, 16,								false, true, true, false, false, false, true, false }; //Normal thrust attack
+	const Attack HEAVY_THRUST_ATTACK = { {HEAVY_THRUST_WINDUP, HEAVY_THRUST_RELEASE}, {}, {}, SOUND_ATTACK2, 24,			false, true, true, true, false, false, true, false }; //Heavy thrust attack
 	//Throw
-	const Attack NORMAL_STRAIGHT_THROW_ATTACK = { {THROW_PROJECTILE_FAST}, &PROJECTILE_DATA_STRAIGHT_THROW, {}, -1,		true, true, true, false, false, false, false }; //Normal throw attack
-	const Attack NORMAL_SPINNING_THROW_ATTACK = { {THROW_PROJECTILE_FAST}, &PROJECTILE_DATA_SPINNING_THROW, {}, -1,		true, true, true, false, false, false, false }; //Normal spinning throw attack
+	const Attack NORMAL_STRAIGHT_THROW_ATTACK = { {THROW_PROJECTILE_FAST}, &PROJECTILE_DATA_STRAIGHT_THROW, {}, {}, -1,		true, true, true, false, false, false, false, false }; //Normal throw attack
+	const Attack NORMAL_SPINNING_THROW_ATTACK = { {THROW_PROJECTILE_FAST}, &PROJECTILE_DATA_SPINNING_THROW, {}, {}, -1,		true, true, true, false, false, false, false, false }; //Normal spinning throw attack
 	//Special
-	const Attack CIRCLE_OF_DOOM_ATTACK = { {CIRCLE_OF_DOOM}, {}, {}, 240,												false, false, true, false, false, false, false }; //Sword of doom attack
+	const Attack CIRCLE_OF_DOOM_ATTACK = { {CIRCLE_OF_DOOM}, {}, {}, {}, 240,												false, false, true, false, false, false, false, false }; //Sword of doom attack
 	//Enemy attacks
-	const Attack HORN_STAB = { {HORN_STAB_JUMP}, {}, {}, 64,															false, false, false, false, false, false, false }; //Horn stab jump attack
-	const Attack CHARGE = { {CHARGE_WINDUP, CHARGE_RELEASE}, {}, &ENEMY_ANIM_MOVE, 160,									false, false, false, true, false, false, true, false, true }; //Horn charge attack
-	const Attack BITE = { {BITE_WINDUP}, &FIRE_BALL, &ENEMY_ANIM_BITE, 96,												true, false, true, false, false, false, true, true, false }; //Bite attack
-	const Attack BITE_BARRAGE = { {BITE_WINDUP}, &FIRE_BALL_BARRAGE, &ENEMY_ANIM_BITE, 160,								true, false, true, false, false, false, true, true, false }; //Bite barrage attack
-	const Attack BITE_WAVE = { {BITE_WINDUP}, &FIRE_BALL_VORTEX, &ENEMY_ANIM_BITE, 160,									true, false, true, false, false, false, true, true, false }; //Bite wave attack
-	const Attack FIRE_BALL_SPIT = { {FIRE_BALL_SPIT_WINDUP, FIRE_BALL_SPIT_RELEASE}, &FIRE_BALL, {}, 160,				true, false, true, true, false, false, false, false, false }; //Fire spit attack
+	const Attack HORN_STAB = { {HORN_STAB_JUMP}, {}, {}, {}, 64,															false, false, false, false, false, false, false, false }; //Horn stab jump attack
+	const Attack CHARGE = { {CHARGE_WINDUP, CHARGE_RELEASE}, {}, &ENEMY_ANIM_MOVE, {}, 160,									false, false, false, true, false, false, false, true, false, true }; //Horn charge attack
+	const Attack BITE = { {BITE_WINDUP}, &FIRE_BALL, &ENEMY_ANIM_BITE, {}, 96,												true, false, true, false, false, false, false, true, true, false }; //Bite attack
+	const Attack BITE_BARRAGE = { {BITE_WINDUP}, &FIRE_BALL_BARRAGE, &ENEMY_ANIM_BITE, {}, 160,								true, false, true, false, false, false, false, true, true, false }; //Bite barrage attack
+	const Attack BITE_WAVE = { {BITE_WINDUP}, &FIRE_BALL_VORTEX, &ENEMY_ANIM_BITE, {}, 160,									true, false, true, false, false, false, false, true, true, false }; //Bite wave attack
+	const Attack FIRE_BALL_SPIT = { {FIRE_BALL_SPIT_WINDUP, FIRE_BALL_SPIT_RELEASE}, &FIRE_BALL, {}, {}, 160,				true, false, true, true, false, false, false, false, false, false }; //Fire spit attack
 	//Weapons																									(bools: hasTwoAttacks, entityIsWeapon)
 	const Weapon SWORD = { NORMAL_SWING_ATTACK, HEAVY_SWING_ATTACK, ID_SWORD, &SWORD_RECT, &SWORD_ORIGIN,						true, false }; //Normal sword, starting weapon for the knight?
 	const Weapon FANCY_SWORD = { NORMAL_SWING_ATTACK, HEAVY_F_SWING_ATTACK, ID_FANCY_SWORD, &F_SWORD_RECT, &F_SWORD_ORIGIN,		true, false }; //Big fancy sword, used by the knight?

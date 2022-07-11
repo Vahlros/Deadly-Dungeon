@@ -2,13 +2,6 @@
 #include "data.h"
 #include "graphics.h"
 
-struct Button
-{
-	int ID = 0;
-	bool mouseHover = false;
-	sf::Sprite sprite{};
-};
-
 struct GameUI
 {
 	//Health
