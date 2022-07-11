@@ -13,6 +13,6 @@ namespace GC
 {
 	//Collision: General
 	const unsigned char FEET_COLLISION_HEIGHT = 4; //Feet collision box height
-	const unsigned char C_OFFSET = 1; //Offset for smooth collision
+	const unsigned char C_OFFSET = 2; //Offset for smoother collision
 	const unsigned char ENEMY_ATTACK_C_OFFSET = 3; //Offset for better body attack collision
 }

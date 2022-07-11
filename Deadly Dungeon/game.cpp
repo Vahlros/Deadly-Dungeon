@@ -342,6 +342,41 @@ short GetDifficultyRating(const float& totalTime)
 //	return enemiesCreated;
 //}
 
+void BoostWave(std::vector<Enemy>& enemies, const int& difficulty)
+{
+	//Find which way up/down the list that boosts will be applied
+	bool fromTop = false;
+	int i = rand() % 100;
+	if (i >= 50) //50/50 chance
+	{
+		fromTop = true;
+	}
+
+	//Apply boost bool
+	float boostChance = (difficulty - GC::D_NIGHTMARE) * GC::ENEMY_BOOST_CHANCE;
+	int boostCounter = 0;
+
+	while (boostChance > GC::ZERO && boostCounter != GC::MAX_ENEMIES_SPAWNED)
+	{
+		if (boostChance >= (rand() % 100))
+		{
+			if (fromTop)
+			{
+				i = GC::MAX_ENEMIES_SPAWNED - boostCounter - 1;
+			}
+			else
+			{
+				i = boostCounter;
+			}
+
+			enemies[i].boosted = true;
+			boostCounter += 1;
+		}
+
+		boostChance -= 100.f;
+	}
+}
+
 //Creates an enemy wave based on difficulty, returns number of enemies
 char CreateEnemyWave(std::vector<Enemy>& enemies, const short& difficulty)
 {
@@ -350,7 +385,6 @@ char CreateEnemyWave(std::vector<Enemy>& enemies, const short& difficulty)
 	enemies[1].ID = 0;
 	
 	switch (difficulty)
-	//switch (11) //For testing purposes
 	{
 	case GC::D_TRIVIAL:
 		enemiesCreated = 2;
@@ -425,7 +459,8 @@ char CreateEnemyWave(std::vector<Enemy>& enemies, const short& difficulty)
 		enemies[2].ID = rand() % 2;
 		enemies[3].ID = (rand() % 2) + 1;
 		enemies[4].ID = 3;
-		enemiesCreated = 1;
+		enemiesCreated = 5;
+		BoostWave(enemies, difficulty);
 	}
 
 	return enemiesCreated;
@@ -437,12 +472,12 @@ void StopSounds(std::vector<Enemy>& enemies, Player& player)
 	for (unsigned int i = 0; i < enemies.size(); i++)
 	{
 		enemies[i].active = false;
-		//enemies[i].entity.footsteps.stop();
-		//enemies[i].entity.noise.stop();
+		enemies[i].entity.footsteps.stop();
+		enemies[i].entity.noise.stop();
 	}
 
-	//player.entity.footsteps.stop();
-	//player.entity.noise.stop();
+	player.entity.footsteps.stop();
+	player.entity.noise.stop();
 }
 
 void Game::Init(sf::RenderWindow& window, Input& input)
@@ -500,10 +535,10 @@ void Game::ExitGame(sf::RenderWindow& window, int& state, const bool& playerDead
 	//Audio
 	if (!playerDead)
 	{
-		//data.music.stop();
+		data.music.stop();
 	}
 
-	//StopSounds(enemyList, player1);
+	StopSounds(enemyList, player1);
 }
 
 void Game::EnemyUpdate()

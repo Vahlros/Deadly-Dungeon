@@ -14,6 +14,7 @@ struct Enemy
 	bool madman = false; //If the enemy will wildly attack
 	bool attackCooldown = false; //If the enemy is in cooldown
 	bool attackCancelImmune = false; //If the enemy is immune to player's attack cancellation
+	bool boosted = false; //If the enemy has boosted stats and immunities
 
 	//Operational stats
 	float distanceToPlayer = 0.f; //Distance to the player
@@ -63,6 +64,9 @@ struct Enemy
 
 	//Updates the status of the attack cancellation immunity buff
 	void AttackCancellationHandling(const GameData& game);
+
+	//Gives this enemy random boost effects
+	void Boost();
 };
 
 //Game constants
@@ -74,4 +78,9 @@ namespace GC
 	const float DIFFERENT_ROOM_DESPAWN_TIMER = 29.f; //How long an enemy is stuck in a different room before it despawns
 	const float ATTACK_CANCELLATION_COOLDOWN = 5.f; //How long cancellation immunity lasts for
 	const float KNOCKBACK_RESISTANCE_COOLDOWN = 2.f; //How long cancellation immunity lasts for
+
+	//Boosts
+	const float ENEMY_BOOST_CHANCE = 30.f; //Percentage chance to boost and enemy, stacks on difficulty over 10 (after 5 minutes)
+	const int ENEMY_BOOSTED_HEALTH = 2;
+	const float ENEMY_BOOSTED_DAMAGE = 2.f;
 }

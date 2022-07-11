@@ -67,8 +67,11 @@ struct Entity
 	//Initiates a knockback
 	void InitKnockback(const DirectionalAngle& facing, const float& knockPower);
 
-	//Updates knockback
+	//Reduces knockback timer until it disables knockback
 	void UpdateKnockback(const GameData& game);
+
+	//Reduces invulnerability timer until it disables invulnerability
+	void UpdateInvulnerability(const GameData& game);
 
 	//Moves the entity, also updates knockback
 	void Move(const GameData& game);

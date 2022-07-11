@@ -69,7 +69,7 @@ struct Shop
 	void Render(sf::RenderWindow& window);
 
 	//Buys the item from the shop
-	char Buy(GameData& game, short& coins);
+	char Buy(GameData& game, short& coins, sf::Sound& sound);
 
 	//Increases price and changes the name of the shop
 	void IncreasePrice();

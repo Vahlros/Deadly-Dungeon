@@ -50,10 +50,10 @@ void Player::Init(GameData& game, Input& inputRef)
 	entity.sprite.setOrigin(GC::KNIGHT_BODY_CENTRE);
 
 	//Audio
-	//entity.footsteps.setBuffer(game.sounds[GC::SOUND_PLAYER_FOOTSTEPS]);
-	//entity.footsteps.setLoop(true);
-	//entity.footsteps.setVolume(GC::VOLUME_FOOTSTEPS);
-	//entity.noise.setBuffer(game.sounds[GC::SOUND_PLAYER_HIT]);
+	entity.footsteps.setBuffer(game.sounds[GC::SOUND_PLAYER_FOOTSTEPS]);
+	entity.footsteps.setLoop(true);
+	entity.footsteps.setVolume(GC::VOLUME_FOOTSTEPS);
+	entity.noise.setBuffer(game.sounds[GC::SOUND_PLAYER_HIT]);
 }
 
 void Player::InputHandling(GameData& game, std::vector<Room>& rooms)
@@ -142,8 +142,8 @@ void Player::KeyboardMovement()
 		{
 			entity.moving = true;
 			entity.anim.Init(&GC::PLAYER_ANIM_MOVE);
-			//entity.footsteps.setLoop(true);
-			//entity.footsteps.play();
+			entity.footsteps.setLoop(true);
+			entity.footsteps.play();
 		}
 	}
 	else
@@ -152,7 +152,7 @@ void Player::KeyboardMovement()
 		{
 			entity.moving = false;
 			entity.anim.Init(&GC::PLAYER_ANIM_IDLE);
-			//entity.footsteps.stop();
+			entity.footsteps.stop();
 		}
 	}
 
@@ -247,7 +247,7 @@ void Player::CheckAttackCollision(GameData& game, std::vector<Enemy>& enemies)
 						//Hit enemy
 						unsigned char actualDamage = (unsigned char)round(damage);
 						enemies[i].entity.TakeDamage(actualDamage, entity.facing, knockbackPower);
-						//enemies[i].entity.HitNoise(game, enemies[i].ID);
+						enemies[i].entity.HitNoise(game, enemies[i].ID);
 
 						if (enemies[i].entity.isAlive)
 						{
@@ -324,9 +324,9 @@ void Player::UpdateInvulnerability(GameData& game)
 void Player::Dead(GameData& game)
 {
 	game.playerDead = true;
-	//entity.noise.stop();
-	//entity.noise.setBuffer(game.sounds[GC::SOUND_PLAYER_DEATH]);
-	//entity.noise.play();
+	entity.noise.stop();
+	entity.noise.setBuffer(game.sounds[GC::SOUND_PLAYER_DEATH]);
+	entity.noise.play();
 }
 
 void Player::EarnCoins(const char& enemyID)
@@ -371,7 +371,7 @@ void Player::BuyItemFromShop(GameData& game, std::vector<Shop>& shops)
 			if (distanceToShop <= GC::BUY_ITEM_RANGE)
 			{
 				found = true;
-				char itemID = shops[index].Buy(game, coins);
+				char itemID = shops[index].Buy(game, coins, shopSound);
 				if (itemID != -1)
 				{
 					ApplyItemEffects(game, itemID);
@@ -417,14 +417,18 @@ void Player::ApplyItemEffects(const GameData& game, const char& itemID)
 
 	case GC::LS_FANCY_SWORD:
 		newWeapon = true;
+		scale = entity.weapon.sprite.getScale();
 		entity.weapon = GC::FANCY_SWORD;
 		entity.weapon.Init(game, true, entity.anim, entity.weaponNoise);
+		entity.weapon.sprite.setScale(scale);
 		break;
 
 	case GC::LS_SPEAR:
 		newWeapon = true;
+		scale = entity.weapon.sprite.getScale();
 		entity.weapon = GC::SPEAR;
 		entity.weapon.Init(game, true, entity.anim, entity.weaponNoise);
+		entity.weapon.sprite.setScale(scale);
 		break;
 
 	case GC::LS_BIG_WEAPONS:
@@ -444,12 +448,6 @@ void Player::ApplyItemEffects(const GameData& game, const char& itemID)
 
 	if (newWeapon)
 	{
-		if (game.metrics.purchasedBigWeapons)
-		{
-			entity.weaponScale = GC::BIG_WEAPONS_SCALE;
-			Dim2Df scale = entity.weapon.sprite.getScale();
-			entity.weapon.sprite.setScale(scale.x * entity.weaponScale.x, scale.y * entity.weaponScale.y);
-		}
 		if (game.metrics.purchasedMeleeBullets)
 		{
 			AssignProjectileData(entity.weapon, game.metrics.meleeBulletUpgrades);

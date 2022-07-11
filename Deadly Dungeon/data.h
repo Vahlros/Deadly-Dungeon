@@ -352,11 +352,12 @@ namespace GC
 
 	//Knockback
 	const float KNOCKBACK_TIMER = 0.25f; //How long an enemy is knocked back for
-	const float KNOCKBACK_INVULNERABILITY = 0.15f; //How long an entity is invulnerable for in knockback
+	const float ENEMY_INVULNERABILITY = 0.25f; //How long an entity is invulnerable for in knockback
 
 	//Colours
 	const sf::Color PLAYER_COLOUR = sf::Color(51, 102, 255); //Softer blue than default
-	const sf::Color FONT_COLOUR = sf::Color(211, 191, 169); //Should be cream-ish?
+	const sf::Color FONT_COLOUR = sf::Color(211, 191, 169); //Cream-ish beige-ish
+	const sf::Color ENEMY_BOOST_COLOUR = sf::Color( 42, 0, 0 ); //Evil red
 
 	//Shop: Text
 	const int TEXT_CHARACTER_SIZE = 40;

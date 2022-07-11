@@ -118,10 +118,11 @@ void Shop::Render(sf::RenderWindow& window)
 	}
 }
 
-char Shop::Buy(GameData& game, short& coins)
+char Shop::Buy(GameData& game, short& coins, sf::Sound& sound)
 {
 	if (coins >= price)
 	{
+		PlaySound(game.sounds, sound, GC::SOUND_SHOP_BUY, false);
 		coins -= price;
 		game.metrics.UpdatePurchases(itemID, (unsigned char)price);
 
@@ -137,6 +138,10 @@ char Shop::Buy(GameData& game, short& coins)
 		}
 
 		return itemID;
+	}
+	else
+	{
+		PlaySound(game.sounds, sound, GC::SOUND_SHOP_FAIL, false);
 	}
 
 	return -1;
@@ -163,8 +168,6 @@ void Room::Init(GameData& game, const int& roomNumber, const Dim2Di& position)
 
 	//Dimensions
 	GetTypeDimensions(rect.width, rect.height);
-
-
 
 	//Draw tiles
 	char tileID = 0, tileAboveID = 1;

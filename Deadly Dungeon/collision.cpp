@@ -84,7 +84,7 @@ bool CheckCollisionLeft(const GameData& game, const sf::FloatRect& collisionBox,
 		}
 		else if (tile == GC::C_WALL_TOP)
 		{
-			tileRect = { collisionPoint.x * GC::TILE_SIZE, (collisionPoint.y * GC::TILE_SIZE) + GC::TILE_SIZE - (GC::WALL_TOP_HEIGHT - GC::C_OFFSET), GC::TILE_SIZE + GC::C_OFFSET, GC::WALL_TOP_HEIGHT };
+			tileRect = { collisionPoint.x * GC::TILE_SIZE, (collisionPoint.y * GC::TILE_SIZE) + GC::TILE_SIZE - GC::WALL_TOP_HEIGHT, GC::TILE_SIZE + GC::C_OFFSET, GC::WALL_TOP_HEIGHT };
 		}
 		else if ((tile == GC::C_WALL_SIDE_LEFT) || (tile == GC::C_CORNER_BOTTOM_LEFT))
 		{
@@ -92,12 +92,12 @@ bool CheckCollisionLeft(const GameData& game, const sf::FloatRect& collisionBox,
 		}
 		else if ((tile == GC::C_WALL_SIDE_RIGHT) || (tile == GC::C_CORNER_BOTTOM_RIGHT))
 		{
-			tileRect = { (collisionPoint.x * GC::TILE_SIZE) + GC::TILE_SIZE - (wallSideWidth + GC::C_OFFSET), collisionPoint.y * GC::TILE_SIZE, wallSideWidth + GC::C_OFFSET + GC::C_OFFSET, GC::TILE_SIZE };
+			tileRect = { (collisionPoint.x * GC::TILE_SIZE) + GC::TILE_SIZE - wallSideWidth, collisionPoint.y * GC::TILE_SIZE, wallSideWidth + GC::C_OFFSET, GC::TILE_SIZE };
 		}
 		else if (tile == GC::C_WALL_TOP_BOTTOM_LEFT)
 		{
 			tileRect = { collisionPoint.x * GC::TILE_SIZE, (collisionPoint.y * GC::TILE_SIZE) + GC::TILE_SIZE - GC::WALL_TOP_HEIGHT,
-				(wallSideWidth + GC::C_OFFSET), GC::WALL_TOP_HEIGHT };
+				wallSideWidth + GC::C_OFFSET, GC::WALL_TOP_HEIGHT };
 		}
 		else if (tile == GC::C_FOUNTAIN_TOP)
 		{
@@ -133,7 +133,7 @@ bool CheckCollisionLeft(const GameData& game, const sf::FloatRect& collisionBox,
 			}
 			else if (tile == GC::C_WALL_SIDE_RIGHT)
 			{
-				tileRect = { (collisionPoint.x * GC::TILE_SIZE) + GC::TILE_SIZE - (wallSideWidth + GC::C_OFFSET), collisionPoint.y * GC::TILE_SIZE, wallSideWidth + GC::C_OFFSET + GC::C_OFFSET, GC::TILE_SIZE };
+				tileRect = { (collisionPoint.x * GC::TILE_SIZE) + GC::TILE_SIZE - wallSideWidth, collisionPoint.y * GC::TILE_SIZE, wallSideWidth + GC::C_OFFSET, GC::TILE_SIZE };
 			}
 			else if (tile == GC::C_FOUNTAIN_BASIN)
 			{
@@ -176,7 +176,7 @@ bool CheckCollisionRight(const GameData& game, const sf::FloatRect& collisionBox
 		}
 		else if (tile == GC::C_WALL_SIDE_LEFT)
 		{
-			tileRect = { (collisionPoint.x * GC::TILE_SIZE) - GC::C_OFFSET, collisionPoint.y * GC::TILE_SIZE, wallSideWidth + GC::C_OFFSET + GC::C_OFFSET, GC::TILE_SIZE };
+			tileRect = { (collisionPoint.x * GC::TILE_SIZE) - GC::C_OFFSET, collisionPoint.y * GC::TILE_SIZE, wallSideWidth + GC::C_OFFSET, GC::TILE_SIZE };
 		}
 		else if (tile == GC::C_WALL_SIDE_RIGHT)
 		{
@@ -184,11 +184,11 @@ bool CheckCollisionRight(const GameData& game, const sf::FloatRect& collisionBox
 		}
 		else if (tile == GC::C_FOUNTAIN_BASIN)
 		{
-			tileRect = { (collisionPoint.x * GC::TILE_SIZE) - GC::C_OFFSET, collisionPoint.y * GC::TILE_SIZE, GC::TILE_SIZE + GC::C_OFFSET, GC::FOUNTAIN_BASIN_HEIGHT - GC::C_OFFSET };
+			tileRect = { (collisionPoint.x * GC::TILE_SIZE) - GC::C_OFFSET, collisionPoint.y * GC::TILE_SIZE, GC::TILE_SIZE + GC::C_OFFSET, GC::FOUNTAIN_BASIN_HEIGHT };
 		}
 		else if (tile == GC::C_COLUMN_BASE)
 		{
-			tileRect = { collisionPoint.x * GC::TILE_SIZE, collisionPoint.y * GC::TILE_SIZE, GC::TILE_SIZE, GC::COLUMN_BASE_HEIGHT - GC::C_OFFSET };
+			tileRect = { (collisionPoint.x * GC::TILE_SIZE) - GC::C_OFFSET, collisionPoint.y * GC::TILE_SIZE, GC::TILE_SIZE + GC::C_OFFSET, GC::COLUMN_BASE_HEIGHT };
 		}
 
 		if (collisionBox.intersects(tileRect, intersection))
@@ -212,11 +212,11 @@ bool CheckCollisionRight(const GameData& game, const sf::FloatRect& collisionBox
 			}
 			else if (tile == GC::C_WALL_TOP)
 			{
-				tileRect = { collisionPoint.x * GC::TILE_SIZE, (collisionPoint.y * GC::TILE_SIZE) + GC::TILE_SIZE - (GC::WALL_TOP_HEIGHT - GC::C_OFFSET), GC::TILE_SIZE, GC::WALL_TOP_HEIGHT - GC::C_OFFSET };
+				tileRect = { (collisionPoint.x * GC::TILE_SIZE) - GC::C_OFFSET, (collisionPoint.y * GC::TILE_SIZE) + GC::TILE_SIZE - (GC::WALL_TOP_HEIGHT - GC::C_OFFSET), GC::TILE_SIZE + GC::C_OFFSET, GC::WALL_TOP_HEIGHT };
 			}
 			else if ((tile == GC::C_WALL_SIDE_LEFT) || (tile == GC::C_CORNER_BOTTOM_LEFT))
 			{
-				tileRect = { (collisionPoint.x * GC::TILE_SIZE) - GC::C_OFFSET, collisionPoint.y * GC::TILE_SIZE, wallSideWidth + GC::C_OFFSET + GC::C_OFFSET, GC::TILE_SIZE };
+				tileRect = { (collisionPoint.x * GC::TILE_SIZE) - GC::C_OFFSET, collisionPoint.y * GC::TILE_SIZE, wallSideWidth + GC::C_OFFSET, GC::TILE_SIZE };
 			}
 			else if ((tile == GC::C_WALL_SIDE_RIGHT) || (tile == GC::C_CORNER_BOTTOM_RIGHT))
 			{
@@ -225,7 +225,7 @@ bool CheckCollisionRight(const GameData& game, const sf::FloatRect& collisionBox
 			else if (tile == GC::C_WALL_TOP_BOTTOM_RIGHT)
 			{
 				tileRect = { (collisionPoint.x * GC::TILE_SIZE) + GC::TILE_SIZE - (wallSideWidth + GC::C_OFFSET), (collisionPoint.y * GC::TILE_SIZE) + GC::TILE_SIZE - GC::WALL_TOP_HEIGHT,
-					(wallSideWidth + GC::C_OFFSET), GC::WALL_TOP_HEIGHT };
+					wallSideWidth + GC::C_OFFSET, GC::WALL_TOP_HEIGHT };
 			}
 			else if (tile == GC::C_FOUNTAIN_TOP)
 			{
@@ -264,19 +264,19 @@ bool CheckCollisionUp(const GameData& game, const sf::FloatRect& collisionBox, D
 	{
 		if (tile == GC::C_WALL)
 		{
-			tileRect = { collisionPoint.x * GC::TILE_SIZE, collisionPoint.y * GC::TILE_SIZE, GC::TILE_SIZE - GC::C_OFFSET, GC::TILE_SIZE + GC::C_OFFSET };
+			tileRect = { collisionPoint.x * GC::TILE_SIZE, collisionPoint.y * GC::TILE_SIZE, GC::TILE_SIZE, GC::TILE_SIZE + GC::C_OFFSET };
 		}
 		else if (tile == GC::C_WALL_SIDE_LEFT)
 		{
-			tileRect = { collisionPoint.x * GC::TILE_SIZE, collisionPoint.y * GC::TILE_SIZE, GC::WALL_SIDE_WIDTH - GC::C_OFFSET, GC::TILE_SIZE };
+			tileRect = { collisionPoint.x * GC::TILE_SIZE, collisionPoint.y * GC::TILE_SIZE, GC::WALL_SIDE_WIDTH, GC::TILE_SIZE + GC::C_OFFSET};
 		}
 		else if (tile == GC::C_FOUNTAIN_BASIN)
 		{
-			tileRect = { collisionPoint.x * GC::TILE_SIZE, collisionPoint.y * GC::TILE_SIZE, GC::TILE_SIZE - GC::C_OFFSET, GC::FOUNTAIN_BASIN_HEIGHT + GC::C_OFFSET };
+			tileRect = { collisionPoint.x * GC::TILE_SIZE, collisionPoint.y * GC::TILE_SIZE, GC::TILE_SIZE, GC::FOUNTAIN_BASIN_HEIGHT + GC::C_OFFSET };
 		}
 		else if (tile == GC::C_COLUMN_BASE)
 		{
-			tileRect = { collisionPoint.x * GC::TILE_SIZE, collisionPoint.y * GC::TILE_SIZE, GC::TILE_SIZE - GC::C_OFFSET, GC::COLUMN_BASE_HEIGHT + GC::C_OFFSET };
+			tileRect = { collisionPoint.x * GC::TILE_SIZE, collisionPoint.y * GC::TILE_SIZE, GC::TILE_SIZE, GC::COLUMN_BASE_HEIGHT + GC::C_OFFSET };
 		}
 
 		if (collisionBox.intersects(tileRect, intersection))
@@ -296,19 +296,19 @@ bool CheckCollisionUp(const GameData& game, const sf::FloatRect& collisionBox, D
 		{
 			if (tile == GC::C_WALL)
 			{
-				tileRect = { (collisionPoint.x * GC::TILE_SIZE) + GC::C_OFFSET, collisionPoint.y * GC::TILE_SIZE, GC::TILE_SIZE - GC::C_OFFSET, GC::TILE_SIZE + GC::C_OFFSET };
+				tileRect = { collisionPoint.x * GC::TILE_SIZE, collisionPoint.y * GC::TILE_SIZE, GC::TILE_SIZE, GC::TILE_SIZE + GC::C_OFFSET };
 			}
 			else if (tile == GC::C_WALL_SIDE_RIGHT)
 			{
-				tileRect = { (collisionPoint.x * GC::TILE_SIZE) + GC::TILE_SIZE - (GC::WALL_SIDE_WIDTH - GC::C_OFFSET), collisionPoint.y * GC::TILE_SIZE, GC::WALL_SIDE_WIDTH - GC::C_OFFSET, GC::TILE_SIZE };
+				tileRect = { (collisionPoint.x * GC::TILE_SIZE) + GC::TILE_SIZE - GC::WALL_SIDE_WIDTH, collisionPoint.y * GC::TILE_SIZE, GC::WALL_SIDE_WIDTH, GC::TILE_SIZE + GC::C_OFFSET };
 			}
 			else if (tile == GC::C_FOUNTAIN_BASIN)
 			{
-				tileRect = { (collisionPoint.x * GC::TILE_SIZE) + GC::C_OFFSET, collisionPoint.y * GC::TILE_SIZE, GC::TILE_SIZE - GC::C_OFFSET, GC::FOUNTAIN_BASIN_HEIGHT + GC::C_OFFSET };
+				tileRect = { collisionPoint.x * GC::TILE_SIZE, collisionPoint.y * GC::TILE_SIZE, GC::TILE_SIZE, GC::FOUNTAIN_BASIN_HEIGHT + GC::C_OFFSET };
 			}
 			else if (tile == GC::C_COLUMN_BASE)
 			{
-				tileRect = { (collisionPoint.x * GC::TILE_SIZE) + GC::C_OFFSET, collisionPoint.y * GC::TILE_SIZE, GC::TILE_SIZE - GC::C_OFFSET, GC::COLUMN_BASE_HEIGHT + GC::C_OFFSET };
+				tileRect = { collisionPoint.x * GC::TILE_SIZE, collisionPoint.y * GC::TILE_SIZE, GC::TILE_SIZE, GC::COLUMN_BASE_HEIGHT + GC::C_OFFSET };
 			}
 
 			if (collisionBox.intersects(tileRect, intersection))
@@ -339,24 +339,24 @@ bool CheckCollisionDown(const GameData& game, const sf::FloatRect& collisionBox,
 	{
 		if (tile == GC::C_WALL)
 		{
-			tileRect = { (collisionPoint.x * GC::TILE_SIZE) + GC::C_OFFSET, (collisionPoint.y * GC::TILE_SIZE) - GC::C_OFFSET, GC::TILE_SIZE - GC::C_OFFSET, GC::TILE_SIZE + GC::C_OFFSET };
+			tileRect = { collisionPoint.x * GC::TILE_SIZE, (collisionPoint.y * GC::TILE_SIZE) - GC::C_OFFSET, GC::TILE_SIZE, GC::TILE_SIZE + GC::C_OFFSET };
 		}
 		else if ((tile == GC::C_WALL_TOP) || (tile == GC::C_CORNER_BOTTOM_RIGHT) || (tile == GC::C_CORNER_BOTTOM_LEFT))
 		{
-			tileRect = { (collisionPoint.x * GC::TILE_SIZE) + GC::C_OFFSET, (collisionPoint.y * GC::TILE_SIZE) + GC::TILE_SIZE - (GC::WALL_TOP_HEIGHT + GC::C_OFFSET), GC::TILE_SIZE - GC::C_OFFSET, GC::WALL_TOP_HEIGHT + GC::C_OFFSET };
+			tileRect = { collisionPoint.x * GC::TILE_SIZE, (collisionPoint.y * GC::TILE_SIZE) + GC::TILE_SIZE - (GC::WALL_TOP_HEIGHT + GC::C_OFFSET), GC::TILE_SIZE, GC::WALL_TOP_HEIGHT + GC::C_OFFSET };
 		}
 		else if (tile == GC::C_WALL_TOP_BOTTOM_RIGHT)
 		{
-			tileRect = { (collisionPoint.x * GC::TILE_SIZE) + GC::TILE_SIZE - (GC::WALL_SIDE_WIDTH - GC::C_OFFSET), (collisionPoint.y * GC::TILE_SIZE) + GC::TILE_SIZE - (GC::WALL_TOP_HEIGHT + GC::C_OFFSET),
-				GC::WALL_SIDE_WIDTH - GC::C_OFFSET, GC::WALL_TOP_HEIGHT + GC::C_OFFSET };
+			tileRect = { (collisionPoint.x * GC::TILE_SIZE) + GC::TILE_SIZE - GC::WALL_SIDE_WIDTH, (collisionPoint.y * GC::TILE_SIZE) + GC::TILE_SIZE - (GC::WALL_TOP_HEIGHT + GC::C_OFFSET),
+				GC::WALL_SIDE_WIDTH, GC::WALL_TOP_HEIGHT + GC::C_OFFSET };
 		}
 		else if (tile == GC::C_FOUNTAIN_TOP)
 		{
-			tileRect = { (collisionPoint.x * GC::TILE_SIZE) + GC::C_OFFSET, (collisionPoint.y * GC::TILE_SIZE) + GC::TILE_SIZE - (GC::FOUNTAIN_TOP_HEIGHT + GC::C_OFFSET), GC::TILE_SIZE - GC::C_OFFSET, GC::FOUNTAIN_TOP_HEIGHT + GC::C_OFFSET };
+			tileRect = { collisionPoint.x * GC::TILE_SIZE, (collisionPoint.y * GC::TILE_SIZE) + GC::TILE_SIZE - (GC::FOUNTAIN_TOP_HEIGHT + GC::C_OFFSET), GC::TILE_SIZE, GC::FOUNTAIN_TOP_HEIGHT + GC::C_OFFSET };
 		}
 		else if (tile == GC::C_COLUMN_TOP)
 		{
-			tileRect = { (collisionPoint.x * GC::TILE_SIZE) + GC::C_OFFSET, (collisionPoint.y * GC::TILE_SIZE) + GC::TILE_SIZE - (GC::COLUMN_TOP_HEIGHT + GC::C_OFFSET), GC::TILE_SIZE - GC::C_OFFSET, GC::COLUMN_TOP_HEIGHT + GC::C_OFFSET };
+			tileRect = { collisionPoint.x * GC::TILE_SIZE, (collisionPoint.y * GC::TILE_SIZE) + GC::TILE_SIZE - (GC::COLUMN_TOP_HEIGHT + GC::C_OFFSET), GC::TILE_SIZE, GC::COLUMN_TOP_HEIGHT + GC::C_OFFSET };
 		}
 
 		if (collisionBox.intersects(tileRect, intersection))
@@ -376,24 +376,24 @@ bool CheckCollisionDown(const GameData& game, const sf::FloatRect& collisionBox,
 		{
 			if (tile == GC::C_WALL)
 			{
-				tileRect = { collisionPoint.x * GC::TILE_SIZE, (collisionPoint.y * GC::TILE_SIZE) - GC::C_OFFSET, GC::TILE_SIZE - GC::C_OFFSET, GC::TILE_SIZE + GC::C_OFFSET };
+				tileRect = { collisionPoint.x * GC::TILE_SIZE, (collisionPoint.y * GC::TILE_SIZE) - GC::C_OFFSET, GC::TILE_SIZE, GC::TILE_SIZE + GC::C_OFFSET };
 			}
 			else if ((tile == GC::C_WALL_TOP) || (tile == GC::C_CORNER_BOTTOM_LEFT) || (tile == GC::C_CORNER_BOTTOM_RIGHT))
 			{
-				tileRect = { collisionPoint.x * GC::TILE_SIZE, (collisionPoint.y * GC::TILE_SIZE) + GC::TILE_SIZE - (GC::WALL_TOP_HEIGHT + GC::C_OFFSET), GC::TILE_SIZE - GC::C_OFFSET, GC::WALL_TOP_HEIGHT + GC::C_OFFSET };
+				tileRect = { collisionPoint.x * GC::TILE_SIZE, (collisionPoint.y * GC::TILE_SIZE) + GC::TILE_SIZE - (GC::WALL_TOP_HEIGHT + GC::C_OFFSET), GC::TILE_SIZE, GC::WALL_TOP_HEIGHT + GC::C_OFFSET };
 			}
 			else if (tile == GC::C_WALL_TOP_BOTTOM_LEFT)
 			{
 				tileRect = { collisionPoint.x * GC::TILE_SIZE, (collisionPoint.y * GC::TILE_SIZE) + GC::TILE_SIZE - (GC::WALL_TOP_HEIGHT + GC::C_OFFSET),
-					GC::WALL_SIDE_WIDTH - GC::C_OFFSET, (GC::WALL_TOP_HEIGHT + GC::C_OFFSET) };
+					GC::WALL_SIDE_WIDTH, GC::WALL_TOP_HEIGHT + GC::C_OFFSET };
 			}
 			else if (tile == GC::C_FOUNTAIN_TOP)
 			{
-				tileRect = { collisionPoint.x * GC::TILE_SIZE, (collisionPoint.y * GC::TILE_SIZE) + GC::TILE_SIZE - (GC::FOUNTAIN_TOP_HEIGHT + GC::C_OFFSET), GC::TILE_SIZE - GC::C_OFFSET, (GC::FOUNTAIN_TOP_HEIGHT + GC::C_OFFSET) };
+				tileRect = { collisionPoint.x * GC::TILE_SIZE, (collisionPoint.y * GC::TILE_SIZE) + GC::TILE_SIZE - (GC::FOUNTAIN_TOP_HEIGHT + GC::C_OFFSET), GC::TILE_SIZE, GC::FOUNTAIN_TOP_HEIGHT + GC::C_OFFSET };
 			}
 			else if (tile == GC::C_COLUMN_TOP)
 			{
-				tileRect = { collisionPoint.x * GC::TILE_SIZE, (collisionPoint.y * GC::TILE_SIZE) + GC::TILE_SIZE - (GC::COLUMN_TOP_HEIGHT + GC::C_OFFSET), GC::TILE_SIZE - GC::C_OFFSET, (GC::COLUMN_TOP_HEIGHT + GC::C_OFFSET) };
+				tileRect = { collisionPoint.x * GC::TILE_SIZE, (collisionPoint.y * GC::TILE_SIZE) + GC::TILE_SIZE - (GC::COLUMN_TOP_HEIGHT + GC::C_OFFSET), GC::TILE_SIZE, GC::COLUMN_TOP_HEIGHT + GC::C_OFFSET };
 			}
 
 			if (collisionBox.intersects(tileRect, intersection))

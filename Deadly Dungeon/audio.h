@@ -23,10 +23,11 @@ namespace GC //Game constants
 	const int NUM_SOUNDS = 26;
 	const int NUM_MUSIC = 4;
 	const float VOLUME_MUSIC = 10.f; //Maximum volume of music
-	const float VOLUME_FOOTSTEPS = 0.4f; //Maximum volume of footsteps is 40.f
+	const float VOLUME_FOOTSTEPS = 0.6f; //Maximum volume of footsteps (60.f)
+	const float VOLUME_NOISES = 0.6f; //Maximum volume of noises (60.f)
 	//Audio: Enemy
-	const float MAX_AUDIO_RANGE = 320.f; //Volume will be mute when more than this distance from the player
-	const float MIN_AUDIO_RANGE = 80.f; //Volume will be maximum when less than this distance from the player
+	const float MAX_AUDIO_RANGE = 160.f; //Volume will be mute when more than this distance from the player
+	const float MIN_AUDIO_RANGE = 32.f; //Volume will be maximum when less than this distance from the player
 	const int RANDOM_NOISE_CHANCE = 30; //Percentage chance that an enemy will play a noise
 	const float RANDOM_NOISE_TIMER = 1.f; //How frequent the enemy will attempt to play a noise
 }

@@ -1,7 +1,7 @@
 #include "enemy.h"
 #include "maths.h"
 
-void SetRandomNoise(std::vector<sf::SoundBuffer> soundList, const int& ID, sf::Sound& sound)
+void SetRandomNoise(const std::vector<sf::SoundBuffer>& soundList, const int& ID, sf::Sound& sound)
 {
 	int soundID = rand() % 4;
 
@@ -17,21 +17,29 @@ void SetRandomNoise(std::vector<sf::SoundBuffer> soundList, const int& ID, sf::S
 	switch (ID)
 	{
 	case GC::ID_IMP:
-		//sound.setBuffer(soundList[GC::SOUND_IMP_NOISE0]);
+		sound.setBuffer(soundList[GC::SOUND_IMP_NOISE0]);
 		break;
 
 	case GC::ID_LESSER_DEMON:
-		//sound.setBuffer(soundList[GC::SOUND_L_DEMON_NOISE0 + soundID]);
+		sound.setBuffer(soundList[GC::SOUND_L_DEMON_NOISE0 +soundID]);
 		break;
 
 	case GC::ID_ABERRANT:
-		//sound.setBuffer(soundList[GC::SOUND_L_DEMON_NOISE0 + soundID]);
+		sound.setBuffer(soundList[GC::SOUND_ABERRANT_NOISE0 + soundID]);
 		break;
 
 	case GC::ID_GREATER_DEMON:
-		//sound.setBuffer(soundList[GC::SOUND_L_DEMON_NOISE0 + soundID]);
+		sound.setBuffer(soundList[GC::SOUND_G_DEMON_NOISE0 + soundID]);
 		break;
 	}
+}
+
+void Enemy::Boost()
+{
+	entity.health *= GC::ENEMY_BOOSTED_HEALTH;
+	entity.power *= GC::ENEMY_BOOSTED_DAMAGE;
+	entity.knock.immovable = true;
+	entity.sprite.setColor(GC::ENEMY_BOOST_COLOUR);
 }
 
 void Enemy::Init(GameData& game, const Dim2Df& spawnPosition, const char& uID)
@@ -112,6 +120,12 @@ void Enemy::Init(GameData& game, const Dim2Df& spawnPosition, const char& uID)
 	entity.weapon.attack0.enemyID = ID;
 	entity.weapon.attack1.enemyID = ID;
 	entity.anim.Init(&GC::ENEMY_ANIM_IDLE);
+
+	boosted = true;
+	if (boosted)
+	{
+		Boost();
+	}
 }
 
 void Enemy::TargetPlayer(const Entity& playerEntity)
@@ -262,6 +276,7 @@ void Enemy::Update(GameData& game, std::vector<Projectile>& proj, std::vector<Ro
 			}
 		}
 
+		entity.UpdateInvulnerability(game);
 		AttackCancellationHandling(game);
 		DespawnIfStuck(game, playerEntity.roomID, rooms);
 	}
@@ -308,7 +323,7 @@ void Enemy::CheckAttackCollision(GameData& game, Entity& playerEntity)
 				//Calculate damage
 				unsigned char actualDamage = (unsigned char)round(entity.power * GC::DEFAULT_DAMAGE);
 				playerEntity.TakeDamage(actualDamage, entity.facing, GC::ZERO);
-				//playerEntity.HitNoise(game, -1);
+				playerEntity.HitNoise(game, -1);
 
 				//Immediately activate player invulnerability
 				playerEntity.invulnerable = true;
@@ -346,7 +361,7 @@ void Enemy::SetSoundVolume()
 
 	//Set volume
 	//entity.footsteps.setVolume(volume * GC::VOLUME_FOOTSTEPS);
-	//entity.noise.setVolume(volume);
+	entity.noise.setVolume(volume * GC::VOLUME_NOISES);
 }
 
 void Enemy::PlayRandomNoise(const GameData& game)
@@ -360,36 +375,36 @@ void Enemy::PlayRandomNoise(const GameData& game)
 
 		if (chance < GC::RANDOM_NOISE_CHANCE)
 		{
-			//SetRandomNoise(game.sounds, ID, entity.noise);
-			//entity.noise.play();
+			SetRandomNoise(game.sounds, ID, entity.noise);
+			entity.noise.play();
 		}
 	}
 }
 
 void Enemy::HitNoise(const GameData& game)
 {
-	//entity.noise.stop();
+	entity.noise.stop();
 
-	//switch (ID)
-	//{
-	//case GC::ID_IMP:
-	//	entity.noise.setBuffer(game.sounds[GC::SOUND_IMP_HIT]);
-	//	break;
+	switch (ID)
+	{
+	case GC::ID_IMP:
+		entity.noise.setBuffer(game.sounds[GC::SOUND_IMP_HIT]);
+		break;
 
-	//case GC::ID_LESSER_DEMON:
-	//	entity.noise.setBuffer(game.sounds[GC::SOUND_L_DEMON_HIT]);
-	//	break;
+	case GC::ID_LESSER_DEMON:
+		entity.noise.setBuffer(game.sounds[GC::SOUND_L_DEMON_HIT]);
+		break;
 
-	//case GC::ID_ABERRANT:
-	//	entity.noise.setBuffer(game.sounds[GC::SOUND_ABERRANT_HIT]);
-	//	break;
+	case GC::ID_ABERRANT:
+		entity.noise.setBuffer(game.sounds[GC::SOUND_ABERRANT_HIT]);
+		break;
 
-	//case GC::ID_GREATER_DEMON:
-	//	entity.noise.setBuffer(game.sounds[GC::SOUND_G_DEMON_HIT]);
-	//	break;
-	//}
+	case GC::ID_GREATER_DEMON:
+		entity.noise.setBuffer(game.sounds[GC::SOUND_G_DEMON_HIT]);
+		break;
+	}
 
-	//entity.noise.play();
+	entity.noise.play();
 }
 
 void Enemy::DespawnIfStuck(const GameData& game, const int& playerRoom, std::vector<Room>& rooms)

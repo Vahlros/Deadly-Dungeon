@@ -3,9 +3,6 @@
 
 void Entity::InitAttack(const GameData& game, const char& attack)
 {
-	canAttack = false;
-	weapon.attacking = true;
-
 	if (attack == GC::FIRST_ATTACK)
 	{
 		if (weapon.entityIsWeapon)
@@ -28,6 +25,12 @@ void Entity::InitAttack(const GameData& game, const char& attack)
 			weapon.attack1.Init(game, weapon.sprite, &sprite, facing, attackSpeed, weapon.holdDistance, false, &anim);
 		}
 	}
+
+	if (weapon.attack0.active || weapon.attack1.active)
+	{
+		canAttack = false;
+		weapon.attacking = true;
+	}
 }
 
 void Entity::InitKnockback(const DirectionalAngle& facing, const float& knockPower)
@@ -36,26 +39,32 @@ void Entity::InitKnockback(const DirectionalAngle& facing, const float& knockPow
 	knock.movementVector = CalculateVectorOfMagnitude(facing, knockPower);
 	knock.timer = GC::KNOCKBACK_TIMER;
 	invulnerable = true;
-	invulnerabilityTimer = GC::KNOCKBACK_INVULNERABILITY;
+	invulnerabilityTimer = GC::ENEMY_INVULNERABILITY;
 }
 
 void Entity::UpdateKnockback(const GameData& game)
 {
 	knock.timer -= game.elapsed;
-	invulnerabilityTimer -= game.elapsed;
 
 	if (knock.timer < GC::ZERO)
 	{
 		knockback = false;
 	}
+}
 
-	if (invulnerabilityTimer < GC::ZERO)
+void Entity::UpdateInvulnerability(const GameData& game)
+{
+	if (invulnerable)
 	{
-		invulnerable = false;
+		invulnerabilityTimer -= game.elapsed;
+
+		if (invulnerabilityTimer < GC::ZERO)
+		{
+			invulnerable = false;
+		}
 	}
 }
 
-//Move the entity, also updates knockback
 void Entity::Move(const GameData& game)
 {
 	if (knockback)
@@ -625,6 +634,11 @@ bool Entity::TakeDamage(const unsigned char& damage, const DirectionalAngle& fac
 	{
 		InitKnockback(facing, knockPower);
 	}
+	else
+	{
+		invulnerable = true;
+		invulnerabilityTimer = GC::ENEMY_INVULNERABILITY;
+	}
 
 	return !isAlive;
 }
@@ -659,22 +673,22 @@ void Entity::HitNoise(const GameData& game, const int& ID)
 	switch (ID)
 	{
 	case GC::ID_IMP:
-		//PlaySound(game.sounds, noise, GC::SOUND_IMP_HIT, false);
+		PlaySound(game.sounds, noise, GC::SOUND_IMP_HIT, false);
 		break;
 
 	case GC::ID_LESSER_DEMON:
-		//PlaySound(game.sounds, noise, GC::SOUND_L_DEMON_HIT, false);
+		PlaySound(game.sounds, noise, GC::SOUND_L_DEMON_HIT, false);
 		break;
 
 	case GC::ID_ABERRANT:
-		//PlaySound(game.sounds, noise, GC::SOUND_ABERRANT_HIT, false);
+		PlaySound(game.sounds, noise, GC::SOUND_ABERRANT_HIT, false);
 		break;
 
 	case GC::ID_GREATER_DEMON:
-		//PlaySound(game.sounds, noise, GC::SOUND_G_DEMON_HIT, false);
+		PlaySound(game.sounds, noise, GC::SOUND_G_DEMON_HIT, false);
 		break;
 
-	//default:
-		//PlaySound(game.sounds, noise, GC::SOUND_PLAYER_HIT, false);
+	default:
+		PlaySound(game.sounds, noise, GC::SOUND_PLAYER_HIT, false);
 	}
 }
