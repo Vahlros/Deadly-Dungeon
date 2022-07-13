@@ -278,7 +278,7 @@ namespace GC
 	const int IMP_COINS = 3;
 	const int LESSER_DEMON_COINS = 4;
 	const int ABERRANT_COINS = 6;
-	const int GREATER_DEMON_COINS = 10;
+	const int GREATER_DEMON_COINS = 8;
 	//Enemy: Animation
 	const unsigned int ENEMY_ANIM_FRAMES = 8; //Number of frames
 	const AnimationData ENEMY_ANIM_IDLE = { IDLE, MOVE - 1, 0.12f }; //Idle animation data for enemies

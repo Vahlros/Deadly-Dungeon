@@ -185,8 +185,8 @@ namespace GC
 	//Projectile data
 	const ProjectileData PROJECTILE_DATA_STRAIGHT_THROW = { &STRAIGHT_THROW_SLOW, 0.f, 1, 1, 0.f };
 	const ProjectileData PROJECTILE_DATA_SPINNING_THROW = { &SPINNING_THROW_SLOW, 0.f, 1, 1, 0.f };
-	const ProjectileData FIRE_BALL = { &STRAIGHT_THROW_SLOW, 0.f, 1, 2, 15.f, FIRE_BALL_PROJECTILE };
-	const ProjectileData FIRE_SPIT = { &STRAIGHT_THROW_SLOW_LONG, 0.f, 1, 2, 15.f, FIRE_BALL_PROJECTILE };
+	const ProjectileData FIRE_BALL = { &STRAIGHT_THROW_SLOW, 0.f, 1, 1, 5.f, FIRE_BALL_PROJECTILE };
+	const ProjectileData FIRE_SPIT = { &STRAIGHT_THROW_SLOW_LONG, 0.f, 1, 3, 5.f, FIRE_BALL_PROJECTILE };
 	const ProjectileData FIRE_BALL_BARRAGE = { &STRAIGHT_THROW_SLOW_LONG, 0.f, 1, 15, 12.f, FIRE_BALL_PROJECTILE };
 	const ProjectileData FIRE_BALL_VORTEX = { &CIRCLE_OF_DOOM, 8.f, 1, 12, 30.f, FIRE_BALL_PROJECTILE };
 	const ProjectileData PLAYER_FROST_BALL1 = { &STRAIGHT_THROW_SLOW_SHORT, 0.f, 1, 1, 15.f, FROST_BALL_PROJECTILE };
@@ -211,16 +211,16 @@ namespace GC
 	//Enemy attacks
 	const Attack HORN_STAB = { {HORN_STAB_JUMP}, {}, {}, {}, 64,															false, false, false, false, false, false, false, false }; //Horn stab jump attack
 	const Attack CHARGE = { {CHARGE_WINDUP, CHARGE_RELEASE}, {}, &ENEMY_ANIM_MOVE, {}, 160,									false, false, false, true, false, false, false, true, false, true }; //Horn charge attack
-	const Attack BITE = { {BITE_WINDUP}, &FIRE_BALL, &ENEMY_ANIM_BITE, {}, 96,												true, false, true, false, false, false, false, true, true, false }; //Bite attack
-	const Attack BITE_BARRAGE = { {BITE_WINDUP}, &FIRE_BALL_BARRAGE, &ENEMY_ANIM_BITE, {}, 160,								true, false, true, false, false, false, false, true, true, false }; //Bite barrage attack
-	const Attack BITE_WAVE = { {BITE_WINDUP}, &FIRE_BALL_VORTEX, &ENEMY_ANIM_BITE, {}, 160,									true, false, true, false, false, false, false, true, true, false }; //Bite wave attack
-	const Attack FIRE_BALL_SPIT = { {FIRE_BALL_SPIT_WINDUP, FIRE_BALL_SPIT_RELEASE}, &FIRE_BALL, {}, {}, 160,				true, false, true, true, false, false, false, false, false, false }; //Fire spit attack
+	const Attack FIREBALL = { {BITE_WINDUP}, &FIRE_BALL, &ENEMY_ANIM_BITE, {}, 96,												true, false, true, false, false, false, false, true, true, false }; //Bite attack
+	const Attack FIRE_BARRAGE = { {BITE_WINDUP}, &FIRE_BALL_BARRAGE, &ENEMY_ANIM_BITE, {}, 160,								true, false, true, false, false, false, false, true, true, false }; //Bite barrage attack
+	const Attack FIRE_WAVE = { {BITE_WINDUP}, &FIRE_BALL_VORTEX, &ENEMY_ANIM_BITE, {}, 160,									true, false, true, false, false, false, false, true, true, false }; //Bite wave attack
+	const Attack FIREBALL_SPIT = { {FIRE_BALL_SPIT_WINDUP, FIRE_BALL_SPIT_RELEASE}, &FIRE_SPIT, {}, {}, 160,				true, false, true, true, false, false, false, false, false, false }; //Fire spit attack
 	//Weapons																									(bools: hasTwoAttacks, entityIsWeapon)
 	const Weapon SWORD = { NORMAL_SWING_ATTACK, HEAVY_SWING_ATTACK, ID_SWORD, &SWORD_RECT, &SWORD_ORIGIN,						true, false }; //Normal sword, starting weapon for the knight?
 	const Weapon FANCY_SWORD = { NORMAL_SWING_ATTACK, HEAVY_F_SWING_ATTACK, ID_FANCY_SWORD, &F_SWORD_RECT, &F_SWORD_ORIGIN,		true, false }; //Big fancy sword, used by the knight?
 	const Weapon SPEAR = { NORMAL_THRUST_ATTACK, HEAVY_THRUST_ATTACK, ID_SPEAR, &SPEAR_RECT, &SPEAR_ORIGIN,						true, false }; //Tribal spear, used by the lizard?
 	const Weapon IMP_WEAPON = { HORN_STAB, CHARGE, ID_IMP_WEAPON, {}, {},														true, true }; //Imp attacks
-	const Weapon LESSER_DEMON_WEAPON = { BITE, FIRE_BALL_SPIT, ID_LESSER_DEMON_WEAPON, {}, {},									true, true }; //Lesser Demon attacks
+	const Weapon LESSER_DEMON_WEAPON = { FIREBALL, FIREBALL_SPIT, ID_LESSER_DEMON_WEAPON, {}, {},								true, true }; //Lesser Demon attacks
 	const Weapon RUSTED_SWORD = { NORMAL_SWING_ATTACK, HEAVY_SWING_ATTACK, ID_RUSTED_SWORD, &R_SWORD_RECT, &R_SWORD_ORIGIN,		true, false }; //Rusted sword, used by Abberants
-	const Weapon GREATER_DEMON_WEAPON = { BITE_BARRAGE, BITE_WAVE, ID_GREATER_DEMON_WEAPON, {}, {},								true, true }; //Greater Demon attacks
+	const Weapon GREATER_DEMON_WEAPON = { FIRE_BARRAGE, FIRE_WAVE, ID_GREATER_DEMON_WEAPON, {}, {},								true, true }; //Greater Demon attacks
 }

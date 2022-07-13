@@ -691,6 +691,7 @@ void Game::NewGame(sf::RenderWindow& window)
 	//Game data
 	data.metrics = Metrics{};
 	data.playerDead = false;
+	data.metrics.totalTime = 300.f;
 
 	//Time
 	data.elapsed = 0.f;
