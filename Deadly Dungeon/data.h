@@ -256,8 +256,7 @@ namespace GC
 	const short MAP_SIZE_PIXELS = MAP_SIZE_TILES * TILE_SIZE; //Maximum size of map, in pixels
 
 	//Player: General
-	const float PLAYER_HIT_INVULNERABILITY = 1.5f; //How long the player is invulnerable after being hit
-	const float PLAYER_DODGE_INVULNERABILITY = 0.5f; //Invulnerability while dodging
+	const float PLAYER_HIT_INVULNERABILITY = 2.0f; //How long the player is invulnerable after being hit
 	//Player: Health
 	const int PLAYER_HEALTH = 10; //Player starting health
 	const int BOOSTED_HEALTH = 16; //Upgraded player health
@@ -279,31 +278,32 @@ namespace GC
 	const int LESSER_DEMON_COINS = 4;
 	const int ABERRANT_COINS = 6;
 	const int GREATER_DEMON_COINS = 8;
+	//Enemy: Health
+	const unsigned int IMP_HEALTH = 3;
+	const unsigned int L_DEMON_HEALTH = 4;
+	const unsigned int ABERRANT_HEALTH = 6;
+	const unsigned int G_DEMON_HEALTH = 10;
 	//Enemy: Animation
 	const unsigned int ENEMY_ANIM_FRAMES = 8; //Number of frames
 	const AnimationData ENEMY_ANIM_IDLE = { IDLE, MOVE - 1, 0.12f }; //Idle animation data for enemies
 	const AnimationData ENEMY_ANIM_MOVE = { MOVE, DODGE - 1, 0.12f }; //Idle animation data for enemies
 	const AnimationData ENEMY_ANIM_BITE = { IDLE, MOVE - 1, 0.2f }; //Bite animation for demons
-	//Enemy: Imp
-	const unsigned int IMP_HEALTH = 3; //Imp health
+	//Enemy: Imp Sprite
 	const Dim2Di IMP_DIMENSIONS = { 16, 14 }; //Dimensions of the imp texture
 	const sf::IntRect IMP_ANIM_RECT = { 369, 50, 128, IMP_DIMENSIONS.y }; //Where the animation is on the spritesheet
 	const sf::IntRect IMP_BODY_RECT = { 4, 0, 10, IMP_DIMENSIONS.y }; //Where the character's body is on the un-scaled sprite
 	const Dim2Df IMP_BODY_CENTRE = { 8.f, 9.f }; //Where the centre of the character's body is on the un-scaled sprite
-	//Enemy: Lesser Demon
-	const unsigned int L_DEMON_HEALTH = 4; //Lesser Demon health
+	//Enemy: Lesser Demon Sprite
 	const Dim2Di L_DEMON_DIMENSIONS = { 16, 23 }; //Dimensions of the lesser demon texture
 	const sf::IntRect L_DEMON_ANIM_RECT = { 369, 329, 128, L_DEMON_DIMENSIONS.y }; //Where the animation is on the spritesheet
 	const sf::IntRect L_DEMON_BODY_RECT = { 2, 0, 11, L_DEMON_DIMENSIONS.y }; //Where the character's body is on the un-scaled sprite
 	const Dim2Df L_DEMON_BODY_CENTRE = { 8.f, 14.f }; //Where the centre of the character's body is on the un-scaled sprite
-	//Enemy: Aberrant
-	const unsigned int ABERRANT_HEALTH = 6; //Lesser Demon health
+	//Enemy: Aberrant Sprite
 	const Dim2Di ABERRANT_DIMENSIONS = { 16, 18 }; //Dimensions of the lesser demon texture
 	const sf::IntRect ABERRANT_ANIM_RECT = { 368, 302, 128, ABERRANT_DIMENSIONS.y }; //Where the animation is on the spritesheet
 	const sf::IntRect ABERRANT_BODY_RECT = { 3, 0, 10, ABERRANT_DIMENSIONS.y }; //Where the character's body is on the un-scaled sprite
 	const Dim2Df ABERRANT_BODY_CENTRE = { 8.f, 12.f }; //Where the centre of the character's body is on the un-scaled sprite
-	//Enemy: Greater Demon
-	const unsigned int G_DEMON_HEALTH = 10; //Lesser Demon health
+	//Enemy: Greater Demon Sprite
 	const Dim2Di G_DEMON_DIMENSIONS = { 32, 34 }; //Dimensions of the lesser demon texture
 	const sf::IntRect G_DEMON_ANIM_RECT = { 16, 366, 256, G_DEMON_DIMENSIONS.y }; //Where the animation is on the spritesheet
 	const sf::IntRect G_DEMON_BODY_RECT = { 5, 2, 10, G_DEMON_DIMENSIONS.y }; //Where the character's body is on the un-scaled sprite

@@ -1,6 +1,8 @@
 #include "enemy.h"
 #include "maths.h"
 
+//NOTE: Enemy footsteps are temporarily commented out due to audio balancing issues
+
 void SetRandomNoise(const std::vector<sf::SoundBuffer>& soundList, const int& ID, sf::Sound& sound)
 {
 	int soundID = rand() % 4;

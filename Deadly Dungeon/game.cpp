@@ -242,106 +242,6 @@ short GetDifficultyRating(const float& totalTime)
 	return (short)floor(difficulty);
 }
 
-////Creates an enemy wave based on difficulty, returns number of enemies
-//char CreateEnemyWave(std::vector<Enemy>& enemies, const short& difficulty)
-//{
-//	char enemiesCreated = 0;
-//	enemies[0].ID = 0;
-//	enemies[1].ID = 0;
-//
-//	switch (difficulty)
-//	//switch (11) //For testing purposes
-//	{
-//	case GC::D_TRIVIAL:
-//		enemiesCreated = 2;
-//		break;
-//
-//	case GC::D_WALK_IN_THE_PARK:
-//		enemies[2].ID = rand() % 2;
-//		enemiesCreated = 3;
-//		break;
-//
-//	case GC::D_VERY_EASY:
-//		enemies[2].ID = rand() % 2;
-//		enemies[3].ID = 0;
-//		enemiesCreated = 4;
-//		break;
-//
-//	case GC::D_EASY:
-//		enemies[2].ID = rand() % 2;
-//		enemies[3].ID = rand() % 2;
-//		enemiesCreated = 4;
-//		break;
-//
-//	case GC::D_KINDA_EASY:
-//		enemies[2].ID = rand() % 2;
-//		enemies[3].ID = rand() % 2;
-//		enemies[4].ID = 0;
-//		enemiesCreated = 5;
-//		break;
-//
-//	case GC::D_NORMAL:
-//		enemies[2].ID = rand() % 2;
-//		enemies[3].ID = (rand() % 2) + 1;
-//		enemies[4].ID = 0;
-//		enemiesCreated = 5;
-//		break;
-//
-//	case GC::D_KINDA_HARD:
-//		enemies[2].ID = rand() % 2;
-//		enemies[3].ID = rand() % 2;
-//		enemies[4].ID = (rand() % 2) + 1;
-//		enemiesCreated = 5;
-//		break;
-//
-//	case GC::D_HARD:
-//		enemies[2].ID = (rand() % 2) + 1;
-//		enemies[3].ID = (rand() % 2) + 1;
-//		enemies[4].ID = (rand() % 2) + 1;
-//		enemiesCreated = 5;
-//		break;
-//
-//	case GC::D_VERY_HARD:
-//		enemies[2].ID = (rand() % 2) + 1;
-//		enemies[3].ID = (rand() % 2) + 1;
-//		enemies[4].ID = (rand() % 2) + 1;
-//		enemies[5].ID = rand() % 2;
-//		enemiesCreated = 6;
-//		break;
-//
-//	case GC::D_BRUTAL:
-//		enemies[2].ID = rand() % 2;
-//		enemies[3].ID = (rand() % 2) + 1;
-//		enemies[4].ID = (rand() % 2) + 1;
-//		enemies[5].ID = 3;
-//		enemiesCreated = 6;
-//		break;
-//
-//	case GC::D_NIGHTMARE:
-//		enemies[0].ID = rand() % 2;
-//		enemies[1].ID = rand() % 2;
-//		enemies[2].ID = rand() % 2;
-//		enemies[3].ID = (rand() % 2) + 1;
-//		enemies[4].ID = (rand() % 2) + 1;
-//		enemies[5].ID = 3;
-//		enemies[6].ID = 3;
-//		enemiesCreated = 7;
-//		break;
-//
-//	default:
-//		enemies[0].ID = rand() % 2;
-//		enemies[1].ID = rand() % 2;
-//		enemies[2].ID = rand() % 2;
-//		enemies[3].ID = (rand() % 2) + 1;
-//		enemies[4].ID = (rand() % 2) + 1;
-//		enemies[5].ID = 3;
-//		enemies[6].ID = 3;
-//		enemiesCreated = 7;
-//	}
-//
-//	return enemiesCreated;
-//}
-
 void BoostWave(std::vector<Enemy>& enemies, const int& difficulty)
 {
 	//Find which way up/down the list that boosts will be applied
@@ -353,7 +253,7 @@ void BoostWave(std::vector<Enemy>& enemies, const int& difficulty)
 	}
 
 	//Apply boost bool
-	float boostChance = (difficulty - GC::D_NIGHTMARE) * GC::ENEMY_BOOST_CHANCE;
+	float boostChance = (difficulty - GC::D_BRUTAL) * GC::ENEMY_BOOST_CHANCE;
 	int boostCounter = 0;
 
 	while (boostChance > GC::ZERO && boostCounter != GC::MAX_ENEMIES_SPAWNED)
@@ -413,32 +313,37 @@ char CreateEnemyWave(std::vector<Enemy>& enemies, const short& difficulty)
 		break;
 
 	case GC::D_NORMAL:
+		enemies[1].ID = 1;
 		enemies[2].ID = rand() % 2;
 		enemies[3].ID = rand() % 2;
 		enemiesCreated = 4;
 		break;
 
 	case GC::D_KINDA_HARD:
+		enemies[1].ID = 1;
 		enemies[2].ID = rand() % 2;
 		enemies[3].ID = (rand() % 2) + 1;
 		enemiesCreated = 4;
 		break;
 
 	case GC::D_HARD:
-		enemies[2].ID = (rand() % 2) + 1;
+		enemies[1].ID = 1;
+		enemies[2].ID = 2;
 		enemies[3].ID = (rand() % 2) + 1;
 		enemiesCreated = 4;
 		break;
 
 	case GC::D_VERY_HARD:
-		enemies[2].ID = (rand() % 2) + 1;
-		enemies[3].ID = (rand() % 2) + 1;
+		enemies[1].ID = 1;
+		enemies[2].ID = rand() % 2;
+		enemies[3].ID = 2;
 		enemies[4].ID = (rand() % 2) + 1;
 		enemiesCreated = 5;
 		break;
 
 	case GC::D_BRUTAL:
-		enemies[2].ID = rand() % 2;
+		enemies[1].ID = 1;
+		enemies[2].ID = 2;
 		enemies[3].ID = (rand() % 2) + 1;
 		enemies[4].ID = 3;
 		enemiesCreated = 5;
@@ -451,12 +356,13 @@ char CreateEnemyWave(std::vector<Enemy>& enemies, const short& difficulty)
 		enemies[3].ID = (rand() % 2) + 1;
 		enemies[4].ID = 3;
 		enemiesCreated = 5;
+		BoostWave(enemies, difficulty);
 		break;
 
-	default:
+	default: //INSANE
 		enemies[0].ID = rand() % 2;
 		enemies[1].ID = rand() % 2;
-		enemies[2].ID = rand() % 2;
+		enemies[2].ID = (rand() % 2) + 1;
 		enemies[3].ID = (rand() % 2) + 1;
 		enemies[4].ID = 3;
 		enemiesCreated = 5;

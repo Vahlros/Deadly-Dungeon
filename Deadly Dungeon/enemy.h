@@ -76,8 +76,8 @@ namespace GC
 	const char RANGE_NERF = 5; //Reduce range before the enemy attacks
 	const float CHECK_ROOM_TIMER = 3.f; //How long between room checks
 	const float DIFFERENT_ROOM_DESPAWN_TIMER = 29.f; //How long an enemy is stuck in a different room before it despawns
-	const float ATTACK_CANCELLATION_COOLDOWN = 5.f; //How long cancellation immunity lasts for
-	const float KNOCKBACK_RESISTANCE_COOLDOWN = 2.f; //How long cancellation immunity lasts for
+	const float ATTACK_CANCELLATION_COOLDOWN = 5.f; //How long attack cancellation immunity lasts for
+	const float KNOCKBACK_RESISTANCE_COOLDOWN = 2.f; //How long knockback immunity lasts for
 
 	//Boosts
 	const float ENEMY_BOOST_CHANCE = 30.f; //Percentage chance to boost and enemy, stacks on difficulty over 10 (after 5 minutes)
