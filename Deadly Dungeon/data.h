@@ -1,6 +1,7 @@
 #pragma once
-#include <string>
 #include <vector>
+#include "Utils.h"
+#include "MyDB.h"
 #include "input.h"
 #include "audio.h"
 
@@ -34,6 +35,9 @@ struct AnimationData
 //Data collected for scores
 struct Metrics
 {
+	//Database
+	MyDB database;
+
 	//Counters: Game
 	unsigned short enemiesKilled = 0; //How many enemies the player has killed
 	unsigned short coinsEarned = 0; //How many coins the player has picked up
@@ -41,8 +45,6 @@ struct Metrics
 	//Counters: Shop
 	unsigned char itemsPurchased = 0; //How many items the player has purchased
 	unsigned short healsPurchased = 0; //How many heals the player has purchased
-	unsigned char fancySwordsPurchased = 0; //How many fancy swords the player has purchased
-	unsigned char spearsPurchased = 0; //How many spears the player has purchased
 	unsigned short coinsSpent = 0; //How many coins the player has spent
 	unsigned char meleeBulletUpgrades = 0; //How many projectiles are fired upon weapon swing
 	//Counters: Weapon
@@ -55,7 +57,7 @@ struct Metrics
 	unsigned short lesserDemonKills = 0; //How many imps were killed
 	unsigned short aberrantKills = 0; //How many imps were killed
 	unsigned short greaterDemonKills = 0; //How many imps were killed
-	//Counters: Player Damage
+	//Counters: Damage Taken
 	unsigned short impPlayerDamage = 0; //How much damage imps dealt to the player
 	unsigned short lesserDemonPlayerDamage = 0; //How much damage lesser demons dealt to the player
 	unsigned short aberrantPlayerDamage = 0; //How much damage aberrants dealt to the player
@@ -70,7 +72,13 @@ struct Metrics
 	bool purchasedBigWeapons = false; //If the player has the big weapons boost active
 	bool purchasedMeleeBullets = false; //If the player has the melee projectiles boost active
 
-	//Update player's damage taken 
+	//Initializes the database, creating one if it does not exist
+	void InitDatabase();
+
+	//Enters all metrics from that game into the database, called on death or win
+	void SaveScores();
+
+	//Update player's damage taken
 	void UpdatePlayerDamage(const char& enemyID, const char& damage);
 
 	//Update player's kills

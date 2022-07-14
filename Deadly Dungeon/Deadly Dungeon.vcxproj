@@ -89,7 +89,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)..\..\..\SFML-2.5.1\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)..\..\..\SFML-2.5.1\include; $(SolutionDir)..\..\..\sqlite;</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -155,9 +155,13 @@
     <ClCompile Include="maths.cpp" />
     <ClCompile Include="menu.cpp" />
     <ClCompile Include="motion.cpp" />
+    <ClCompile Include="MyDB.cpp" />
     <ClCompile Include="player.cpp" />
     <ClCompile Include="rooms.cpp" />
+    <ClCompile Include="shell.c" />
+    <ClCompile Include="sqlite3.c" />
     <ClCompile Include="ui.cpp" />
+    <ClCompile Include="Utils.cpp" />
     <ClCompile Include="weapon.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -172,9 +176,13 @@
     <ClInclude Include="maths.h" />
     <ClInclude Include="menu.h" />
     <ClInclude Include="motion.h" />
+    <ClInclude Include="MyDB.h" />
     <ClInclude Include="player.h" />
     <ClInclude Include="rooms.h" />
+    <ClInclude Include="sqlite3.h" />
+    <ClInclude Include="sqlite3ext.h" />
     <ClInclude Include="ui.h" />
+    <ClInclude Include="Utils.h" />
     <ClInclude Include="weapon.h" />
   </ItemGroup>
   <ItemGroup>
