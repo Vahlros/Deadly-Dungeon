@@ -1,4 +1,5 @@
 #include "data.h"
+#include <assert.h>
 
 void CentreTextOrigin(sf::Text& text)
 {
@@ -10,71 +11,85 @@ void CentreTextOrigin(sf::Text& text)
 	text.setOrigin(localBounds + globalOrigin);
 }
 
+//Came from help from the SFML discord server, centres text origin
+void CentreTextYOrigin(sf::Text& text)
+{
+	text.setScale({ 1.f, 1.f }); //Reset scaling, any different scale messes with the code below
+	const auto localBounds = sf::Vector2f(0.f, text.getLocalBounds().top);
+	const auto globalOrigin = sf::Vector2f(0.f, text.getGlobalBounds().height / 2.0f);
+	text.setScale(GC::TEXT_SCALING);
+
+	text.setOrigin(localBounds + globalOrigin);
+}
+
 void Metrics::InitDatabase()
 {
 	//check the database is setup
 	bool doesExist;
-	database.Init("bin/scores.db", doesExist);
+	database.Init("scores.db", doesExist);
 
 	if (!doesExist)
 	{
-		database.ExecQuery("CREATE TABLE Main_Stats(" \
-			"ID				INTEGER		NOT NULL	PRIMARY KEY		AUTOINCREMENT, "\
-			"Time			FLOAT		NOT NULL, " \
+		database.ExecQuery("CREATE TABLE MainStats(" \
+			"ID				INTEGER		NOT NULL	PRIMARY KEY		AUTOINCREMENT, " \
+			"Time			INTEGER		NOT NULL, " \
 			"Kills			INTEGER		NOT NULL, " \
-			"Coins_Earned	INTEGER		NOT NULL)");
+			"CoinsEarned	INTEGER		NOT NULL)");
 
 		database.ExecQuery("CREATE TABLE Kills(" \
 			"ID				INTEGER		NOT NULL	PRIMARY KEY		AUTOINCREMENT, "\
 			"Imp			INTEGER		NOT NULL, " \
-			"Lesser_Demon	INTEGER		NOT NULL, " \
+			"LesserDemon	INTEGER		NOT NULL, " \
 			"Aberrant		INTEGER		NOT NULL, " \
-			"Greater_Demon	INTEGER		NOT NULL)");
+			"GreaterDemon	INTEGER		NOT NULL)");
 
-		database.ExecQuery("CREATE TABLE Weapon_Kills(" \
+		database.ExecQuery("CREATE TABLE WeaponKills(" \
 			"ID				INTEGER		NOT NULL	PRIMARY KEY		AUTOINCREMENT, "\
 			"Sword			INTEGER		NOT NULL, " \
-			"Fancy_Sword	INTEGER		NOT NULL, " \
+			"FancySword		INTEGER		NOT NULL, " \
 			"Spear			INTEGER		NOT NULL, " \
 			"Projectiles	INTEGER		NOT NULL)");
 
-		database.ExecQuery("CREATE TABLE Damage_Taken(" \
+		database.ExecQuery("CREATE TABLE DamageTaken(" \
 			"ID				INTEGER		NOT NULL	PRIMARY KEY		AUTOINCREMENT, "\
 			"Imp			INTEGER		NOT NULL, " \
-			"Lesser_Demon	INTEGER		NOT NULL, " \
+			"LesserDemon	INTEGER		NOT NULL, " \
 			"Aberrant		INTEGER		NOT NULL, " \
-			"Greater_Demon	INTEGER		NOT NULL)");
+			"GreaterDemon	INTEGER		NOT NULL)");
 
 		database.ExecQuery("CREATE TABLE Shop(" \
 			"ID					INTEGER		NOT NULL	PRIMARY KEY		AUTOINCREMENT, "\
-			"Items_Purchased	INTEGER		NOT NULL, " \
-			"Heals_Purchased	INTEGER		NOT NULL, " \
-			"Coins_Spent		INTEGER		NOT NULL)");
+			"ItemsPurchased		INTEGER		NOT NULL, " \
+			"HealsPurchased		INTEGER		NOT NULL, " \
+			"CoinsSpent			INTEGER		NOT NULL)");
+
+		database.SaveToDisk();
+		database.Close();
+		SaveScores();
 	}
 }
 
 void Metrics::SaveScores()
 {
+	bool temp = true;
+	database.Init("scores.db", temp);
+
 	//Add new entries
-	database.ExecQuery("INSERT INTO Main_Stats (Time, Kills, Coins_Earned) " \
-		"VALUES (" + std::to_string(totalTime) + ", " + std::to_string(enemiesKilled) + ", " \
-		+ std::to_string(coinsEarned) + ")");
+	database.ExecQuery("INSERT INTO MainStats (Time, Kills, CoinsEarned) VALUES ("
+		+ std::to_string((int)floor(totalTime)) + ", " + std::to_string(enemiesKilled) + ", " + std::to_string(coinsEarned) + ")");
 
-	database.ExecQuery("INSERT INTO Kills (Imp, Lesser_Demon, Aberrant, Greater_Demon) " \
-		"VALUES (" + std::to_string(impKills) + ", " + std::to_string(lesserDemonKills) + ", " \
-		+ std::to_string(aberrantKills) + ", " + std::to_string(greaterDemonKills) + ")");
+	database.ExecQuery("INSERT INTO Kills (Imp, LesserDemon, Aberrant, GreaterDemon) VALUES ("
+		+ std::to_string(impKills) + ", " + std::to_string(lesserDemonKills) + ", " + std::to_string(aberrantKills) + ", " + std::to_string(greaterDemonKills) + ")");
 
-	database.ExecQuery("INSERT INTO Weapon_Kills (Sword, Fancy_Sword, Spear, Projectiles) " \
-		"VALUES (" + std::to_string(swordKills) + ", " + std::to_string(fancySwordKills) + ", " \
-		+ std::to_string(spearKills) + ", " + std::to_string(projectileKills) + ")");
+	database.ExecQuery("INSERT INTO WeaponKills (Sword, FancySword, Spear, Projectiles) VALUES ("
+		+ std::to_string(swordKills) + ", " + std::to_string(fancySwordKills) + ", " + std::to_string(spearKills) + ", " + std::to_string(projectileKills) + ")");
 
-	database.ExecQuery("INSERT INTO Damage_Taken (Imp, Lesser_Demon, Aberrant, Greater_Demon) " \
-		"VALUES (" + std::to_string(impPlayerDamage) + ", " + std::to_string(lesserDemonPlayerDamage) + ", " \
-		+ std::to_string(aberrantPlayerDamage) + ", " + std::to_string(greaterDemonPlayerDamage) + ")");
+	database.ExecQuery("INSERT INTO DamageTaken (Imp, LesserDemon, Aberrant, GreaterDemon) VALUES ("
+		+ std::to_string(impPlayerDamage) + ", " + std::to_string(lesserDemonPlayerDamage) + ", " + std::to_string(aberrantPlayerDamage) + ", "
+		+ std::to_string(greaterDemonPlayerDamage) + ")");
 
-	database.ExecQuery("INSERT INTO Shop (Items_Purchased, Heals_Purchased, Coins_Spent) " \
-		"VALUES (" + std::to_string(itemsPurchased) + ", " + std::to_string(healsPurchased) + ", " \
-		+ std::to_string(coinsSpent) + ")");
+	database.ExecQuery("INSERT INTO Shop (ItemsPurchased, HealsPurchased, CoinsSpent) VALUES ("
+		+ std::to_string(itemsPurchased) + ", " + std::to_string(healsPurchased) + ", " + std::to_string(coinsSpent) + ")");
 
 	//Save
 	database.SaveToDisk();
@@ -302,7 +317,7 @@ void GameData::Init(sf::RenderWindow& window, Input& inputRef)
 	//Audio
 	InitAudio(sounds);
 
-
+	//Scores
 	metrics.InitDatabase();
 }
 

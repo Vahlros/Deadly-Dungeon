@@ -8,6 +8,9 @@
 //Came from help from the SFML discord server, centres text origin
 void CentreTextOrigin(sf::Text& text);
 
+//Came from help from the SFML discord server, centres text origin, height only
+void CentreTextYOrigin(sf::Text& text);
+
 //Angle from clockwise NESW axis, calculated in radians
 //Notes: Can be converted to degrees for SFML, be wary of conversion usage
 struct DirectionalAngle
@@ -39,29 +42,29 @@ struct Metrics
 	MyDB database;
 
 	//Counters: Game
-	unsigned short enemiesKilled = 0; //How many enemies the player has killed
-	unsigned short coinsEarned = 0; //How many coins the player has picked up
+	int enemiesKilled = 0; //How many enemies the player has killed
+	int coinsEarned = 0; //How many coins the player has picked up
 	float totalTime = 0.f; //How long the player has survived
 	//Counters: Shop
-	unsigned char itemsPurchased = 0; //How many items the player has purchased
-	unsigned short healsPurchased = 0; //How many heals the player has purchased
-	unsigned short coinsSpent = 0; //How many coins the player has spent
-	unsigned char meleeBulletUpgrades = 0; //How many projectiles are fired upon weapon swing
+	int itemsPurchased = 0; //How many items the player has purchased
+	int healsPurchased = 0; //How many heals the player has purchased
+	int coinsSpent = 0; //How many coins the player has spent
+	int meleeBulletUpgrades = 0; //How many projectiles are fired upon weapon swing
 	//Counters: Weapon
-	unsigned short swordKills = 0; //How many enemies killed with the sword
-	unsigned short fancySwordKills = 0; //How many enemies killed with the fancy sword
-	unsigned short spearKills = 0; //How many enemies killed with the spear
-	unsigned short projectileKills = 0; //How many enemies killed with projectiles
+	int swordKills = 0; //How many enemies killed with the sword
+	int fancySwordKills = 0; //How many enemies killed with the fancy sword
+	int spearKills = 0; //How many enemies killed with the spear
+	int projectileKills = 0; //How many enemies killed with projectiles
 	//Counters: Enemy
-	unsigned short impKills = 0; //How many imps were killed
-	unsigned short lesserDemonKills = 0; //How many imps were killed
-	unsigned short aberrantKills = 0; //How many imps were killed
-	unsigned short greaterDemonKills = 0; //How many imps were killed
+	int impKills = 0; //How many imps were killed
+	int lesserDemonKills = 0; //How many imps were killed
+	int aberrantKills = 0; //How many imps were killed
+	int greaterDemonKills = 0; //How many imps were killed
 	//Counters: Damage Taken
-	unsigned short impPlayerDamage = 0; //How much damage imps dealt to the player
-	unsigned short lesserDemonPlayerDamage = 0; //How much damage lesser demons dealt to the player
-	unsigned short aberrantPlayerDamage = 0; //How much damage aberrants dealt to the player
-	unsigned short greaterDemonPlayerDamage = 0; //How much damage greater demons dealt to the player
+	int impPlayerDamage = 0; //How much damage imps dealt to the player
+	int lesserDemonPlayerDamage = 0; //How much damage lesser demons dealt to the player
+	int aberrantPlayerDamage = 0; //How much damage aberrants dealt to the player
+	int greaterDemonPlayerDamage = 0; //How much damage greater demons dealt to the player
 
 	//Bools
 	bool purchasedHealthMax = false; //If the player has the health boost active
@@ -264,7 +267,7 @@ namespace GC
 	const short MAP_SIZE_PIXELS = MAP_SIZE_TILES * TILE_SIZE; //Maximum size of map, in pixels
 
 	//Player: General
-	const float PLAYER_HIT_INVULNERABILITY = 2.0f; //How long the player is invulnerable after being hit
+	const float PLAYER_HIT_INVULNERABILITY = 1.0f; //How long the player is invulnerable after being hit
 	//Player: Health
 	const int PLAYER_HEALTH = 10; //Player starting health
 	const int BOOSTED_HEALTH = 16; //Upgraded player health

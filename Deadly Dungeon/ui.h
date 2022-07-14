@@ -36,7 +36,7 @@ namespace GC
 {
 	//Enums
 	enum HEARTS { HEART_EMPTY, HEART_HALF, HEART_FULL }; //Health bar heart states
-	enum BUTTONS { B_BACK, B_PLAY, B_SCORES, B_TUTORIAL };
+	enum BUTTONS { B_BACK, B_PLAY, B_SCORES, B_TUTORIAL, B_SCORES_BEST, B_SCORES_RECENT, B_SCORES_TOTALS };
 
 	//UI: General
 	const int UI_BORDER = 8;

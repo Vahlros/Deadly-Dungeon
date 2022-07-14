@@ -43,61 +43,15 @@ int main()
 {
 	//Window
 	sf::RenderWindow window;
-	window.create(sf::VideoMode(sf::VideoMode::getDesktopMode()), "DD Combat Testing", sf::Style::Fullscreen);
+	window.create(sf::VideoMode(sf::VideoMode::getDesktopMode()), "Deadly Dungeon", sf::Style::Fullscreen);
 	window.setFramerateLimit(GC::FRAMERATE);
-
-	//Menus
-	std::vector <sf::Texture> menuTextures;
-	std::vector <Menu> menus;
-	InitializeMenus(menuTextures, menus);
-
-	//Input
-	Input input;
-
-	//Game
-	Game game;
-	game.Init(window, input);
 
 	//Cursor
 	sf::Cursor cursor;
 	GetCursorImage(cursor, window);
 
-	//State
-	int gameState = GC::STATE_MAIN_MENU;
-	bool gameStarted = false;
-
-	//Start the game loop
-	while (window.isOpen()) //Could change this to a state manager?
-	{
-		input.Clear();
-		input.ProcessEvents(window);
-
-		if (gameState < GC::STATE_PLAYING) //In menus
-		{
-			MenusInputHandling(window, gameState, input, menus, game, gameStarted);
-		}
-		else
-		{
-			game.Update(window, input, gameState);
-		}
-
-		if (gameStarted)
-		{
-			game.NewGame(window);
-			gameStarted = false;
-		}
-
-		window.clear(sf::Color::Black);
-
-		if (gameState < GC::STATE_PLAYING) //In menus
-		{
-			RenderMenus(window, menus, gameState);
-		}
-		else
-		{
-			game.Render(window);
-		}
-
-		window.display();
-	}
+	//State Manager
+	StateManager state;
+	state.Init(window);
+	state.MainLoop(window);
 }

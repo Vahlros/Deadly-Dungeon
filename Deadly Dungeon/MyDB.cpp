@@ -1,9 +1,7 @@
 #include <assert.h>
 #include <fstream>
-
 #include "MyDB.h"
 #include "Utils.h"
-
 
 using namespace std;
 
@@ -59,7 +57,6 @@ static int MyDB_callback(void *pStuff, int argc, char **argv, char **azColName) 
 	return p->Callback(argc, argv, azColName);
 }
 
-
 void MyDB::Init(const std::string & _dbFileName, bool& doesExist) {
 	assert(pDB == nullptr);
 	dbFileName = _dbFileName;
@@ -68,8 +65,10 @@ void MyDB::Init(const std::string & _dbFileName, bool& doesExist) {
 		DebugPrint("Cannot open DB:", dbFileName);
 		assert(false);
 	}
+
 	doesExist = false;
 	ifstream f(dbFileName.c_str());
+
 	if (f.good()) {
 		f.close();
 		int rc = loadOrSaveDb(pDB, dbFileName.c_str(), false);
@@ -135,32 +134,8 @@ float MyDB::GetFloat(int rowNum, const string& fieldName) {
 	string res = GetStr(rowNum, fieldName);
 	return stof(res);
 }
+
 int MyDB::GetInt(int rowNum, const string& fieldName) {
 	string res = GetStr(rowNum, fieldName);
 	return stoi(res);
-}
-vector<string> MyDB::GetFieldNames(const string& table) {
-	string sql = "SELECT * FROM " + table;
-	vector<string> fields;
-	sqlite3_stmt *res;
-	int rc = sqlite3_prepare_v2(pDB, sql.c_str(), -1, &res, 0);
-	if (rc == SQLITE_OK)
-	{
-		for (int i = 0; i < sqlite3_column_count(res); ++i)
-			fields.push_back(sqlite3_column_name(res, i));
-	}
-	sqlite3_finalize(res);
-	return fields;
-}
-
-//assumes results containing descending SCORE of HIGHSCORES
-//SELECT * FROM 'HIGHSCORES' ORDER BY SCORE DESC must be last called query
-void MyDB::ReorderHighscores(const int& maxHighScores, vector<Row> currentHighScores)
-{
-	string updateQuery;
-	for (int i = 0; i < maxHighScores; i++)
-	{
-		updateQuery = "UPDATE HIGHSCORES SET NAME='" + currentHighScores[i][1].value + "', SCORE=" + currentHighScores[i][2].value + " WHERE ID=" + to_string(i + 1);
-		ExecQuery(updateQuery);
-	}
 }

@@ -52,13 +52,8 @@ struct MyDB {
 	float GetFloat(int rowNum, const std::string& fieldName);
 	int GetInt(int rowNum, const std::string& fieldName);
 	
-	//get all the field names in a specific table
-	std::vector<std::string> GetFieldNames(const std::string& table);
 	//the callback is used to get results back from the database
 	int Callback(int argc, char **argv, char **azColName);
-
-	//Sorts data - requires sorted results SCORE descending
-	void ReorderHighscores(const int& maxHighScores, std::vector<Row> currentHighScores);
 };
 
 

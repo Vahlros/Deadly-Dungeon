@@ -424,11 +424,8 @@ void Game::IsPlayerDead(sf::RenderWindow& window, int& state)
 {
 	if (data.playerDead)
 	{
-		//SAVE METRICS TO DATABASE
-		
-		//END THE GAME SESSION
+		data.metrics.SaveScores();
 		PlayMusic(data.music, GC::MUSIC_LOSE, false);
-		printf("I need to do things because the player is dead!\n");
 		ExitGame(window, state, true);
 	}
 }
@@ -511,9 +508,6 @@ void Game::SpawnEnemies()
 
 void Game::Update(sf::RenderWindow& window, const Input& input, int& state)
 {
-	//Check for end game
-	IsPlayerDead(window, state);
-
 	if (input.escapePressed)
 	{
 		ExitGame(window, state, false);
@@ -536,6 +530,9 @@ void Game::Update(sf::RenderWindow& window, const Input& input, int& state)
 
 	//Projectiles
 	UpdateProjectiles(data, projectiles, enemyList, player1);
+
+	//Check for end game
+	IsPlayerDead(window, state);
 }
 
 void Game::Render(sf::RenderWindow& window)
@@ -572,7 +569,7 @@ void Game::NewGame(sf::RenderWindow& window)
 	InitShops(data, roomList);
 
 	//Player: Stats
-	player1.coins = 0;
+	player1.coins = 300;
 	player1.maxHealth = GC::PLAYER_HEALTH;
 	player1.entity.health = GC::PLAYER_HEALTH;
 	player1.speed = GC::MEDIUM_MOVEMENT_SPEED;
@@ -597,6 +594,7 @@ void Game::NewGame(sf::RenderWindow& window)
 	//Game data
 	data.metrics = Metrics{};
 	data.playerDead = false;
+	data.metrics.totalTime = 300.f;
 
 	//Time
 	data.elapsed = 0.f;

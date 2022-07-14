@@ -168,17 +168,6 @@ void RenderHearts(sf::RenderWindow& window, sf::Sprite& heartSprite, char hearts
 	}
 }
 
-//Came from help from the SFML discord server, centres text origin
-void CentreTextYOrigin(sf::Text& text)
-{
-	text.setScale({ 1.f, 1.f }); //Reset scaling, any different scale messes with the code below
-	const auto localBounds = sf::Vector2f(0.f, text.getLocalBounds().top);
-	const auto globalOrigin = sf::Vector2f(0.f, text.getGlobalBounds().height / 2.0f);
-	text.setScale(GC::TEXT_SCALING);
-
-	text.setOrigin(localBounds + globalOrigin);
-}
-
 //Returns the top left corner of the current view
 Dim2Df GetGameUIPosition(const GameData& game, const bool& timeUI)
 {
