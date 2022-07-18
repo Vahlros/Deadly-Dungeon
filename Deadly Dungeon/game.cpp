@@ -425,7 +425,16 @@ void Game::IsPlayerDead(sf::RenderWindow& window, int& state)
 	if (data.playerDead)
 	{
 		data.metrics.SaveScores();
-		PlayMusic(data.music, GC::MUSIC_LOSE, false);
+
+		if (data.metrics.totalTime > GC::WIN_TIME)
+		{
+			PlayMusic(data.music, GC::MUSIC_WIN, false);
+		}
+		else
+		{
+			PlayMusic(data.music, GC::MUSIC_LOSE, false);
+		}
+
 		ExitGame(window, state, true);
 	}
 }

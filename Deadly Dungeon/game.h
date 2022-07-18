@@ -66,4 +66,7 @@ namespace GC //Game constants
 	const char MAX_SPECIALS_SPAWNED = 3; //Maximum number of powerful enemies spawned per wave
 	const float VALID_SPAWN_DISTANCE = GC::TILE_SIZE * 2;
 	const short MAX_SPAWN_ATTEMPTS = 10;
+
+	//Game: Win
+	const float WIN_TIME = 60.f * 7.f; //Surviving for longer than 6 minutes will play the win music upon death
 }
